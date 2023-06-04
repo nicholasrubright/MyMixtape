@@ -1,5 +1,5 @@
 package models
 
-type ClientAccessTokenResponse struct {
+type ClientAccessTokenRequest struct {
 	Code	string	`json:"code"`
 }

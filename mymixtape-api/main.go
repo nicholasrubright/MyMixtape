@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	server "github.com/mymixtape-api/server"
+	"github.com/mymixtape-api/server"
 )
 
 func main() {
@@ -13,10 +13,13 @@ func main() {
 	server.SPOTIFY_CLIENT_SECRET = SPOTIFY_CLIENT_SECRET
 	server.SPOTIFY_CLIENT_REDIRECT = SPOTIFY_CLIENT_REDIRECT
 
+
+
+
 	router := gin.Default()
 	
 	router.GET("/api/auth", server.GetAuthorizationUrl)
-	router.POST("/api/auth", )
+	// router.POST("/api/auth", )
 
 	router.Run("localhost:8080")
 }

@@ -2,10 +2,10 @@ package server
 
 import (
 	"net/http"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mymixtape-api/spotify"
-	"github.com/mymixtape-api/spotify/models"
+	"github.com/mymixtape-api/client"
 )
 
 var (
@@ -18,28 +18,20 @@ var (
 	CLIENT = NewRequestManager(http.DefaultClient)
 )
 
-func GetAccessToken(c *gin.Context) {
-
-	
-
-}
-
-
 
 func GetAuthorizationUrl(c *gin.Context) {
 
-	authorizationResponse, err := spotify.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, &models.SpotifyErrorResponse{
-			Error: models.SpotifyErrorObjectResponse{
-				Status: http.StatusBadRequest,
-				Message: "there was a problem with getting the authorization url",
-			},
-		})
+	fmt.Println("CLEINT: ", SPOTIFY_CLIENT_ID)
+
+
+	clientAuthorizationUrlResponse, clientErrorResponse := client.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+
+	if clientErrorResponse != nil {
+		c.JSON(clientErrorResponse.Status, clientErrorResponse)
 		return
 	}
 
-	c.JSON(http.StatusOK, authorizationResponse)
+	c.JSON(http.StatusOK, clientAuthorizationUrlResponse)
 
 }
