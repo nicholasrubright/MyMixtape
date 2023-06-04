@@ -11,6 +11,7 @@ type SpotifyAuthorizationUrlResponse struct {
 	Url	string	`json:"url"`
 }
 
+
 // Error Responses
 type SpotifyAuthenticationErrorResponse struct {
 	Error	string	`json:"error"`

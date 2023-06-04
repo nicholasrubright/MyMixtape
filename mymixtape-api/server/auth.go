@@ -14,9 +14,20 @@ var (
 	SPOTIFY_CLIENT_REDIRECT = ""
 )
 
+var (
+	CLIENT = NewRequestManager(http.DefaultClient)
+)
+
+func GetAccessToken(c *gin.Context) {
+
+	
+
+}
+
+
 
 func GetAuthorizationUrl(c *gin.Context) {
-	
+
 	authorizationResponse, err := spotify.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
 	if err != nil {

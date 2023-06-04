@@ -16,6 +16,7 @@ func main() {
 	router := gin.Default()
 	
 	router.GET("/api/auth", server.GetAuthorizationUrl)
+	router.POST("/api/auth", )
 
 	router.Run("localhost:8080")
 }
