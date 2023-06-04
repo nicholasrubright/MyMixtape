@@ -1,4 +1,4 @@
-package server
+package spotify
 
 import (
 	"bytes"

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	server "github.com/mymixtape-api/server"
+	"github.com/mymixtape-api/server"
 )
 
 func main() {
@@ -15,7 +15,15 @@ func main() {
 
 	router := gin.Default()
 	
+	// Authorization
 	router.GET("/api/auth", server.GetAuthorizationUrl)
+	router.POST("/api/auth", server.GetAccessToken)
+
+	// User
+	router.GET("/api/user", server.GetCurrentUsersProfile)
+
+	// Playlists
+	router.GET("/api/playlists", server.GetCurrentUsersPlaylists)
 
 	router.Run("localhost:8080")
 }

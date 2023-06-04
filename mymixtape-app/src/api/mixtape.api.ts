@@ -6,5 +6,7 @@ const baseUrl = "http://127.0.0.1:8080";
 export const getAuthorizationUrl = (): Promise<
   AuthorizationUrlResponse | ErrorResponse
 > => {
-  return fetch(`${baseUrl}/api/auth`).then(checkStatus);
+  return fetch(`${baseUrl}/api/auth`, {
+    cache: "no-store",
+  }).then(checkStatus);
 };
