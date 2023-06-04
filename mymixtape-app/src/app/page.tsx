@@ -1,7 +1,9 @@
+import Jumbotron from "@/components/Jumbotron";
+
 export default function Home() {
   return (
-    <div>
-      <h1>Hello world!</h1>
+    <div className="container-fluid">
+      <Jumbotron />
     </div>
   );
 }
