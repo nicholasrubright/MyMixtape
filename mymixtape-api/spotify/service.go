@@ -1,6 +1,7 @@
 package spotify
 
 import (
+	"net/http"
 	"net/url"
 
 	"github.com/mymixtape-api/spotify/models"
@@ -14,6 +15,11 @@ const (
 	SPOTIFY_AUTHORIZATION_URL = "https://accounts.spotify.com/authorize"
 )
 
+var (
+	REQUEST_MANAGER = NewRequestManager(http.DefaultClient)
+)
+
+// Authorization Endpoints
 func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri string) (*models.SpotifyAuthorizationUrlResponse, *models.SpotifyErrorResponse) {
 
 	state := utils.GenerateAuthorizationState()
@@ -33,3 +39,36 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 		Url: authorizationUrl,
 	}, nil
 }
+
+
+func GetAccessToken(code string, client_id string, client_secret, redirect_uri string) *models.SpotifyAuthenticationErrorResponse {
+	if err := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret); err != nil {
+		return &models.SpotifyAuthenticationErrorResponse{
+			Error: "AccessToken Error",
+			Description: "There was a problem getting the access token",
+		}
+	}
+
+	return nil
+}
+
+// User Endpoints
+func GetCurrentUsersProfile() (*models.SpotifyCurrentUsersProfileResponse, *models.SpotifyErrorResponse) {
+
+	var spotifyCurrentUsersProfileResponse *models.SpotifyCurrentUsersProfileResponse
+
+	if err := REQUEST_MANAGER.GetInto("/me", &spotifyCurrentUsersProfileResponse); err != nil {
+		return nil, &models.SpotifyErrorResponse{
+			Error: models.SpotifyErrorObjectResponse{
+				Status: http.StatusInternalServerError,
+				Message: err.Error(),
+			},
+		}
+	}
+
+	return spotifyCurrentUsersProfileResponse, nil
+}
+
+
+
+// Playlist Endpoints

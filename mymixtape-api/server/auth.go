@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mymixtape-api/client"
+	"github.com/mymixtape-api/client/models"
 )
 
 var (
@@ -13,13 +14,8 @@ var (
 	SPOTIFY_CLIENT_REDIRECT = ""
 )
 
-var (
-	CLIENT = NewRequestManager(http.DefaultClient)
-)
-
 
 func GetAuthorizationUrl(c *gin.Context) {
-
 	clientAuthorizationUrlResponse, clientErrorResponse := client.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
 	if clientErrorResponse != nil {
@@ -28,5 +24,23 @@ func GetAuthorizationUrl(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, clientAuthorizationUrlResponse)
+}
 
+func GetAccessToken(c *gin.Context) {
+
+	var clientAccessTokenRequest models.ClientAccessTokenRequest
+
+	if err := c.BindJSON(&clientAccessTokenRequest); err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	clientErrorResponse := client.GetAccessToken(clientAccessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+
+	if clientErrorResponse != nil {
+		c.JSON(clientErrorResponse.Status, clientErrorResponse.Message)
+		return
+	}
+
+	c.Done()
 }

@@ -15,8 +15,12 @@ func main() {
 
 	router := gin.Default()
 	
+	// Authorization
 	router.GET("/api/auth", server.GetAuthorizationUrl)
-	// router.POST("/api/auth", )
+	router.POST("/api/auth", server.GetAccessToken)
+
+	// User
+	router.GET("/api/user", server.GetCurrentUsersProfile)
 
 	router.Run("localhost:8080")
 }
