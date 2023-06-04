@@ -22,5 +22,8 @@ func main() {
 	// User
 	router.GET("/api/user", server.GetCurrentUsersProfile)
 
+	// Playlists
+	router.GET("/api/playlists", server.GetCurrentUsersPlaylists)
+
 	router.Run("localhost:8080")
 }

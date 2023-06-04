@@ -55,3 +55,65 @@ func GetCurrentUsersProfile() (*models.ClientCurrentUsersProfileResponse, *model
 	}, nil
 
 }
+
+
+// User Playlists
+func GetCurrentUsersPlaylists() (*models.ClientCurrentUsersPlaylistsResponse, *models.ClientErrorResponse) {
+	spotifyCurrentUsersPlaylistsResponse, spotifyErrorResponse := spotify.GetCurrentUsersPlaylists()
+
+	if spotifyErrorResponse != nil {
+		return nil, &models.ClientErrorResponse{
+			Message: spotifyErrorResponse.Error.Message,
+			Status: spotifyErrorResponse.Error.Status,
+		}
+	}
+
+	var clientItems []struct {
+		ID     string `json:"id"`
+		Images []struct {
+			URL    string `json:"url"`
+			Height int    `json:"height"`
+			Width  int    `json:"width"`
+		} `json:"images"`
+		Name  string `json:"name"`
+	}
+
+	clientItems = make([]struct {
+		ID     string `json:"id"`
+		Images []struct {
+			URL    string `json:"url"`
+			Height int    `json:"height"`
+			Width  int    `json:"width"`
+		} `json:"images"`
+		Name  string `json:"name"`
+	}, 0)
+
+	for _, spotifyItemResponse := range spotifyCurrentUsersPlaylistsResponse.Items {
+		newClientItem := struct {
+			ID     string `json:"id"`
+			Images []struct {
+				URL    string `json:"url"`
+				Height int    `json:"height"`
+				Width  int    `json:"width"`
+			} `json:"images"`
+			Name  string `json:"name"`
+		}{
+			ID: spotifyItemResponse.ID,
+			Images: spotifyItemResponse.Images,
+			Name: spotifyItemResponse.Name,
+		}
+
+		clientItems = append(clientItems, newClientItem)
+	}
+
+
+	return &models.ClientCurrentUsersPlaylistsResponse{
+		Href: spotifyCurrentUsersPlaylistsResponse.Href,
+		Limit: spotifyCurrentUsersPlaylistsResponse.Limit,
+		Next: spotifyCurrentUsersPlaylistsResponse.Next,
+		Offset: spotifyCurrentUsersPlaylistsResponse.Offset,
+		Previous: spotifyCurrentUsersPlaylistsResponse.Previous,
+		Total: spotifyCurrentUsersPlaylistsResponse.Total,
+		Items: clientItems,
+	}, nil
+}
