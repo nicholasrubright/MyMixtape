@@ -13,9 +13,6 @@ func main() {
 	server.SPOTIFY_CLIENT_SECRET = SPOTIFY_CLIENT_SECRET
 	server.SPOTIFY_CLIENT_REDIRECT = SPOTIFY_CLIENT_REDIRECT
 
-
-
-
 	router := gin.Default()
 	
 	router.GET("/api/auth", server.GetAuthorizationUrl)
