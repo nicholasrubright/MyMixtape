@@ -1,0 +1,37 @@
+@use "vars" as *;
+
+.logo {
+  font-size: 72px;
+  background: rgb(22, 219, 101);
+  background: linear-gradient(
+    90deg,
+    rgba(22, 219, 101, 1) 17%,
+    rgba(81, 205, 168, 1) 69%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-getStarted {
+  background-color: $bg-purple;
+}
+
+.btn-getStarted:hover {
+  background-color: $bg-purple-light;
+}
+
+.btn-getStarted:active {
+  background-color: $bg-purple-dark !important;
+}
+
+.btn-learnMore {
+  background-color: $bg-gray;
+}
+
+.btn-learnMore:hover {
+  background-color: $bg-gray-light;
+}
+
+.btn-learnMore:active {
+  background-color: $bg-gray-dark !important;
+}
