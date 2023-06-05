@@ -35,12 +35,12 @@ func GetAccessToken(c *gin.Context) {
 		return
 	}
 
-	clientErrorResponse := client.GetAccessToken(clientAccessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+	clientAccessTokenResponse, clientErrorResponse := client.GetAccessToken(clientAccessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse.Message)
 		return
 	}
 
-	c.Done()
+	c.JSON(http.StatusOK, clientAccessTokenResponse)
 }

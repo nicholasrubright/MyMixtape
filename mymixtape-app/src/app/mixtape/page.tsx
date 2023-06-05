@@ -1,13 +1,12 @@
-import { getAuthorizationUrl } from "@/api/mixtape.api";
+import { api } from "@/api/mixtape.api";
 import Navbar from "@/components/Navbar";
-import { AuthorizationUrlResponse } from "@/types/api/response";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
 
   if (code) {
-    console.log(code);
+    const { token, expires_in } = await getAccessToken(code as string);
   } else {
     const authorization = await getAuthorization(null);
     if (!authorization.code && authorization.url) {
@@ -38,13 +37,7 @@ async function getAuthorization(code: string | null) {
   };
 
   try {
-    let authorizationResponse = await getAuthorizationUrl();
-
-    if ("error" in authorizationResponse) {
-      return defaultAuthorization;
-    } else {
-      authorizationResponse = authorizationResponse as AuthorizationUrlResponse;
-    }
+    const authorizationResponse = await api.getAuthorizationUrl();
 
     const { url } = authorizationResponse;
 
@@ -62,5 +55,16 @@ async function getAuthorization(code: string | null) {
   } catch (err) {
     console.error("There was a problem!", err);
     return defaultAuthorization;
+  }
+}
+
+async function getAccessToken(code: string) {
+  try {
+    const { token, expires_in } = await api.getAccessToken(code);
+
+    return { token, expires_in };
+  } catch (err) {
+    console.error("There was a problem!", err);
+    return { token: "", expires_in: 0 };
   }
 }

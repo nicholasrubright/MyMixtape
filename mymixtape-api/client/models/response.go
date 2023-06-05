@@ -5,6 +5,11 @@ type ClientAuthorizationUrlResponse struct {
 	Url		string	`json:"url"`
 }
 
+type ClientAccessTokenResponse struct {
+	Token	string	`json:"token"`
+	ExpiresIn	int	`json:"expires_in"`
+}
+
 // User Profile
 type ClientCurrentUsersProfileResponse struct {
 	ID		string	`json:"id"`

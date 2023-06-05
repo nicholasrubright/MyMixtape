@@ -41,15 +41,20 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 }
 
 
-func GetAccessToken(code string, client_id string, client_secret, redirect_uri string) *models.SpotifyAuthenticationErrorResponse {
+func GetAccessToken(code string, client_id string, client_secret, redirect_uri string) (*models.SpotifyAccessTokenResponse, *models.SpotifyAuthenticationErrorResponse) {
+	
 	if err := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret); err != nil {
-		return &models.SpotifyAuthenticationErrorResponse{
+		return nil, &models.SpotifyAuthenticationErrorResponse{
 			Error: "AccessToken Error",
 			Description: "There was a problem getting the access token",
 		}
 	}
 
-	return nil
+	return &models.SpotifyAccessTokenResponse{
+		AccessToken: REQUEST_MANAGER.Token,
+		ExpiresIn: REQUEST_MANAGER.TokenExpires,
+		TokenType: REQUEST_MANAGER.TokenType,
+	}, nil
 }
 
 // User Endpoints
