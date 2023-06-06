@@ -2,31 +2,30 @@ import { checkStatus } from "@/utils/fetch";
 import {
   AccessTokenResponse,
   AuthorizationUrlResponse,
-  ErrorResponse,
 } from "../types/api/response";
 
 const baseUrl = "http://127.0.0.1:8080";
 
-const getAuthorizationUrl = (): Promise<AuthorizationUrlResponse> => {
-  const response = fetch(`${baseUrl}/api/auth`, {
-    cache: "no-store",
-  }).then(checkStatus);
+const getAuthorizationUrl = async (): Promise<AuthorizationUrlResponse> => {
+  const response = await checkStatus<AuthorizationUrlResponse>(
+    fetch(`${baseUrl}/api/auth`, {
+      cache: "no-store",
+    })
+  );
 
-  if ("error" in response) {
-    throw new Error("There was an error in response");
-  }
-
-  return response as Promise<AuthorizationUrlResponse>;
+  return response;
 };
 
-const getAccessToken = (code: string): Promise<AccessTokenResponse> => {
-  return fetch(`${baseUrl}/api/auth`, {
-    method: "POST",
-    body: JSON.stringify(code),
-  }).then(checkStatus);
-};
+const getAccessToken = async (code: string): Promise<AccessTokenResponse> => {
+  const response = await checkStatus<AccessTokenResponse>(
+    fetch(`${baseUrl}/api/auth`, {
+      method: "POST",
+      body: JSON.stringify({ code }),
+    })
+  );
 
-//export { getAuthorizationUrl, getAccessToken };
+  return response;
+};
 
 export const api = {
   getAuthorizationUrl,

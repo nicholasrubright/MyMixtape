@@ -6,11 +6,13 @@ export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
 
   if (code) {
-    const { token, expires_in } = await getAccessToken(code as string);
+    const { token, expires_in } = await getAccessToken(code);
+    console.log(token, expires_in);
   } else {
-    const authorization = await getAuthorization(null);
-    if (!authorization.code && authorization.url) {
-      redirect(authorization.url);
+    const { url } = await getAuthorization();
+
+    if (url) {
+      redirect(url);
     }
   }
 
@@ -27,35 +29,25 @@ export default async function Mixtape(props: MixtapeProps) {
 }
 
 interface MixtapeProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { [key: string]: string | undefined };
 }
 
-async function getAuthorization(code: string | null) {
-  const defaultAuthorization = {
-    code: null,
-    url: "",
-  };
-
-  try {
-    const authorizationResponse = await api.getAuthorizationUrl();
-
-    const { url } = authorizationResponse;
-
-    if (!code && url) {
-      return {
-        code: null,
-        url,
-      };
-    }
-
-    return {
-      code,
-      url: "",
-    };
-  } catch (err) {
-    console.error("There was a problem!", err);
-    return defaultAuthorization;
-  }
+async function getAuthorization(
+  code: string | null = null
+): Promise<{ url: string | null }> {
+  return await api
+    .getAuthorizationUrl()
+    .then((response) => {
+      const { url } = response;
+      return !code && url ? { url } : { url: null };
+    })
+    .catch((error) => {
+      console.error(
+        "There was a problem getting the authorization url: ",
+        error
+      );
+      return { url: null };
+    });
 }
 
 async function getAccessToken(code: string) {

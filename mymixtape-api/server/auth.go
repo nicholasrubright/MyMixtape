@@ -39,11 +39,11 @@ func GetAccessToken(c *gin.Context) {
 
 	session := sessions.Default(c)
 	var token string
-	v := session.Get("token")
-	if v == nil {
+	tokenValue := session.Get("token")
+	if tokenValue == nil {
 		token = ""
 	} else {
-		token = v.(string)
+		token = tokenValue.(string)
 		c.JSON(http.StatusOK, &models.ClientAccessTokenResponse{
 			Token: token,
 			ExpiresIn: 0,
