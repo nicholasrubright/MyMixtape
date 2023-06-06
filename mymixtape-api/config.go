@@ -12,6 +12,7 @@ var (
 	SPOTIFY_CLIENT_REDIRECT = ""
 
 	API_ADDRESS = ""
+	SESSION_SECRET = ""
 )
 
 func InitConfig() {
@@ -22,4 +23,5 @@ func InitConfig() {
 	SPOTIFY_CLIENT_REDIRECT = os.Getenv("SPOTIFY_CLIENT_REDIRECT")
 
 	API_ADDRESS = os.Getenv("API_ADDRESS")
+	SESSION_SECRET = os.Getenv("SESSION_SECRET")
 }

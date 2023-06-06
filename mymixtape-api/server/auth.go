@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/sessions"
 	"github.com/mymixtape-api/client"
 	"github.com/mymixtape-api/client/models"
 )
@@ -35,12 +36,31 @@ func GetAccessToken(c *gin.Context) {
 		return
 	}
 
-	clientErrorResponse := client.GetAccessToken(clientAccessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+
+	session := sessions.Default(c)
+	var token string
+	tokenValue := session.Get("token")
+	if tokenValue == nil {
+		token = ""
+	} else {
+		token = tokenValue.(string)
+		c.JSON(http.StatusOK, &models.ClientAccessTokenResponse{
+			Token: token,
+			ExpiresIn: 0,
+		})
+
+		return
+	}
+
+	clientAccessTokenResponse, clientErrorResponse := client.GetAccessToken(clientAccessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT, token)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse.Message)
 		return
 	}
 
-	c.Done()
+	session.Set("token", clientAccessTokenResponse.Token)
+	session.Save()
+
+	c.JSON(http.StatusOK, clientAccessTokenResponse)
 }

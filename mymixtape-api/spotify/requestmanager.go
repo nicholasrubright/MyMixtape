@@ -30,6 +30,8 @@ type Doer interface {
 type RequestManager struct {
 	Client 	Doer
 	Token	string
+	TokenExpires	int
+	TokenType	string
 }
 
 func NewRequestManager(client Doer) *RequestManager {
@@ -88,6 +90,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	}
 
 	rm.Token = accessTokenResponse.AccessToken
+	rm.TokenExpires = accessTokenResponse.ExpiresIn
 
 	return nil
 }

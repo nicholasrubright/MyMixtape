@@ -1,17 +1,18 @@
-import { getAuthorizationUrl } from "@/api/mixtape.api";
+import { api } from "@/api/mixtape.api";
 import Navbar from "@/components/Navbar";
-import { AuthorizationUrlResponse } from "@/types/api/response";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
 
   if (code) {
-    console.log(code);
+    const { token, expires_in } = await getAccessToken(code);
+    console.log(token, expires_in);
   } else {
-    const authorization = await getAuthorization(null);
-    if (!authorization.code && authorization.url) {
-      redirect(authorization.url);
+    const { url } = await getAuthorization();
+
+    if (url) {
+      redirect(url);
     }
   }
 
@@ -28,39 +29,34 @@ export default async function Mixtape(props: MixtapeProps) {
 }
 
 interface MixtapeProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { [key: string]: string | undefined };
 }
 
-async function getAuthorization(code: string | null) {
-  const defaultAuthorization = {
-    code: null,
-    url: "",
-  };
+async function getAuthorization(
+  code: string | null = null
+): Promise<{ url: string | null }> {
+  return await api
+    .getAuthorizationUrl()
+    .then((response) => {
+      const { url } = response;
+      return !code && url ? { url } : { url: null };
+    })
+    .catch((error) => {
+      console.error(
+        "There was a problem getting the authorization url: ",
+        error
+      );
+      return { url: null };
+    });
+}
 
+async function getAccessToken(code: string) {
   try {
-    let authorizationResponse = await getAuthorizationUrl();
+    const { token, expires_in } = await api.getAccessToken(code);
 
-    if ("error" in authorizationResponse) {
-      return defaultAuthorization;
-    } else {
-      authorizationResponse = authorizationResponse as AuthorizationUrlResponse;
-    }
-
-    const { url } = authorizationResponse;
-
-    if (!code && url) {
-      return {
-        code: null,
-        url,
-      };
-    }
-
-    return {
-      code,
-      url: "",
-    };
+    return { token, expires_in };
   } catch (err) {
     console.error("There was a problem!", err);
-    return defaultAuthorization;
+    return { token: "", expires_in: 0 };
   }
 }
