@@ -1,3 +1,5 @@
+import CombineButton from "@/components/controls/CombineButton";
+
 export default function Form() {
   return (
     <div className="container h-100">
@@ -37,10 +39,7 @@ export default function Form() {
           </div>
           <div id="buttons" className="row border-top p-3 align-items-end">
             <div className="col d-grid align-self-end">
-              {/* <CreateButton
-                  isLoading={false}
-                  createNewPlaylist={createNewPlaylist}
-                /> */}
+              <CombineButton isLoading={false} isDisabled={false} />
             </div>
           </div>
         </div>

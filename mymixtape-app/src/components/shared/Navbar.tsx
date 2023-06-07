@@ -1,10 +1,10 @@
-import ProfileButton from "./ProfileButton";
+import ProfileButton from "../controls/ProfileButton";
 
 export default function Navbar() {
   const profile = {
     image:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png",
-    name: "Test",
+    name: "Bob Bobertin",
   };
 
   return (

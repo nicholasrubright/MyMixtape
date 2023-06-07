@@ -1,6 +1,6 @@
 import { api } from "@/api/mixtape.api";
-import Mixer from "@/components/Mixtape/Mixer";
-import Navbar from "@/components/Navbar";
+import { Mixer } from "@/components/Mixtape/Mixer";
+import Navbar from "@/components/shared/Navbar";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
