@@ -1,5 +1,9 @@
+import { Image } from "@/types/models";
+
 export default function PlaylistBlock(props: PlaylistBlockProps) {
-  const { name, image } = props;
+  const { name, images } = props;
+
+  const image = images[0];
 
   return (
     <div className="container rounded py-3">
@@ -10,7 +14,7 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
         <div className="col-auto p-0">
           <img
             className="rounded object-fit-scale"
-            src={image}
+            src={image.url}
             width="100"
             height="100"
           ></img>
@@ -29,5 +33,5 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
 
 interface PlaylistBlockProps {
   name: string;
-  image: string;
+  images: Image[];
 }

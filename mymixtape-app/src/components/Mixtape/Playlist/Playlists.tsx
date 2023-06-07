@@ -5,9 +5,7 @@ export default function Playlists(props: PlaylistsProp) {
   const { playlists } = props;
 
   const playlist_blocks = playlists.map((playlist) => {
-    return (
-      <PlaylistBlock name={playlist.name} image={playlist.images[0].url} />
-    );
+    return <PlaylistBlock name={playlist.name} images={playlist.images} />;
   });
 
   const isEmpty = playlists.length === 0;
