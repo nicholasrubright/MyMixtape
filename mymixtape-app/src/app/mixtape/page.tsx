@@ -1,16 +1,13 @@
 import { api } from "@/api/mixtape.api";
+import Mixer from "@/components/Mixtape/Mixer";
 import Navbar from "@/components/Navbar";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
 
-  if (code) {
-    const { token, expires_in } = await getAccessToken(code);
-    console.log(token, expires_in);
-  } else {
+  if (!code) {
     const { url } = await getAuthorization();
-
     if (url) {
       redirect(url);
     }
@@ -22,7 +19,7 @@ export default async function Mixtape(props: MixtapeProps) {
         <Navbar />
       </div>
       <div className="row container-fluid">
-        <h1>Mixtape!!</h1>
+        <Mixer code={code as string} />
       </div>
     </div>
   );

@@ -1,0 +1,77 @@
+@use "vars" as *;
+
+.profile-dropdown {
+  background-color: $bg-green-light;
+  color: $bg-white;
+}
+
+.profile-dropdown:hover {
+  background-color: $bg-green-dark;
+}
+
+.create-btn {
+  background-color: $bg-green-light;
+  color: $bg-white;
+}
+
+.create-btn:hover {
+  background-color: $bg-green-dark;
+  color: $bg-white;
+}
+
+.form-input {
+  background-color: $bg-black-lighter;
+  border-color: $bg-black !important;
+  color: $bg-white;
+}
+
+.form-input:focus {
+  background-color: $bg-black-light;
+  border-color: $bg-black !important;
+  color: $bg-white;
+}
+
+.alert-red {
+  background-color: $bg-red;
+}
+
+.alert-yellow {
+  background-color: $bg-yellow;
+  color: $bg-black;
+}
+
+.playlist-container {
+  border-bottom-style: solid;
+  border-top-style: solid;
+  border-color: $bg-black-lighter;
+  height: 400px;
+}
+
+.playlist {
+  color: $bg-black;
+}
+
+.playlist:hover {
+  background-color: $bg-gray !important;
+  cursor: pointer;
+}
+
+.playlist.active {
+  background-color: $bg-green-light !important;
+  color: $bg-white;
+}
+
+.playlist.active:hover {
+  background-color: $bg-green-dark !important;
+}
+
+// Playlist Options
+.options-btn {
+  background-color: $bg-green;
+  color: $bg-white;
+}
+
+.options-btn:hover {
+  background-color: $bg-green-dark;
+  color: $bg-white;
+}
