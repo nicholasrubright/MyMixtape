@@ -17,6 +17,8 @@ const getAuthorizationUrl = async (): Promise<AuthorizationUrlResponse> => {
 };
 
 const getAccessToken = async (code: string): Promise<AccessTokenResponse> => {
+  console.log("GET ACCESS TOEKN!!!!");
+
   const response = await checkStatus<AccessTokenResponse>(
     fetch(`${baseUrl}/api/auth`, {
       method: "POST",
