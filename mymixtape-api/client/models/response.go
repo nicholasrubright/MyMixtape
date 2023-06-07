@@ -3,6 +3,7 @@ package models
 // Authorization
 type ClientAuthorizationUrlResponse struct {
 	Url		string	`json:"url"`
+	ValidToken	bool	`json:"valid_token"`
 }
 
 type ClientAccessTokenResponse struct {

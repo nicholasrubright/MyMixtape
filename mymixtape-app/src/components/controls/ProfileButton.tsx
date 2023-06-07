@@ -1,5 +1,7 @@
+import { Image } from "@/types/models";
+
 export default function ProfileButton(props: ProfileButtonProps) {
-  const { name, image } = props;
+  const { name, images } = props;
 
   return (
     <div className="dropdown">
@@ -10,7 +12,7 @@ export default function ProfileButton(props: ProfileButtonProps) {
       >
         <img
           className="img-fluid me-2 rounded-circle"
-          src={image}
+          src={images.length > 0 ? images[0].url : ""}
           height="30"
           width="30"
         />
@@ -27,5 +29,5 @@ export default function ProfileButton(props: ProfileButtonProps) {
 
 interface ProfileButtonProps {
   name: string;
-  image: string;
+  images: Image[];
 }

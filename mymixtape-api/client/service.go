@@ -20,6 +20,7 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 
 	return &models.ClientAuthorizationUrlResponse{
 		Url: spotifyAuthorzationUrlResponse.Url,
+		ValidToken: false,
 	}, nil
 }
 
