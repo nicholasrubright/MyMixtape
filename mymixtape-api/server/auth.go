@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"github.com/mymixtape-api/client"
 	"github.com/mymixtape-api/client/models"
 )
@@ -24,7 +24,19 @@ func GetAuthorizationUrl(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, clientAuthorizationUrlResponse)
+
+	session := sessions.Default(c)
+	tokenValue := session.Get("token")
+	if tokenValue != nil {
+		c.JSON(http.StatusOK, &models.ClientAuthorizationUrlResponse{
+			Url: clientAuthorizationUrlResponse.Url,
+			ValidToken: true,
+		})
+
+		return
+	} else {
+		c.JSON(http.StatusOK, clientAuthorizationUrlResponse)
+	}
 }
 
 func GetAccessToken(c *gin.Context) {
