@@ -121,3 +121,18 @@ func GetCurrentUsersPlaylists() (*models.ClientCurrentUsersPlaylistsResponse, *m
 		Items: clientItems,
 	}, nil
 }
+
+func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string) *models.ClientErrorResponse {
+
+	spotifyCreatePlaylistResponse, spotifyErrorResponse := spotify.CreatePlaylist(user_id, playlist_name, playlist_description)
+
+	if spotifyErrorResponse != nil {
+		return &models.ClientErrorResponse{
+			Message: spotifyErrorResponse.Error.Message,
+			Status: spotifyErrorResponse.Error.Status,
+		}
+	}
+
+	
+
+}
