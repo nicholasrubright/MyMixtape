@@ -8,6 +8,16 @@ export type AccessTokenResponse = {
   expires_in: number;
 };
 
+export type UserProfileResponse = {
+  id: string;
+  name: string;
+  images: {
+    url: string;
+    height: number;
+    width: number;
+  }[];
+};
+
 // Error Response
 export type ErrorResponse = {
   status: number;

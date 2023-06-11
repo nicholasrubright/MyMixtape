@@ -11,6 +11,10 @@ export default async function Mixtape(props: MixtapeProps) {
     if (url && !valid_token) {
       redirect(url);
     }
+  } else {
+    await getAccessToken(code);
+
+    await getData();
   }
 
   return (
@@ -47,4 +51,12 @@ async function getAuthorization(
       );
       return { url: null, valid_token: false };
     });
+}
+
+async function getAccessToken(code: string) {
+  await api.getAccessToken(code);
+}
+
+async function getData() {
+  await api.getUserProfile();
 }

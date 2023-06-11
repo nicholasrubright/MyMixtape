@@ -4,6 +4,8 @@ import { ApiError } from "./errors";
 export async function checkStatus<T>(response: Promise<Response>): Promise<T> {
   return await response
     .then(async (responseObj: Response) => {
+      //console.log(responseObj);
+
       if (responseObj.ok) {
         return responseObj.json();
       }
