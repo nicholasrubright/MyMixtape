@@ -12,19 +12,23 @@ export default async function Mixtape(props: MixtapeProps) {
       redirect(url);
     }
   } else {
-    await getAccessToken(code);
+    const accessTokenResponse = await getAccessToken(code);
 
-    await getData();
+    return (
+      <div className="container">
+        <div className="row float-end">
+          <Navbar token={accessTokenResponse.token} />
+        </div>
+        <div className="row container-fluid">
+          <Mixer token={accessTokenResponse.token} />
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="container">
-      <div className="row float-end">
-        <Navbar code={code as string} />
-      </div>
-      <div className="row container-fluid">
-        <Mixer code={code as string} />
-      </div>
+      <h1>Error on mixtape</h1>
     </div>
   );
 }
@@ -54,9 +58,5 @@ async function getAuthorization(
 }
 
 async function getAccessToken(code: string) {
-  await api.getAccessToken(code);
-}
-
-async function getData() {
-  await api.getUserProfile();
+  return await api.getAccessToken(code);
 }

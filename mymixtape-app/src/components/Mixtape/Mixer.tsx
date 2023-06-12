@@ -41,7 +41,7 @@ const playlists: Playlist[] = [
 ];
 
 export function Mixer(props: MixerProps) {
-  const { code } = props;
+  const { token } = props;
 
   const [alert, setAlert] = useState({ hasAlert: false, message: "" });
 
@@ -71,5 +71,5 @@ export function Mixer(props: MixerProps) {
 }
 
 interface MixerProps {
-  code: string;
+  token: string;
 }

@@ -28,9 +28,13 @@ const getAccessToken = async (code: string): Promise<AccessTokenResponse> => {
   return response;
 };
 
-const getUserProfile = async (): Promise<UserProfileResponse> => {
+const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
   const response = await checkStatus<UserProfileResponse>(
-    fetch(`${baseUrl}/api/user`)
+    fetch(`${baseUrl}/api/user`, {
+      headers: {
+        "X-MyMixtape-Token": token,
+      },
+    })
   );
 
   return response;
