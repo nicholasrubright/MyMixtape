@@ -24,8 +24,8 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 	}, nil
 }
 
-func GetAccessToken(code string, client_id string, client_secret string, redirect_uri string, token string) (*models.ClientAccessTokenResponse, *models.ClientErrorResponse) {
-	spotifyAccessTokenResponse, spotifyErrorResponse := spotify.GetAccessToken(code, client_id, client_secret, redirect_uri, token)
+func GetAccessToken(code string, client_id string, client_secret string, redirect_uri string) (*models.ClientAccessTokenResponse, *models.ClientErrorResponse) {
+	spotifyAccessTokenResponse, spotifyErrorResponse := spotify.GetAccessToken(code, client_id, client_secret, redirect_uri)
 
 	if spotifyErrorResponse != nil {
 		return nil, &models.ClientErrorResponse{
@@ -41,9 +41,9 @@ func GetAccessToken(code string, client_id string, client_secret string, redirec
 }
 
 // User Profile
-func GetCurrentUsersProfile() (*models.ClientCurrentUsersProfileResponse, *models.ClientErrorResponse) {
+func GetCurrentUsersProfile(token string) (*models.ClientCurrentUsersProfileResponse, *models.ClientErrorResponse) {
 
-	spotifyCurrentUsersProfileResponse, spotifyErrorResponse := spotify.GetCurrentUsersProfile()
+	spotifyCurrentUsersProfileResponse, spotifyErrorResponse := spotify.GetCurrentUsersProfile(token)
 
 	if spotifyErrorResponse != nil {
 		return nil, &models.ClientErrorResponse{
@@ -62,8 +62,8 @@ func GetCurrentUsersProfile() (*models.ClientCurrentUsersProfileResponse, *model
 
 
 // User Playlists
-func GetCurrentUsersPlaylists() (*models.ClientCurrentUsersPlaylistsResponse, *models.ClientErrorResponse) {
-	spotifyCurrentUsersPlaylistsResponse, spotifyErrorResponse := spotify.GetCurrentUsersPlaylists()
+func GetCurrentUsersPlaylists(token string) (*models.ClientCurrentUsersPlaylistsResponse, *models.ClientErrorResponse) {
+	spotifyCurrentUsersPlaylistsResponse, spotifyErrorResponse := spotify.GetCurrentUsersPlaylists(token)
 
 	if spotifyErrorResponse != nil {
 		return nil, &models.ClientErrorResponse{

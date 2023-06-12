@@ -8,7 +8,10 @@ import (
 )
 
 func GetCurrentUsersProfile(c *gin.Context) {
-	clientCurrentUsersProfileResponse, clientErrorResponse := client.GetCurrentUsersProfile()
+
+	token := c.GetHeader(tokenKey)
+
+	clientCurrentUsersProfileResponse, clientErrorResponse := client.GetCurrentUsersProfile(token)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse)

@@ -8,7 +8,10 @@ import (
 )
 
 func GetCurrentUsersPlaylists(c *gin.Context) {
-	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists()
+
+	token := c.GetHeader(tokenKey)
+
+	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse)
