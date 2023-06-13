@@ -1,69 +1,87 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
-import { Playlist } from "@/types/models";
-
-const image =
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/SMPTE_Color_Bars.svg/1200px-SMPTE_Color_Bars.svg.png";
-
-const playlists: Playlist[] = [
-  {
-    id: "1",
-    name: "Playlist",
-    images: [{ url: image, height: 0, width: 0 }],
-  },
-  {
-    id: "2",
-    name: "Playlist",
-    images: [{ url: image, height: 0, width: 0 }],
-  },
-  {
-    id: "3",
-    name: "Playlist",
-    images: [{ url: image, height: 0, width: 0 }],
-  },
-  {
-    id: "4",
-    name: "Playlist",
-    images: [{ url: image, height: 0, width: 0 }],
-  },
-  {
-    id: "5",
-    name: "Playlist",
-    images: [{ url: image, height: 0, width: 0 }],
-  },
-  {
-    id: "6",
-    name: "Playlist",
-    images: [{ url: image, height: 0, width: 0 }],
-  },
-];
+import { Playlist, PlaylistMapping } from "@/types/models";
+import { api } from "@/api/mixtape.api";
+import { getPlaylistMapping, getSelectedPlaylists } from "@/utils/playlists";
 
 export function Mixer(props: MixerProps) {
   const { token } = props;
 
-  const [alert, setAlert] = useState({ hasAlert: false, message: "" });
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [newPlaylistName, setNewPlaylistName] = useState<string>("");
+  const [newPlaylistDescription, setNewPlaylistDescription] =
+    useState<string>("");
+  const [selectedPlaylists, setSelectedPlaylists] = useState<PlaylistMapping>(
+    {}
+  );
 
-  //   useEffect(() => {
-  //     const setAccessToken = async () => {
-  //       if (!localStorage.getItem("code")) {
-  //         await getAccessToken(code);
-  //         localStorage.setItem("code", code);
-  //       }
-  //     };
+  const handleNewPlaylistName = (e: any) => {
+    setNewPlaylistName(e.target.value);
+  };
 
-  //     setAccessToken();
-  //   }, [code]);
+  const handleNewPlaylistDescription = (e: any) => {
+    setNewPlaylistDescription(e.target.value);
+  };
+
+  const createNewPlaylist = async (e: any) => {
+    console.log(newPlaylistName, newPlaylistDescription);
+
+    const ids = getSelectedPlaylists(playlists, selectedPlaylists);
+
+    console.log(ids);
+
+    setNewPlaylistName("");
+    setNewPlaylistDescription("");
+    const mapping = getPlaylistMapping(playlists);
+    setSelectedPlaylists({ ...mapping });
+  };
+
+  const selectPlaylist = (e: any, index: string): void => {
+    const updatedSelectedPlaylists = selectedPlaylists;
+    updatedSelectedPlaylists[index] = !updatedSelectedPlaylists[index];
+    setSelectedPlaylists({ ...updatedSelectedPlaylists });
+  };
+
+  useEffect(() => {
+    const getPlaylists = async () => {
+      const response = await api.getUserPlaylists(token);
+      const tempPlaylists: Playlist[] = [];
+      response.items.forEach((item) => {
+        tempPlaylists.push({
+          id: item.id,
+          name: item.name,
+          images: item.images,
+        });
+      });
+
+      setPlaylists(tempPlaylists);
+      const mapping = getPlaylistMapping(playlists);
+      setSelectedPlaylists({ ...mapping });
+    };
+
+    getPlaylists();
+  }, [token]);
 
   return (
     <div className="container px-4 py-5">
       <div className="row">
         <div className="col-lg-7">
-          <Playlists playlists={playlists} />
+          <Playlists
+            playlists={playlists}
+            selectedPlaylists={selectedPlaylists}
+            selectPlaylist={selectPlaylist}
+          />
         </div>
         <div className="col-lg-5">
-          <Form />
+          <Form
+            newPlaylistName={newPlaylistName}
+            newPlaylistDescription={newPlaylistDescription}
+            handleNewPlaylistName={handleNewPlaylistName}
+            handleNewPlaylistDescription={handleNewPlaylistDescription}
+            createNewPlaylist={createNewPlaylist}
+          />
         </div>
       </div>
     </div>

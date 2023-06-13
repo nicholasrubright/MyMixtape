@@ -18,6 +18,24 @@ export type UserProfileResponse = {
   }[];
 };
 
+export type UserPlaylistsResponse = {
+  href: string;
+  limit: number;
+  next: string;
+  offset: number;
+  previous: string;
+  total: number;
+  items: {
+    id: string;
+    name: string;
+    images: {
+      url: string;
+      height: number;
+      width: number;
+    }[];
+  }[];
+};
+
 // Error Response
 export type ErrorResponse = {
   status: number;

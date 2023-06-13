@@ -15,3 +15,5 @@ export type Playlist = {
   name: string;
   images: Image[];
 };
+
+export type PlaylistMapping = Record<string, boolean>;

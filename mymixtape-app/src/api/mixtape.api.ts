@@ -2,6 +2,7 @@ import { checkStatus } from "@/utils/fetch";
 import {
   AccessTokenResponse,
   AuthorizationUrlResponse,
+  UserPlaylistsResponse,
   UserProfileResponse,
 } from "../types/api/response";
 
@@ -41,8 +42,23 @@ const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
   return response;
 };
 
+const getUserPlaylists = async (
+  token: string
+): Promise<UserPlaylistsResponse> => {
+  const response = await checkStatus<UserPlaylistsResponse>(
+    fetch(`${baseUrl}/api/playlists`, {
+      method: "GET",
+      headers: {
+        "X-MyMixtape-Token": token,
+      },
+    })
+  );
+
+  return response;
+};
 export const api = {
   getAuthorizationUrl,
   getAccessToken,
   getUserProfile,
+  getUserPlaylists,
 };

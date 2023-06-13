@@ -1,6 +1,14 @@
 import CombineButton from "@/components/controls/CombineButton";
 
-export default function Form() {
+export default function Form(props: FormProps) {
+  const {
+    newPlaylistName,
+    newPlaylistDescription,
+    handleNewPlaylistName,
+    handleNewPlaylistDescription,
+    createNewPlaylist,
+  } = props;
+
   return (
     <div className="container h-100">
       <div>
@@ -13,9 +21,9 @@ export default function Form() {
               type="text"
               className="form-control form-input"
               id="newPlaylistName"
-              //   value={newPlaylistName}
+              value={newPlaylistName}
               placeholder="Awesome Playlist"
-              //   onChange={(e) => handleNewPlaylistName(e)}
+              onChange={(e) => handleNewPlaylistName(e)}
             />
           </div>
           <div className="mb-3">
@@ -25,9 +33,9 @@ export default function Form() {
             <textarea
               className="form-control form-input"
               id="newPlaylistDescription"
-              //   value={newPlaylistDescription}
+              value={newPlaylistDescription}
               placeholder="This is a really awesome playlist..."
-              //   onChange={(e) => handleNewPlaylistDescription(e)}
+              onChange={(e) => handleNewPlaylistDescription(e)}
             />
           </div>
         </div>
@@ -39,11 +47,23 @@ export default function Form() {
           </div>
           <div id="buttons" className="row border-top p-3 align-items-end">
             <div className="col d-grid align-self-end">
-              <CombineButton isLoading={false} isDisabled={false} />
+              <CombineButton
+                isLoading={false}
+                isDisabled={false}
+                createNewPlaylist={createNewPlaylist}
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+interface FormProps {
+  newPlaylistName: string;
+  newPlaylistDescription: string;
+  handleNewPlaylistName: (e: any) => void;
+  handleNewPlaylistDescription: (e: any) => void;
+  createNewPlaylist: (e: any) => void;
 }
