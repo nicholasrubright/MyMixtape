@@ -5,6 +5,7 @@ import {
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "../types/api/response";
+import { CombinePlaylistRequest } from "@/types/api/request";
 
 const baseUrl = "http://127.0.0.1:8080";
 
@@ -56,9 +57,28 @@ const getUserPlaylists = async (
 
   return response;
 };
+
+const combinePlaylist = async (
+  request: CombinePlaylistRequest,
+  token: string
+): Promise<void> => {
+  const response = await checkStatus<void>(
+    fetch(`${baseUrl}/api/playlists`, {
+      method: "POST",
+      headers: {
+        "X-MyMixtape-Token": token,
+      },
+      body: JSON.stringify(request),
+    })
+  );
+
+  return response;
+};
+
 export const api = {
   getAuthorizationUrl,
   getAccessToken,
   getUserProfile,
   getUserPlaylists,
+  combinePlaylist,
 };

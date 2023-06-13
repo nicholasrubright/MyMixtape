@@ -106,7 +106,14 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 	
 	var spotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
 
-	if err := REQUEST_MANAGER.GetInto("/playlists/" + playlist_id, &spotifyPlaylistItemsResponse, token); err != nil {
+	parameters := url.Values{
+		"fields": {"href,limit,next,offset,previous,total,items(track(name,id))"},
+	}
+
+	endpoint := "/playlists/" + playlist_id + "?" + parameters.Encode()
+
+
+	if err := REQUEST_MANAGER.GetInto(endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,

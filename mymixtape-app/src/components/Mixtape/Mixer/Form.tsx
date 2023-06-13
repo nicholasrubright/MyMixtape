@@ -8,10 +8,9 @@ export default function Form(props: FormProps) {
     handleNewPlaylistDescription,
     createNewPlaylist,
   } = props;
-
   return (
     <div className="container h-100">
-      <div>
+      <form className="needs-validation" noValidate>
         <div id="fields" className="row mt-2 p-4">
           <div className="mb-3">
             <label htmlFor="newPlaylistName" className="form-label">
@@ -23,6 +22,7 @@ export default function Form(props: FormProps) {
               id="newPlaylistName"
               value={newPlaylistName}
               placeholder="Awesome Playlist"
+              required
               onChange={(e) => handleNewPlaylistName(e)}
             />
           </div>
@@ -34,6 +34,7 @@ export default function Form(props: FormProps) {
               className="form-control form-input"
               id="newPlaylistDescription"
               value={newPlaylistDescription}
+              required
               placeholder="This is a really awesome playlist..."
               onChange={(e) => handleNewPlaylistDescription(e)}
             />
@@ -55,7 +56,7 @@ export default function Form(props: FormProps) {
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

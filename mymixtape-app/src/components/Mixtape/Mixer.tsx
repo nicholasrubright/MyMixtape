@@ -16,6 +16,7 @@ export function Mixer(props: MixerProps) {
   const [selectedPlaylists, setSelectedPlaylists] = useState<PlaylistMapping>(
     {}
   );
+  const [userId, setUserId] = useState<string>("");
 
   const handleNewPlaylistName = (e: any) => {
     setNewPlaylistName(e.target.value);
@@ -29,8 +30,20 @@ export function Mixer(props: MixerProps) {
     console.log(newPlaylistName, newPlaylistDescription);
 
     const ids = getSelectedPlaylists(playlists, selectedPlaylists);
-
     console.log(ids);
+
+    // Client validation for now
+    if (newPlaylistName !== "" && newPlaylistDescription !== "") {
+      await api.combinePlaylist(
+        {
+          playlist_ids: ids,
+          name: newPlaylistName,
+          description: newPlaylistDescription,
+          user_id: userId,
+        },
+        token
+      );
+    }
 
     setNewPlaylistName("");
     setNewPlaylistDescription("");
@@ -61,7 +74,13 @@ export function Mixer(props: MixerProps) {
       setSelectedPlaylists({ ...mapping });
     };
 
+    const getUserProfile = async () => {
+      const response = await api.getUserProfile(token);
+      setUserId(response.id);
+    };
+
     getPlaylists();
+    getUserProfile();
   }, [token]);
 
   return (

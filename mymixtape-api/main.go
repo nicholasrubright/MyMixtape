@@ -44,6 +44,7 @@ func main() {
 
 	// Playlists
 	router.GET("/api/playlists", server.GetCurrentUsersPlaylists)
+	router.POST("/api/playlists", server.CombinePlaylists)
 
 	router.Run("localhost:8080")
 }
