@@ -94,3 +94,71 @@ func GetCurrentUsersPlaylists(token string) (*models.SpotifyCurrentUsersPlaylist
 	return spotifyCurrentUsersPlaylistsResponse, nil
 
 }
+
+/* Combine Playlists
+*	1. Get the track ids from the selected playlists
+*	2. Create the playlist with the name and description
+*	3. Add tracks to the newly created playlist  
+*/
+
+// Get the track ids from the selected playlists
+func GetPlaylistTracks(playlist_id string) (*models.SpotifyPlaylistItemsResponse, *models.SpotifyErrorResponse) {
+	
+	var spotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
+
+	if err := REQUEST_MANAGER.GetInto("/playlists/" + playlist_id, &spotifyPlaylistItemsResponse); err != nil {
+		return nil, &models.SpotifyErrorResponse{
+			Error: models.SpotifyErrorObjectResponse{
+				Status: http.StatusInternalServerError,
+				Message: err.Error(),
+			},
+		}
+	}
+	
+	
+	return spotifyPlaylistItemsResponse, nil
+}
+
+// Create the playlist with the name and description
+func CreatePlaylist(user_id string, playlist_name string, playlist_description string) (*models.SpotifyCreatePlaylistResponse, *models.SpotifyErrorResponse) {
+	
+	spotifyCreatePlaylistRequest := &models.SpotifyCreatePlaylistRequest{
+		Name: playlist_name,
+		Description: playlist_description,
+	}
+
+	var spotifyCreatePlaylistResponse *models.SpotifyCreatePlaylistResponse
+
+	if err := REQUEST_MANAGER.PostInto("/users/" + user_id + "/playlists", &spotifyCreatePlaylistRequest, &spotifyCreatePlaylistResponse); err != nil {
+		return nil, &models.SpotifyErrorResponse{
+			Error: models.SpotifyErrorObjectResponse{
+				Status: http.StatusInternalServerError,
+				Message: err.Error(),
+			},
+		}
+	}
+
+	return spotifyCreatePlaylistResponse, nil
+}
+
+// Add tracks to the newly created playlist
+func AddTracksToPlaylist(playlist_id string, track_ids []string) (*models.SpotifyAddItemsToPlaylistResponse, *models.SpotifyErrorResponse) {
+	
+	spotifyAddTracksToPlaylistRequest := &models.SpotifyAddItemsToPlaylistRequest{
+		URIs: track_ids,
+		Position: 0,
+	}
+
+	var spotifyAddTracksToPlaylistResponse *models.SpotifyAddItemsToPlaylistResponse
+
+	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", spotifyAddTracksToPlaylistRequest, spotifyAddTracksToPlaylistResponse); err != nil {
+		return nil, &models.SpotifyErrorResponse{
+			Error: models.SpotifyErrorObjectResponse{
+				Status: http.StatusInternalServerError,
+				Message: err.Error(),
+			},
+		}
+	}
+	
+	return spotifyAddTracksToPlaylistResponse, nil
+}
