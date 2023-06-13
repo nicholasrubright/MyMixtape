@@ -26,11 +26,7 @@ export default async function Mixtape(props: MixtapeProps) {
     );
   }
 
-  return (
-    <div className="container">
-      <h1>Error on mixtape</h1>
-    </div>
-  );
+  return redirect("/error");
 }
 
 interface MixtapeProps {

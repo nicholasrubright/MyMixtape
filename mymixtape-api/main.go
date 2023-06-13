@@ -23,8 +23,8 @@ func main() {
 	// CORS Policy For Testing
 	router.Use(cors.New(cors.Config{
         AllowOrigins:     []string{CLIENT_ADDRESS},
-        AllowMethods:     []string{"GET,POST"},
-        AllowHeaders:     []string{"Origin"},
+        AllowMethods:     []string{"GET,POST,OPTIONS"},
+        AllowHeaders:     []string{"Origin,X-MyMixtape-Token"},
         ExposeHeaders:    []string{"Content-Length"},
         AllowCredentials: true,
         MaxAge: 12 * time.Hour,
