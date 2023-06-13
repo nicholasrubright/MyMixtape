@@ -122,11 +122,11 @@ func GetCurrentUsersPlaylists(token string) (*models.ClientCurrentUsersPlaylists
 	}, nil
 }
 
-func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string) *models.ClientErrorResponse {
+func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string, token string) *models.ClientErrorResponse {
 
 
 	// Create the playlist
-	spotifyCreatePlaylistResponse, spotifyErrorResponse := spotify.CreatePlaylist(user_id, playlist_name, playlist_description)
+	spotifyCreatePlaylistResponse, spotifyErrorResponse := spotify.CreatePlaylist(user_id, playlist_name, playlist_description, token)
 
 	if spotifyErrorResponse != nil {
 		return &models.ClientErrorResponse{
@@ -142,7 +142,7 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 
 	for _, playlist_id := range playlist_ids {
 
-		spotifyPlaylistItemsResponse, spotifyErrorResponse := spotify.GetPlaylistTracks(playlist_id)
+		spotifyPlaylistItemsResponse, spotifyErrorResponse := spotify.GetPlaylistTracks(playlist_id, token)
 
 		if spotifyErrorResponse != nil {
 			// probably want to mark that a playlist didn't work
@@ -159,7 +159,7 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 
 
 	// Add Tracks to the newly created playlist
-	_, spotifyErrorResponse = spotify.AddTracksToPlaylist(spotifyCreatePlaylistResponse.ID, clientSelectedPlaylistsTrackList)
+	_, spotifyErrorResponse = spotify.AddTracksToPlaylist(spotifyCreatePlaylistResponse.ID, clientSelectedPlaylistsTrackList, token)
 
 	if spotifyErrorResponse != nil {
 		return &models.ClientErrorResponse{

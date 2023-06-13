@@ -102,11 +102,11 @@ func GetCurrentUsersPlaylists(token string) (*models.SpotifyCurrentUsersPlaylist
 */
 
 // Get the track ids from the selected playlists
-func GetPlaylistTracks(playlist_id string) (*models.SpotifyPlaylistItemsResponse, *models.SpotifyErrorResponse) {
+func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylistItemsResponse, *models.SpotifyErrorResponse) {
 	
 	var spotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
 
-	if err := REQUEST_MANAGER.GetInto("/playlists/" + playlist_id, &spotifyPlaylistItemsResponse); err != nil {
+	if err := REQUEST_MANAGER.GetInto("/playlists/" + playlist_id, &spotifyPlaylistItemsResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
@@ -120,7 +120,7 @@ func GetPlaylistTracks(playlist_id string) (*models.SpotifyPlaylistItemsResponse
 }
 
 // Create the playlist with the name and description
-func CreatePlaylist(user_id string, playlist_name string, playlist_description string) (*models.SpotifyCreatePlaylistResponse, *models.SpotifyErrorResponse) {
+func CreatePlaylist(user_id string, playlist_name string, playlist_description string, token string) (*models.SpotifyCreatePlaylistResponse, *models.SpotifyErrorResponse) {
 	
 	spotifyCreatePlaylistRequest := &models.SpotifyCreatePlaylistRequest{
 		Name: playlist_name,
@@ -129,7 +129,7 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 
 	var spotifyCreatePlaylistResponse *models.SpotifyCreatePlaylistResponse
 
-	if err := REQUEST_MANAGER.PostInto("/users/" + user_id + "/playlists", &spotifyCreatePlaylistRequest, &spotifyCreatePlaylistResponse); err != nil {
+	if err := REQUEST_MANAGER.PostInto("/users/" + user_id + "/playlists", &spotifyCreatePlaylistRequest, &spotifyCreatePlaylistResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
@@ -142,7 +142,7 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 }
 
 // Add tracks to the newly created playlist
-func AddTracksToPlaylist(playlist_id string, track_ids []string) (*models.SpotifyAddItemsToPlaylistResponse, *models.SpotifyErrorResponse) {
+func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) (*models.SpotifyAddItemsToPlaylistResponse, *models.SpotifyErrorResponse) {
 	
 	spotifyAddTracksToPlaylistRequest := &models.SpotifyAddItemsToPlaylistRequest{
 		URIs: track_ids,
@@ -151,7 +151,7 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string) (*models.Spotif
 
 	var spotifyAddTracksToPlaylistResponse *models.SpotifyAddItemsToPlaylistResponse
 
-	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", spotifyAddTracksToPlaylistRequest, spotifyAddTracksToPlaylistResponse); err != nil {
+	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", spotifyAddTracksToPlaylistRequest, spotifyAddTracksToPlaylistResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,

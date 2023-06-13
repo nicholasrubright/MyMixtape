@@ -24,6 +24,8 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 
 func CombinePlaylists(c *gin.Context) {
 
+	token := c.GetHeader(tokenKey)
+
 	var clientCombinePlaylistRequest models.ClientCombinePlaylistRequest
 
 	if err := c.BindJSON(&clientCombinePlaylistRequest); err != nil {
@@ -31,7 +33,7 @@ func CombinePlaylists(c *gin.Context) {
 		return
 	}
 
-	clientErrorResponse := client.CombinePlaylists(clientCombinePlaylistRequest.UserID, clientCombinePlaylistRequest.Name, clientCombinePlaylistRequest.Description, clientCombinePlaylistRequest.PlaylistIDs)
+	clientErrorResponse := client.CombinePlaylists(clientCombinePlaylistRequest.UserID, clientCombinePlaylistRequest.Name, clientCombinePlaylistRequest.Description, clientCombinePlaylistRequest.PlaylistIDs, token)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse.Message)
