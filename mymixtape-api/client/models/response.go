@@ -42,6 +42,16 @@ type ClientCurrentUsersPlaylistsResponse struct {
 	} `json:"items"`
 }
 
+type ClientPlaylistItemsResponse struct {
+	Items    []struct {
+		Track   struct {
+			ID         string `json:"id"`
+			Name        string `json:"name"`
+			Type        string `json:"type"`
+		} `json:"track"`
+	} `json:"items"`
+}
+
 // Error Response
 type ClientErrorResponse struct {
 	Message	string	`json:"message"`
