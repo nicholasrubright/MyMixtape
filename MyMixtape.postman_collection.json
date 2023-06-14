@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "d177dcf1-a9e8-4e9b-b5e6-f9dadbed35c3",
+		"name": "MyMixtape",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get Authorization Url",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/auth",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Access Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"{{spotify_authorization_code}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/auth",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Playlists",
+			"item": [
+				{
+					"name": "GET User Playlists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "{{Token-Header-Name}}",
+								"value": "{{Token-Header-Value}}",
+								"description": "{{Token-Header-Description}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}/playlists",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"playlists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Combine Playlists",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "{{Token-Header-Name}}",
+								"value": "{{Token-Header-Value}}",
+								"description": "{{Token-Header-Description}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}/playlists",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"playlists"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "GET User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "{{Token-Header-Name}}",
+								"value": "{{Token-Header-Value}}",
+								"description": "{{Token-Header-Description}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{API_URL}}/user",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Token-Header-Name",
+			"value": "X-MyMixtape-Token",
+			"type": "default"
+		},
+		{
+			"key": "Token-Header-Value",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "Token-Header-Description",
+			"value": "Custom header for api authorization token"
+		},
+		{
+			"key": "Spotify_Authorization_Code",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "API_URL",
+			"value": "http://localhost:8080/api",
+			"type": "default"
+		}
+	]
+}
