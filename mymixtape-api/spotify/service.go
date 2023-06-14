@@ -110,10 +110,9 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 		"fields": {"href,limit,next,offset,previous,total,items(track(name,id))"},
 	}
 
-	endpoint := "/playlists/" + playlist_id + "?" + parameters.Encode()
+	api_endpoint := "/playlists/" + playlist_id + "/tracks?" + string(parameters.Encode())
 
-
-	if err := REQUEST_MANAGER.GetInto(endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
+	if err := REQUEST_MANAGER.GetInto(api_endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
@@ -121,7 +120,6 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 			},
 		}
 	}
-	
 	
 	return spotifyPlaylistItemsResponse, nil
 }
@@ -158,7 +156,7 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) (
 
 	var spotifyAddTracksToPlaylistResponse *models.SpotifyAddItemsToPlaylistResponse
 
-	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", spotifyAddTracksToPlaylistRequest, spotifyAddTracksToPlaylistResponse, token); err != nil {
+	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", &spotifyAddTracksToPlaylistRequest, &spotifyAddTracksToPlaylistResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,

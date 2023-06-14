@@ -5,6 +5,7 @@ import (
 
 	"github.com/mymixtape-api/client/models"
 	"github.com/mymixtape-api/spotify"
+	"github.com/mymixtape-api/utils"
 )
 
 func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri string) (*models.ClientAuthorizationUrlResponse, *models.ClientErrorResponse) {
@@ -152,11 +153,10 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 		tracks := models.NewPlaylistTracks(spotifyPlaylistItemsResponse)
 
 		for _, track := range tracks.Tracks {
-			clientSelectedPlaylistsTrackList = append(clientSelectedPlaylistsTrackList, track.ID)
+			clientSelectedPlaylistsTrackList = append(clientSelectedPlaylistsTrackList, utils.GetSpotifyTrackURI(track.ID))
 		}
 
 	}
-
 
 	// Add Tracks to the newly created playlist
 	_, spotifyErrorResponse = spotify.AddTracksToPlaylist(spotifyCreatePlaylistResponse.ID, clientSelectedPlaylistsTrackList, token)
