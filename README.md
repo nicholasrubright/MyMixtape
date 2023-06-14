@@ -25,6 +25,7 @@ MyMixtape runs on a [Gin](https://gin-gonic.com/) backend and uses a [Next.js](h
 - Utilize cookies to move api requests server side
 - Add client-side validation
 - Add loading/placeholders on elements
+- Unit testing
 
 ### Backend
 
@@ -34,3 +35,4 @@ MyMixtape runs on a [Gin](https://gin-gonic.com/) backend and uses a [Next.js](h
 - Caching
 - Handle rate-limiting
 - Server side validation
+- unit tests
