@@ -47,8 +47,8 @@ func GetAccessToken(code string, client_id string, client_secret, redirect_uri s
 	if err := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret); err != nil {
 		utils.LogError("GetAccessToken", "Authentication Error")
 		return nil, &models.SpotifyAuthenticationErrorResponse{
-			Error: "AccessToken Error",
-			Description: "There was a problem getting the access token",
+			Error: err.Error(),
+			Description: err.Message,
 		}
 	}
 
@@ -68,8 +68,8 @@ func GetCurrentUsersProfile(token string) (*models.SpotifyCurrentUsersProfileRes
 		utils.LogError("GetCurrentUsersProfile", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
-				Status: http.StatusInternalServerError,
-				Message: err.Error(),
+				Status: err.StatusCode,
+				Message: err.Message,
 			},
 		}
 	}
@@ -89,8 +89,8 @@ func GetCurrentUsersPlaylists(token string) (*models.SpotifyCurrentUsersPlaylist
 		utils.LogError("GetCurrentUsersPlaylists", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
-				Status: http.StatusInternalServerError,
-				Message: err.Error(),
+				Status: err.StatusCode,
+				Message: err.Message,
 			},
 		}
 	}
@@ -120,8 +120,8 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 		utils.LogError("GetPlaylistTracks", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
-				Status: http.StatusInternalServerError,
-				Message: err.Error(),
+				Status: err.StatusCode,
+				Message: err.Message,
 			},
 		}
 	}
@@ -143,8 +143,8 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 		utils.LogError("CreatePlaylist", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
-				Status: http.StatusInternalServerError,
-				Message: err.Error(),
+				Status: err.StatusCode,
+				Message: err.Message,
 			},
 		}
 	}
@@ -166,8 +166,8 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) (
 		utils.LogError("AddTracksToPlaylist", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
-				Status: http.StatusInternalServerError,
-				Message: err.Error(),
+				Status: err.StatusCode,
+				Message: err.Message,
 			},
 		}
 	}

@@ -40,7 +40,7 @@ func NewRequestManager(client Doer) *RequestManager {
 	}
 }
 
-func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id string, client_secret string) error {
+func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id string, client_secret string) *utils.Error {
 	
 	formData := url.Values{
 		"grant_type": {GRANT_TYPE},
@@ -51,7 +51,10 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	request, err := http.NewRequest("POST", ACCESS_TOKEN_URL, strings.NewReader(formData.Encode()))
 
 	if err != nil {
-		return err
+		return &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -61,14 +64,20 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 
 	if err != nil {
 		utils.LogError("SetToken", err.Error())
-		return err
+		return &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	if response.StatusCode == http.StatusServiceUnavailable {
 		time.Sleep(time.Second)
 		response, err = rm.Client.Do(request)
 		if err != nil {
-			return err
+			return &utils.Error{
+				Message: err.Error(),
+				StatusCode: response.StatusCode,
+			}
 		}
 	}
 
@@ -81,14 +90,17 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 				StatusCode: response.StatusCode,
 			}
 		}
-		return err
+		return &err
 	}
 
 	var accessTokenResponse *models.SpotifyAccessTokenResponse
 
 	if err := json.NewDecoder(response.Body).Decode(&accessTokenResponse); err != nil {
 		utils.LogError("SetToken", err.Error())
-		return err
+		return &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	rm.Token = accessTokenResponse.AccessToken
@@ -97,7 +109,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	return nil
 }
 
-func (rm *RequestManager) GetInto(endpoint string, target interface{}, token string) error {
+func (rm *RequestManager) GetInto(endpoint string, target interface{}, token string) *utils.Error {
 	response, err := rm.Get(endpoint, token)
 
 	if err != nil {
@@ -107,13 +119,16 @@ func (rm *RequestManager) GetInto(endpoint string, target interface{}, token str
 
 	if err := json.NewDecoder(response.Body).Decode(target); err != nil {
 		utils.LogError("GetInto", err.Error())
-		return err
+		return &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	return nil
 }
 
-func (rm *RequestManager) PostInto(endpoint string, body, target interface{}, token string) error {
+func (rm *RequestManager) PostInto(endpoint string, body, target interface{}, token string) *utils.Error {
 	response, err := rm.Post(endpoint, body, token)
 
 	if err != nil {
@@ -123,55 +138,72 @@ func (rm *RequestManager) PostInto(endpoint string, body, target interface{}, to
 
 	if err := json.NewDecoder(response.Body).Decode(target); err != nil {
 		utils.LogError("PostInto", err.Error())
-		return err
+		return &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	return nil
 }
 
-func (rm *RequestManager) Get(endpoint string, token string) (*http.Response, error) {
+func (rm *RequestManager) Get(endpoint string, token string) (*http.Response, *utils.Error) {
 	return rm.DoRequest("GET", endpoint, nil, token)
 }
 
-func (rm *RequestManager) Post(endpoint string, body interface{}, token string) (*http.Response, error) {
+func (rm *RequestManager) Post(endpoint string, body interface{}, token string) (*http.Response, *utils.Error) {
 	buf := &bytes.Buffer{}
 
 	if err := json.NewEncoder(buf).Encode(body); err != nil {
 		utils.LogError("Post", err.Error())
-		return nil, err
+		return nil, &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	return rm.DoRequest("POST", endpoint, buf, token)
 }
 
-func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, token string) (*http.Response, error) {
+func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, token string) (*http.Response, *utils.Error) {
 	request, err := rm.NewRequest(method, endpoint, body, token)
 
 	if err != nil {
 		utils.LogError("DoRequest", err.Error())
-		return nil, err
+		return nil, &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	response, err := rm.Client.Do(request)
 
 	if err != nil {
 		utils.LogError("DoRequest", err.Error())
-		return nil, err
+		return nil, &utils.Error{
+			Message: err.Error(),
+			StatusCode: http.StatusInternalServerError,
+		}
 	}
 
 	if response.StatusCode == http.StatusServiceUnavailable {
 		time.Sleep(time.Second)
 		response, err = rm.Client.Do(request)
 		if err != nil {
-			return nil, err
+			utils.LogError("DoRequest", err.Error())
+			utilsError := utils.StatusToError[response.StatusCode]
+			return nil, &utilsError
 		}
 	}
+
 
 	if response.StatusCode == http.StatusTooManyRequests {
 		retry := response.Header.Get("Retry-After")
 		seconds, err := strconv.Atoi(retry)
 		if err != nil {
-			return nil, err
+			utils.LogError("DoRequest", err.Error())
+			utilsError := utils.StatusToError[response.StatusCode]
+			return nil, &utilsError
 		}
 
 		time.Sleep(time.Duration(seconds) * time.Second)
@@ -187,7 +219,8 @@ func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, tok
 				StatusCode: response.StatusCode,
 			}
 		}
-		return nil, err
+		
+		return nil, &err
 	}
 
 	return response, nil

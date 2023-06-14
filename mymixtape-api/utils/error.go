@@ -4,6 +4,7 @@ import "net/http"
 
 type Error struct {
 	Message string
+	ApiMessage string
 	StatusCode int
 }
 
