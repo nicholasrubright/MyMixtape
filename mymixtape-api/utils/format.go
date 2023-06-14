@@ -10,3 +10,7 @@ func GetEncodedClientCredentials(client_id string, client_secret string) string 
 	encodedStr := b64.StdEncoding.EncodeToString([]byte(str))
 	return encodedStr
 }
+
+func GetSpotifyTrackURI(track_id string) string {
+	return "spotify:track:" + track_id
+}

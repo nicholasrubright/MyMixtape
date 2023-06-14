@@ -5,6 +5,7 @@ import (
 
 	"github.com/mymixtape-api/client/models"
 	"github.com/mymixtape-api/spotify"
+	"github.com/mymixtape-api/utils"
 )
 
 func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri string) (*models.ClientAuthorizationUrlResponse, *models.ClientErrorResponse) {
@@ -24,8 +25,8 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 	}, nil
 }
 
-func GetAccessToken(code string, client_id string, client_secret string, redirect_uri string, token string) (*models.ClientAccessTokenResponse, *models.ClientErrorResponse) {
-	spotifyAccessTokenResponse, spotifyErrorResponse := spotify.GetAccessToken(code, client_id, client_secret, redirect_uri, token)
+func GetAccessToken(code string, client_id string, client_secret string, redirect_uri string) (*models.ClientAccessTokenResponse, *models.ClientErrorResponse) {
+	spotifyAccessTokenResponse, spotifyErrorResponse := spotify.GetAccessToken(code, client_id, client_secret, redirect_uri)
 
 	if spotifyErrorResponse != nil {
 		return nil, &models.ClientErrorResponse{
@@ -41,9 +42,9 @@ func GetAccessToken(code string, client_id string, client_secret string, redirec
 }
 
 // User Profile
-func GetCurrentUsersProfile() (*models.ClientCurrentUsersProfileResponse, *models.ClientErrorResponse) {
+func GetCurrentUsersProfile(token string) (*models.ClientCurrentUsersProfileResponse, *models.ClientErrorResponse) {
 
-	spotifyCurrentUsersProfileResponse, spotifyErrorResponse := spotify.GetCurrentUsersProfile()
+	spotifyCurrentUsersProfileResponse, spotifyErrorResponse := spotify.GetCurrentUsersProfile(token)
 
 	if spotifyErrorResponse != nil {
 		return nil, &models.ClientErrorResponse{
@@ -62,8 +63,8 @@ func GetCurrentUsersProfile() (*models.ClientCurrentUsersProfileResponse, *model
 
 
 // User Playlists
-func GetCurrentUsersPlaylists() (*models.ClientCurrentUsersPlaylistsResponse, *models.ClientErrorResponse) {
-	spotifyCurrentUsersPlaylistsResponse, spotifyErrorResponse := spotify.GetCurrentUsersPlaylists()
+func GetCurrentUsersPlaylists(token string) (*models.ClientCurrentUsersPlaylistsResponse, *models.ClientErrorResponse) {
+	spotifyCurrentUsersPlaylistsResponse, spotifyErrorResponse := spotify.GetCurrentUsersPlaylists(token)
 
 	if spotifyErrorResponse != nil {
 		return nil, &models.ClientErrorResponse{
@@ -122,11 +123,11 @@ func GetCurrentUsersPlaylists() (*models.ClientCurrentUsersPlaylistsResponse, *m
 	}, nil
 }
 
-func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string) *models.ClientErrorResponse {
+func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string, token string) *models.ClientErrorResponse {
 
 
 	// Create the playlist
-	spotifyCreatePlaylistResponse, spotifyErrorResponse := spotify.CreatePlaylist(user_id, playlist_name, playlist_description)
+	spotifyCreatePlaylistResponse, spotifyErrorResponse := spotify.CreatePlaylist(user_id, playlist_name, playlist_description, token)
 
 	if spotifyErrorResponse != nil {
 		return &models.ClientErrorResponse{
@@ -142,7 +143,7 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 
 	for _, playlist_id := range playlist_ids {
 
-		spotifyPlaylistItemsResponse, spotifyErrorResponse := spotify.GetPlaylistTracks(playlist_id)
+		spotifyPlaylistItemsResponse, spotifyErrorResponse := spotify.GetPlaylistTracks(playlist_id, token)
 
 		if spotifyErrorResponse != nil {
 			// probably want to mark that a playlist didn't work
@@ -152,14 +153,13 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 		tracks := models.NewPlaylistTracks(spotifyPlaylistItemsResponse)
 
 		for _, track := range tracks.Tracks {
-			clientSelectedPlaylistsTrackList = append(clientSelectedPlaylistsTrackList, track.ID)
+			clientSelectedPlaylistsTrackList = append(clientSelectedPlaylistsTrackList, utils.GetSpotifyTrackURI(track.ID))
 		}
 
 	}
 
-
 	// Add Tracks to the newly created playlist
-	_, spotifyErrorResponse = spotify.AddTracksToPlaylist(spotifyCreatePlaylistResponse.ID, clientSelectedPlaylistsTrackList)
+	_, spotifyErrorResponse = spotify.AddTracksToPlaylist(spotifyCreatePlaylistResponse.ID, clientSelectedPlaylistsTrackList, token)
 
 	if spotifyErrorResponse != nil {
 		return &models.ClientErrorResponse{

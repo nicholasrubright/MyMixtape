@@ -95,8 +95,8 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	return nil
 }
 
-func (rm *RequestManager) GetInto(endpoint string, target interface{}) error {
-	response, err := rm.Get(endpoint)
+func (rm *RequestManager) GetInto(endpoint string, target interface{}, token string) error {
+	response, err := rm.Get(endpoint, token)
 
 	if err != nil {
 		return err
@@ -109,8 +109,8 @@ func (rm *RequestManager) GetInto(endpoint string, target interface{}) error {
 	return nil
 }
 
-func (rm *RequestManager) PostInto(endpoint string, body, target interface{}) error {
-	response, err := rm.Post(endpoint, body)
+func (rm *RequestManager) PostInto(endpoint string, body, target interface{}, token string) error {
+	response, err := rm.Post(endpoint, body, token)
 
 	if err != nil {
 		return err
@@ -123,22 +123,22 @@ func (rm *RequestManager) PostInto(endpoint string, body, target interface{}) er
 	return nil
 }
 
-func (rm *RequestManager) Get(endpoint string) (*http.Response, error) {
-	return rm.DoRequest("GET", endpoint, nil)
+func (rm *RequestManager) Get(endpoint string, token string) (*http.Response, error) {
+	return rm.DoRequest("GET", endpoint, nil, token)
 }
 
-func (rm *RequestManager) Post(endpoint string, body interface{}) (*http.Response, error) {
+func (rm *RequestManager) Post(endpoint string, body interface{}, token string) (*http.Response, error) {
 	buf := &bytes.Buffer{}
 
 	if err := json.NewEncoder(buf).Encode(body); err != nil {
 		return nil, err
 	}
 
-	return rm.DoRequest("POST", endpoint, buf)
+	return rm.DoRequest("POST", endpoint, buf, token)
 }
 
-func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader) (*http.Response, error) {
-	request, err := rm.NewRequest(method, endpoint, body)
+func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, token string) (*http.Response, error) {
+	request, err := rm.NewRequest(method, endpoint, body, token)
 
 	if err != nil {
 		return nil, err
@@ -166,7 +166,7 @@ func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader) (*h
 		}
 
 		time.Sleep(time.Duration(seconds) * time.Second)
-		return rm.DoRequest(method, endpoint, body)
+		return rm.DoRequest(method, endpoint, body, token)
 	}
 
 	if response.StatusCode < 200 || response.StatusCode > 299 {
@@ -184,14 +184,14 @@ func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader) (*h
 	return response, nil
 }
 
-func (rm *RequestManager) NewRequest(method, endpoint string, body io.Reader) (*http.Request, error) {
+func (rm *RequestManager) NewRequest(method, endpoint string, body io.Reader, token string) (*http.Request, error) {
 	request, err := http.NewRequest(method, API_URL + endpoint, body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	request.Header.Add("Authorization", "Bearer " + rm.Token)
+	request.Header.Add("Authorization", "Bearer " + token)
 	request.Header.Add("Accept", "application/json")
 
 	return request, nil

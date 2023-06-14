@@ -1,15 +1,18 @@
-import { Playlist } from "@/types/models";
+import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "./PlaylistBlock";
 
 export default function Playlists(props: PlaylistsProp) {
-  const { playlists } = props;
+  const { playlists, selectPlaylist, selectedPlaylists } = props;
 
   const playlist_blocks = playlists.map((playlist) => {
     return (
       <PlaylistBlock
         key={playlist.id}
+        id={playlist.id}
         name={playlist.name}
         images={playlist.images}
+        active={selectedPlaylists[playlist.id]}
+        selectPlaylist={selectPlaylist}
       />
     );
   });
@@ -26,7 +29,7 @@ export default function Playlists(props: PlaylistsProp) {
         {!isEmpty && playlist_blocks}
       </div>
       <div className="row mt-3 text-center py-2">
-        <p>hello</p>
+        <p>Options</p>
       </div>
     </div>
   );
@@ -34,4 +37,6 @@ export default function Playlists(props: PlaylistsProp) {
 
 interface PlaylistsProp {
   playlists: Playlist[];
+  selectedPlaylists: PlaylistMapping;
+  selectPlaylist: (e: any, id: string) => void;
 }

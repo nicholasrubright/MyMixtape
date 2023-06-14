@@ -8,7 +8,7 @@ const testImage =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png";
 
 export default function Navbar(props: NavbarProps) {
-  const { code } = props;
+  const { token } = props;
 
   const [profile, setProfile] = useState<Profile>({
     id: "",
@@ -17,23 +17,17 @@ export default function Navbar(props: NavbarProps) {
   });
 
   useEffect(() => {
-    const getData = async () => {
-      if (!localStorage.getItem("token")) {
-        const response = await api.getAccessToken(code);
-        console.log(response);
-        localStorage.setItem("token", response.token);
-      } else {
-        // testing
-        setProfile({
-          id: "test",
-          name: "Bob Bobertin",
-          images: [{ url: testImage, height: 0, width: 0 }],
-        });
-      }
+    const getProfile = async () => {
+      const response = await api.getUserProfile(token);
+      setProfile({
+        id: response.id,
+        name: response.name,
+        images: response.images,
+      });
     };
 
-    getData();
-  }, [code]);
+    getProfile();
+  }, [token]);
 
   return (
     <nav className="navbar">
@@ -47,5 +41,5 @@ export default function Navbar(props: NavbarProps) {
 }
 
 interface NavbarProps {
-  code: string;
+  token: string;
 }

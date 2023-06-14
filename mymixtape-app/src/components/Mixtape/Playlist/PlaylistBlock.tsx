@@ -1,7 +1,7 @@
 import { Image } from "@/types/models";
 
 export default function PlaylistBlock(props: PlaylistBlockProps) {
-  const { name, images } = props;
+  const { id, name, images, active, selectPlaylist } = props;
 
   const image = images[0];
 
@@ -9,7 +9,9 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
     <div className="container rounded py-3">
       <div
         id="playlist-block"
-        className={`row playlist rounded shadow bg-light position-relative`}
+        className={`row playlist rounded shadow bg-light position-relative ${
+          active ? "active" : ""
+        }`}
       >
         <div className="col-auto p-0">
           <img
@@ -23,7 +25,7 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
           <h4 className="text-center">{name}</h4>
         </div>
         <a
-          //   onClick={(e) => selectPlaylist(e, id)}
+          onClick={(e) => selectPlaylist(e, id)}
           className="stretched-link"
         ></a>
       </div>
@@ -32,6 +34,9 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
 }
 
 interface PlaylistBlockProps {
+  id: string;
   name: string;
   images: Image[];
+  active: boolean;
+  selectPlaylist: (e: any, id: string) => void;
 }
