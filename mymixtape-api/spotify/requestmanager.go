@@ -60,6 +60,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	response, err := rm.Client.Do(request)
 
 	if err != nil {
+		utils.LogError("SetToken", err.Error())
 		return err
 	}
 
@@ -86,6 +87,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	var accessTokenResponse *models.SpotifyAccessTokenResponse
 
 	if err := json.NewDecoder(response.Body).Decode(&accessTokenResponse); err != nil {
+		utils.LogError("SetToken", err.Error())
 		return err
 	}
 
@@ -99,10 +101,12 @@ func (rm *RequestManager) GetInto(endpoint string, target interface{}, token str
 	response, err := rm.Get(endpoint, token)
 
 	if err != nil {
+		utils.LogError("GetInto", err.Error())
 		return err
 	}
 
 	if err := json.NewDecoder(response.Body).Decode(target); err != nil {
+		utils.LogError("GetInto", err.Error())
 		return err
 	}
 
@@ -113,10 +117,12 @@ func (rm *RequestManager) PostInto(endpoint string, body, target interface{}, to
 	response, err := rm.Post(endpoint, body, token)
 
 	if err != nil {
+		utils.LogError("PostInto", err.Error())
 		return err
 	}
 
 	if err := json.NewDecoder(response.Body).Decode(target); err != nil {
+		utils.LogError("PostInto", err.Error())
 		return err
 	}
 
@@ -131,6 +137,7 @@ func (rm *RequestManager) Post(endpoint string, body interface{}, token string) 
 	buf := &bytes.Buffer{}
 
 	if err := json.NewEncoder(buf).Encode(body); err != nil {
+		utils.LogError("Post", err.Error())
 		return nil, err
 	}
 
@@ -141,12 +148,14 @@ func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, tok
 	request, err := rm.NewRequest(method, endpoint, body, token)
 
 	if err != nil {
+		utils.LogError("DoRequest", err.Error())
 		return nil, err
 	}
 
 	response, err := rm.Client.Do(request)
 
 	if err != nil {
+		utils.LogError("DoRequest", err.Error())
 		return nil, err
 	}
 
@@ -188,6 +197,7 @@ func (rm *RequestManager) NewRequest(method, endpoint string, body io.Reader, to
 	request, err := http.NewRequest(method, API_URL + endpoint, body)
 
 	if err != nil {
+		utils.LogError("NewRequest", err.Error())
 		return nil, err
 	}
 

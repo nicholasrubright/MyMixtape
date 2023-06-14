@@ -12,6 +12,7 @@ const (
 	RESPONSE_TYPE = "code"
 	SHOW_DIALOG = "true"
 	SCOPE = "user-read-private user-read-email playlist-modify-public playlist-modify-private"
+	TRACK_FIELDS = "href,limit,next,offset,previous,total,items(track(name,id))"
 	SPOTIFY_AUTHORIZATION_URL = "https://accounts.spotify.com/authorize"
 )
 
@@ -44,6 +45,7 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 func GetAccessToken(code string, client_id string, client_secret, redirect_uri string) (*models.SpotifyAccessTokenResponse, *models.SpotifyAuthenticationErrorResponse) {
 	
 	if err := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret); err != nil {
+		utils.LogError("GetAccessToken", "Authentication Error")
 		return nil, &models.SpotifyAuthenticationErrorResponse{
 			Error: "AccessToken Error",
 			Description: "There was a problem getting the access token",
@@ -63,6 +65,7 @@ func GetCurrentUsersProfile(token string) (*models.SpotifyCurrentUsersProfileRes
 	var spotifyCurrentUsersProfileResponse *models.SpotifyCurrentUsersProfileResponse
 
 	if err := REQUEST_MANAGER.GetInto("/me", &spotifyCurrentUsersProfileResponse, token); err != nil {
+		utils.LogError("GetCurrentUsersProfile", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
@@ -83,6 +86,7 @@ func GetCurrentUsersPlaylists(token string) (*models.SpotifyCurrentUsersPlaylist
 	var spotifyCurrentUsersPlaylistsResponse *models.SpotifyCurrentUsersPlaylistsResponse
 
 	if err := REQUEST_MANAGER.GetInto("/me/playlists", &spotifyCurrentUsersPlaylistsResponse, token); err != nil {
+		utils.LogError("GetCurrentUsersPlaylists", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
@@ -107,12 +111,13 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 	var spotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
 
 	parameters := url.Values{
-		"fields": {"href,limit,next,offset,previous,total,items(track(name,id))"},
+		"fields": {TRACK_FIELDS},
 	}
 
 	api_endpoint := "/playlists/" + playlist_id + "/tracks?" + string(parameters.Encode())
 
 	if err := REQUEST_MANAGER.GetInto(api_endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
+		utils.LogError("GetPlaylistTracks", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
@@ -135,6 +140,7 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 	var spotifyCreatePlaylistResponse *models.SpotifyCreatePlaylistResponse
 
 	if err := REQUEST_MANAGER.PostInto("/users/" + user_id + "/playlists", &spotifyCreatePlaylistRequest, &spotifyCreatePlaylistResponse, token); err != nil {
+		utils.LogError("CreatePlaylist", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
@@ -157,6 +163,7 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) (
 	var spotifyAddTracksToPlaylistResponse *models.SpotifyAddItemsToPlaylistResponse
 
 	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", &spotifyAddTracksToPlaylistRequest, &spotifyAddTracksToPlaylistResponse, token); err != nil {
+		utils.LogError("AddTracksToPlaylist", err.Error())
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,
