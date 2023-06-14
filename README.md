@@ -1,7 +1,7 @@
 <div align="center">
     <br>
-    <h1>MyMixtape🎶</h1>
-    <strong>Organize your music!</strong>
+    <h1>MyMixtape 🎶</h1>
+    <strong>Unite your playlists, amplify your vibes.</strong>
 </div>
 <br>
 
