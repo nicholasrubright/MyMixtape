@@ -7,6 +7,7 @@ export default function Form(props: FormProps) {
     handleNewPlaylistName,
     handleNewPlaylistDescription,
     createNewPlaylist,
+    isCombining,
   } = props;
   return (
     <div className="container h-100">
@@ -49,8 +50,8 @@ export default function Form(props: FormProps) {
           <div id="buttons" className="row border-top p-3 align-items-end">
             <div className="col d-grid align-self-end">
               <CombineButton
-                isLoading={false}
-                isDisabled={false}
+                isLoading={isCombining}
+                isDisabled={isCombining}
                 createNewPlaylist={createNewPlaylist}
               />
             </div>
@@ -64,6 +65,7 @@ export default function Form(props: FormProps) {
 interface FormProps {
   newPlaylistName: string;
   newPlaylistDescription: string;
+  isCombining: boolean;
   handleNewPlaylistName: (e: any) => void;
   handleNewPlaylistDescription: (e: any) => void;
   createNewPlaylist: (e: any) => void;
