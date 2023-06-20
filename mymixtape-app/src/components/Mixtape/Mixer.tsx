@@ -4,7 +4,11 @@ import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
 import { Playlist, PlaylistMapping } from "@/types/models";
 import { api } from "@/api/mixtape.api";
-import { getPlaylistMapping, getSelectedPlaylists } from "@/utils/playlists";
+import {
+  createPlaylistMapping,
+  getSelectedPlaylists,
+  remapPlaylistMapping,
+} from "@/utils/playlists";
 
 export function Mixer(props: MixerProps) {
   const { token } = props;
@@ -48,7 +52,7 @@ export function Mixer(props: MixerProps) {
 
     setNewPlaylistName("");
     setNewPlaylistDescription("");
-    const mapping = getPlaylistMapping(playlists);
+    const mapping = createPlaylistMapping(playlists);
     setSelectedPlaylists({ ...mapping });
   };
 
@@ -59,7 +63,8 @@ export function Mixer(props: MixerProps) {
   };
 
   const setMapping = () => {
-    const mapping = getPlaylistMapping(playlists);
+    const mapping = remapPlaylistMapping(playlists, selectedPlaylists);
+
     setSelectedPlaylists({ ...mapping });
   };
 
