@@ -1,6 +1,7 @@
 import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "./PlaylistBlock";
 import ScrollableList from "@/components/controls/ScrollableList";
+import PlaylistBlockPlaceholder from "./PlaylistBlockPlaceholder";
 
 export default function Playlists(props: PlaylistsProp) {
   const {
@@ -23,6 +24,14 @@ export default function Playlists(props: PlaylistsProp) {
       />
     );
   });
+
+  // if (playlists.length !== maxPlaylists && playlists.length > 0) {
+  //   for (let i = 0; i < 3; i++) {
+  //     playlist_blocks.push(
+  //       <PlaylistBlockPlaceholder key={i + Math.random().toFixed(0)} />
+  //     );
+  //   }
+  // }
 
   return (
     <div className="container">
