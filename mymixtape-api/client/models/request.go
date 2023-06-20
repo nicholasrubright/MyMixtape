@@ -10,3 +10,8 @@ type ClientCombinePlaylistRequest struct {
 	Description	string		`json:"description"`
 	PlaylistIDs	[]string	`json:"playlist_ids"`
 }
+
+type ClientGetCurrentUsersPlaylistsRequest struct {
+	Limit	string	`json:"limit"`
+	Offset	string	`json:"offset"`
+}

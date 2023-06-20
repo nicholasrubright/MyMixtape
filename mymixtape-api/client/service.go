@@ -63,8 +63,8 @@ func GetCurrentUsersProfile(token string) (*models.ClientCurrentUsersProfileResp
 
 
 // User Playlists
-func GetCurrentUsersPlaylists(token string) (*models.ClientCurrentUsersPlaylistsResponse, *models.ClientErrorResponse) {
-	spotifyCurrentUsersPlaylistsResponse, spotifyErrorResponse := spotify.GetCurrentUsersPlaylists(token)
+func GetCurrentUsersPlaylists(token string, offset string, limit string) (*models.ClientCurrentUsersPlaylistsResponse, *models.ClientErrorResponse) {
+	spotifyCurrentUsersPlaylistsResponse, spotifyErrorResponse := spotify.GetCurrentUsersPlaylists(token, offset, limit)
 
 	if spotifyErrorResponse != nil {
 		return nil, &models.ClientErrorResponse{

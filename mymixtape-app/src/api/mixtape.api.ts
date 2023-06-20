@@ -44,10 +44,19 @@ const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
 };
 
 const getUserPlaylists = async (
-  token: string
+  token: string,
+  offset: number,
+  limit: number
 ): Promise<UserPlaylistsResponse> => {
+  const params: Record<string, string> = {
+    offset: offset.toString(),
+    limit: limit.toString(),
+  };
+
+  const urlParams = new URLSearchParams(params);
+
   const response = await checkStatus<UserPlaylistsResponse>(
-    fetch(`${baseUrl}/api/playlists`, {
+    fetch(`${baseUrl}/api/playlists?${urlParams}`, {
       method: "GET",
       headers: {
         "X-MyMixtape-Token": token,

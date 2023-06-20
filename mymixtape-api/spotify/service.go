@@ -78,11 +78,20 @@ func GetCurrentUsersProfile(token string) (*models.SpotifyCurrentUsersProfileRes
 
 // Playlist Endpoints
 // will need to add parameters for limit and offset for paginations
-func GetCurrentUsersPlaylists(token string) (*models.SpotifyCurrentUsersPlaylistsResponse, *models.SpotifyErrorResponse) {
+func GetCurrentUsersPlaylists(token string, offset string, limit string) (*models.SpotifyCurrentUsersPlaylistsResponse, *models.SpotifyErrorResponse) {
 
 	var spotifyCurrentUsersPlaylistsResponse *models.SpotifyCurrentUsersPlaylistsResponse
 
-	if err := REQUEST_MANAGER.GetInto("/me/playlists", &spotifyCurrentUsersPlaylistsResponse, token); err != nil {
+
+	parameters := url.Values{
+		"offset": {offset},
+		"limit": {limit},
+	}
+
+	endpoint := "/me/playlists?" + parameters.Encode()
+
+
+	if err := REQUEST_MANAGER.GetInto(endpoint, &spotifyCurrentUsersPlaylistsResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{
 				Status: http.StatusInternalServerError,

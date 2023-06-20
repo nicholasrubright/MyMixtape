@@ -4,7 +4,11 @@ import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
 import { Playlist, PlaylistMapping } from "@/types/models";
 import { api } from "@/api/mixtape.api";
-import { getPlaylistMapping, getSelectedPlaylists } from "@/utils/playlists";
+import {
+  createPlaylistMapping,
+  getSelectedPlaylists,
+  remapPlaylistMapping,
+} from "@/utils/playlists";
 
 export function Mixer(props: MixerProps) {
   const { token } = props;
@@ -17,6 +21,7 @@ export function Mixer(props: MixerProps) {
     {}
   );
   const [userId, setUserId] = useState<string>("");
+  const [maxPlaylists, setMaxPlaylists] = useState(-1);
 
   const handleNewPlaylistName = (e: any) => {
     setNewPlaylistName(e.target.value);
@@ -47,7 +52,7 @@ export function Mixer(props: MixerProps) {
 
     setNewPlaylistName("");
     setNewPlaylistDescription("");
-    const mapping = getPlaylistMapping(playlists);
+    const mapping = createPlaylistMapping(playlists);
     setSelectedPlaylists({ ...mapping });
   };
 
@@ -57,9 +62,15 @@ export function Mixer(props: MixerProps) {
     setSelectedPlaylists({ ...updatedSelectedPlaylists });
   };
 
+  const setMapping = () => {
+    const mapping = remapPlaylistMapping(playlists, selectedPlaylists);
+
+    setSelectedPlaylists({ ...mapping });
+  };
+
   useEffect(() => {
     const getPlaylists = async () => {
-      const response = await api.getUserPlaylists(token);
+      const response = await api.getUserPlaylists(token, 0, 20);
       const tempPlaylists: Playlist[] = [];
       response.items.forEach((item) => {
         tempPlaylists.push({
@@ -69,9 +80,12 @@ export function Mixer(props: MixerProps) {
         });
       });
 
+      console.log(response.total);
+
+      setMaxPlaylists(response.total);
+
       setPlaylists(tempPlaylists);
-      const mapping = getPlaylistMapping(playlists);
-      setSelectedPlaylists({ ...mapping });
+      setMapping();
     };
 
     const getUserProfile = async () => {
@@ -83,6 +97,12 @@ export function Mixer(props: MixerProps) {
     getUserProfile();
   }, [token]);
 
+  const getMoreData = async (offset: number, limit: number) => {
+    const response = await api.getUserPlaylists(token, offset, limit);
+    setPlaylists([...playlists, ...response.items]);
+    setMapping();
+  };
+
   return (
     <div className="container px-4 py-5">
       <div className="row">
@@ -91,6 +111,8 @@ export function Mixer(props: MixerProps) {
             playlists={playlists}
             selectedPlaylists={selectedPlaylists}
             selectPlaylist={selectPlaylist}
+            getMoreData={getMoreData}
+            maxPlaylists={maxPlaylists}
           />
         </div>
         <div className="col-lg-5">
