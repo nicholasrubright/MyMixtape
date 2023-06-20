@@ -1,0 +1,17 @@
+version: "3"
+
+tasks:
+  build:
+    dir: mymixtape-api
+    cmd: go build -o ./bin
+
+  run:
+    dir: mymixtape-api
+    cmds:
+      - osascript -e 'tell app "Terminal" to do script "cd ~/Dev/Projects/multi/Projects/MyMixtape/mymixtape-api && go run ."'
+
+  start:
+    dir: mymixtape-api
+    cmds:
+      - task: build
+      - task: run

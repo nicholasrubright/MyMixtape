@@ -1,0 +1,8 @@
+version: "3"
+
+tasks:
+  start:
+    dir: mymixtape-app
+    cmds:
+      - npm install
+      - osascript -e 'tell app "Terminal" to do script "cd ~/Dev/Projects/multi/Projects/MyMixtape/mymixtape-app && npm run dev"'
