@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Loader from "../shared/Loader";
 
 export default function ScrollableList(props: ScrollableListProps) {
   const { items, getMoreData, maxPlaylists } = props;
@@ -40,7 +41,11 @@ export default function ScrollableList(props: ScrollableListProps) {
       ref={listInnerRef}
       onScroll={onScroll}
     >
-      {isEmpty && <h3 className="text-center p-4">No Items...</h3>}
+      {isEmpty && (
+        <div className="d-flex justify-content-center">
+          <Loader />
+        </div>
+      )}
       {!isEmpty && items}
     </div>
   );
