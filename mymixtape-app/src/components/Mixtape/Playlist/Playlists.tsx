@@ -1,8 +1,15 @@
 import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "./PlaylistBlock";
+import ScrollableList from "@/components/controls/ScrollableList";
 
 export default function Playlists(props: PlaylistsProp) {
-  const { playlists, selectPlaylist, selectedPlaylists } = props;
+  const {
+    playlists,
+    selectPlaylist,
+    selectedPlaylists,
+    getMoreData,
+    maxPlaylists,
+  } = props;
 
   const playlist_blocks = playlists.map((playlist) => {
     return (
@@ -17,16 +24,17 @@ export default function Playlists(props: PlaylistsProp) {
     );
   });
 
-  const isEmpty = playlists.length === 0;
-
   return (
     <div className="container">
       <div className="row text-center mb-3">
         <h3>Playlists</h3>
       </div>
-      <div className="row overflow-auto px-3 playlist-container">
-        {isEmpty && <h3 className="text-center p-4">No Playlists...</h3>}
-        {!isEmpty && playlist_blocks}
+      <div className="row">
+        <ScrollableList
+          items={playlist_blocks}
+          getMoreData={getMoreData}
+          maxPlaylists={maxPlaylists}
+        />
       </div>
       <div className="row mt-3 text-center py-2">
         <p>Options</p>
@@ -39,4 +47,6 @@ interface PlaylistsProp {
   playlists: Playlist[];
   selectedPlaylists: PlaylistMapping;
   selectPlaylist: (e: any, id: string) => void;
+  getMoreData: (offset: number, limit: number) => void;
+  maxPlaylists: number;
 }
