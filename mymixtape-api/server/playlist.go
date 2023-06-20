@@ -12,7 +12,21 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 
 	token := c.GetHeader(tokenKey)
 
-	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token)
+	var offset string
+	var limit string
+
+	offset, ok := c.GetQuery("offset")
+	if !ok {
+		offset = "0"
+	}
+
+	limit, ok = c.GetQuery("limit")
+
+	if !ok {
+		limit = "20"
+	}
+
+	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token, offset, limit)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse)
