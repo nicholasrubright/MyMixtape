@@ -137,14 +137,20 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 
 	for spotifyPlaylistItemsResponse.Total >= len(spotifyPlaylistItemsResponse.Items) {
 
-
-		var nextSpotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
-
-		if spotifyPlaylistItemsResponse.Next == nil {
+		if spotifyPlaylistItemsResponse.Next == "" {
 			break
 		}
 
-		endpoint := spotifyPlaylistItemsResponse.Next.(string)
+
+		var nextSpotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
+
+		parameters := url.Values{
+			"offset": {strconv.Itoa(len(spotifyPlaylistItemsResponse.Items))},
+			"fields": {TRACK_FIELDS},
+		}
+
+		endpoint := "/playlists/" + playlist_id + "/tracks?" + string(parameters.Encode())
+
 
 		if err := REQUEST_MANAGER.GetInto(endpoint, &nextSpotifyPlaylistItemsResponse, token); err != nil {
 			return nil, &models.SpotifyErrorResponse{
