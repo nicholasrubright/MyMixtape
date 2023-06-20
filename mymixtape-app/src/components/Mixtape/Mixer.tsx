@@ -22,6 +22,7 @@ export function Mixer(props: MixerProps) {
   );
   const [userId, setUserId] = useState<string>("");
   const [maxPlaylists, setMaxPlaylists] = useState(-1);
+  const [isCombining, setIsCombining] = useState<boolean>(false);
 
   const handleNewPlaylistName = (e: any) => {
     setNewPlaylistName(e.target.value);
@@ -39,6 +40,8 @@ export function Mixer(props: MixerProps) {
 
     // Client validation for now
     if (newPlaylistName !== "" && newPlaylistDescription !== "") {
+      setIsCombining(true);
+
       await api.combinePlaylist(
         {
           playlist_ids: ids,
@@ -48,6 +51,7 @@ export function Mixer(props: MixerProps) {
         },
         token
       );
+      setIsCombining(false);
     }
 
     setNewPlaylistName("");
@@ -122,6 +126,7 @@ export function Mixer(props: MixerProps) {
             handleNewPlaylistName={handleNewPlaylistName}
             handleNewPlaylistDescription={handleNewPlaylistDescription}
             createNewPlaylist={createNewPlaylist}
+            isCombining={isCombining}
           />
         </div>
       </div>

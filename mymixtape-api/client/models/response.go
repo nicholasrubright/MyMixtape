@@ -52,6 +52,11 @@ type ClientPlaylistItemsResponse struct {
 	} `json:"items"`
 }
 
+type ClientCombinePlaylistResponse struct {
+	ID	string	`json:"id"`
+	Name	string	`json:"name"`
+}
+
 // Error Response
 type ClientErrorResponse struct {
 	Message	string	`json:"message"`

@@ -3,6 +3,7 @@ package spotify
 import (
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/mymixtape-api/spotify/models"
 	"github.com/mymixtape-api/utils"
@@ -12,6 +13,7 @@ const (
 	RESPONSE_TYPE = "code"
 	SHOW_DIALOG = "true"
 	SCOPE = "user-read-private user-read-email playlist-modify-public playlist-modify-private"
+	TRACK_FIELDS = "href,limit,next,offset,previous,total,items(track(name,id))"
 	SPOTIFY_AUTHORIZATION_URL = "https://accounts.spotify.com/authorize"
 )
 
@@ -116,10 +118,12 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 	var spotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
 
 	parameters := url.Values{
-		"fields": {"href,limit,next,offset,previous,total,items(track(name,id))"},
+		"fields": {TRACK_FIELDS},
+		"limit": {strconv.Itoa(50)},
 	}
 
 	api_endpoint := "/playlists/" + playlist_id + "/tracks?" + string(parameters.Encode())
+
 
 	if err := REQUEST_MANAGER.GetInto(api_endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
@@ -129,6 +133,38 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 			},
 		}
 	}
+
+
+	for spotifyPlaylistItemsResponse.Total >= len(spotifyPlaylistItemsResponse.Items) {
+
+		if spotifyPlaylistItemsResponse.Next == "" {
+			break
+		}
+
+
+		var nextSpotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
+
+		parameters := url.Values{
+			"offset": {strconv.Itoa(len(spotifyPlaylistItemsResponse.Items))},
+			"fields": {TRACK_FIELDS},
+		}
+
+		endpoint := "/playlists/" + playlist_id + "/tracks?" + string(parameters.Encode())
+
+
+		if err := REQUEST_MANAGER.GetInto(endpoint, &nextSpotifyPlaylistItemsResponse, token); err != nil {
+			return nil, &models.SpotifyErrorResponse{
+				Error: models.SpotifyErrorObjectResponse{
+					Status: http.StatusInternalServerError,
+					Message: err.Error(),
+				},
+			}
+		}
+
+		spotifyPlaylistItemsResponse.Items = append(spotifyPlaylistItemsResponse.Items, nextSpotifyPlaylistItemsResponse.Items...)
+	}
+
+
 	
 	return spotifyPlaylistItemsResponse, nil
 }

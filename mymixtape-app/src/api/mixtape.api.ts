@@ -2,6 +2,7 @@ import { checkStatus } from "@/utils/fetch";
 import {
   AccessTokenResponse,
   AuthorizationUrlResponse,
+  CombinePlaylistResponse,
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "../types/api/response";
@@ -70,8 +71,8 @@ const getUserPlaylists = async (
 const combinePlaylist = async (
   request: CombinePlaylistRequest,
   token: string
-): Promise<void> => {
-  const response = await checkStatus<void>(
+): Promise<CombinePlaylistResponse> => {
+  const response = await checkStatus<CombinePlaylistResponse>(
     fetch(`${baseUrl}/api/playlists`, {
       method: "POST",
       headers: {

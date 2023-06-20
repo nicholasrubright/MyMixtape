@@ -93,12 +93,12 @@ type SpotifyAddItemsToPlaylistResponse struct {
 }
 
 type SpotifyPlaylistItemsResponse struct {
-	Href     string `json:"href"`
-	Limit    int    `json:"limit"`
-	Next     any    `json:"next"`
-	Offset   int    `json:"offset"`
-	Previous any    `json:"previous"`
-	Total    int    `json:"total"`
+	Href     string 	`json:"href"`
+	Limit    int    	`json:"limit"`
+	Next     string    	`json:"next"`
+	Offset   int    	`json:"offset"`
+	Previous string    	`json:"previous"`
+	Total    int    	`json:"total"`
 	Items    []struct {
 		Track struct {
 			ID   string `json:"id"`
