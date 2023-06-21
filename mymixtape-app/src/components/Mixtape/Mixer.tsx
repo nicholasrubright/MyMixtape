@@ -37,10 +37,7 @@ export function Mixer(props: MixerProps) {
   };
 
   const createNewPlaylist = async (e: any) => {
-    console.log(newPlaylistName, newPlaylistDescription);
-
     const ids = getSelectedPlaylists(playlists, selectedPlaylists);
-    console.log(ids);
 
     // Client validation for now
     if (newPlaylistName !== "" && newPlaylistDescription !== "") {

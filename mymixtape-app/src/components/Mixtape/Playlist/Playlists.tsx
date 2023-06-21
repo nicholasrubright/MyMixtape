@@ -45,9 +45,7 @@ export default function Playlists(props: PlaylistsProp) {
           maxPlaylists={maxPlaylists}
         />
       </div>
-      <div className="row mt-3 text-center py-2">
-        <p>Options</p>
-      </div>
+      <div className="row mt-3 text-center py-2">{/* <p>Options</p> */}</div>
     </div>
   );
 }
