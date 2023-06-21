@@ -19,7 +19,7 @@ export default function Form(props: FormProps) {
             </label>
             <input
               type="text"
-              className="form-control form-input"
+              className="form-control form-input bg-white"
               id="newPlaylistName"
               value={newPlaylistName}
               placeholder="Awesome Playlist"
@@ -32,7 +32,7 @@ export default function Form(props: FormProps) {
               Description
             </label>
             <textarea
-              className="form-control form-input"
+              className="form-control form-input bg-white"
               id="newPlaylistDescription"
               value={newPlaylistDescription}
               required
@@ -42,11 +42,11 @@ export default function Form(props: FormProps) {
           </div>
         </div>
         <div>
-          <div id="stats" className="row p-3">
+          {/* <div id="stats" className="row p-3">
             <p>Total Songs: </p>
             <p>Total Selected Playlists: </p>
             <p>Total Hours on Selected Playlists: </p>
-          </div>
+          </div> */}
           <div id="buttons" className="row border-top p-3 align-items-end">
             <div className="col d-grid align-self-end">
               <CombineButton
