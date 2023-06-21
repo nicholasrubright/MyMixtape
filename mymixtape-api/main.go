@@ -1,6 +1,9 @@
 package main
 
 import (
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/mymixtape-api/server"
 )
@@ -19,14 +22,14 @@ func main() {
 	
 
 	// CORS Policy For Testing
-	// router.Use(cors.New(cors.Config{
-    //     AllowOrigins:     []string{CLIENT_ADDRESS},
-    //     AllowMethods:     []string{"GET,POST,OPTIONS"},
-    //     AllowHeaders:     []string{"Origin,X-MyMixtape-Token"},
-    //     ExposeHeaders:    []string{"Content-Length"},
-    //     AllowCredentials: true,
-    //     MaxAge: 12 * time.Hour,
-    // }))
+	router.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{CLIENT_ADDRESS},
+        AllowMethods:     []string{"GET,POST,OPTIONS"},
+        AllowHeaders:     []string{"Origin,X-MyMixtape-Token"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge: 12 * time.Hour,
+    }))
 
 	// Authorization
 	router.GET("/api/auth", server.GetAuthorizationUrl)
