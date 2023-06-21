@@ -9,6 +9,7 @@ export default function Form(props: FormProps) {
     createNewPlaylist,
     isCombining,
   } = props;
+
   return (
     <div className="container h-100">
       <form className="needs-validation" noValidate>
@@ -24,6 +25,7 @@ export default function Form(props: FormProps) {
               value={newPlaylistName}
               placeholder="Awesome Playlist"
               required
+              disabled={isCombining}
               onChange={(e) => handleNewPlaylistName(e)}
             />
           </div>
@@ -36,17 +38,18 @@ export default function Form(props: FormProps) {
               id="newPlaylistDescription"
               value={newPlaylistDescription}
               required
+              disabled={isCombining}
               placeholder="This is a really awesome playlist..."
               onChange={(e) => handleNewPlaylistDescription(e)}
             />
           </div>
         </div>
         <div>
-          <div id="stats" className="row p-3">
+          {/* <div id="stats" className="row p-3">
             <p>Total Songs: </p>
             <p>Total Selected Playlists: </p>
             <p>Total Hours on Selected Playlists: </p>
-          </div>
+          </div> */}
           <div id="buttons" className="row border-top p-3 align-items-end">
             <div className="col d-grid align-self-end">
               <CombineButton
