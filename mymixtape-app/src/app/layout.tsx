@@ -2,6 +2,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "@/styles/globals.scss";
 
 import { Inter } from "next/font/google";
+import { MixtapeContextProvider } from "@/context/mixtape";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,7 +41,9 @@ export default function RootLayout({
         ></script>
       </head>
       <body className={inter.className}>
-        <div>{children}</div>
+        <MixtapeContextProvider>
+          <div>{children}</div>
+        </MixtapeContextProvider>
       </body>
     </html>
   );
