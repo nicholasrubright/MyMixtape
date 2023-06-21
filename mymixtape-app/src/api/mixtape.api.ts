@@ -8,7 +8,7 @@ import {
 } from "../types/api/response";
 import { CombinePlaylistRequest } from "@/types/api/request";
 
-const baseUrl = "http://127.0.0.1:8080";
+const baseUrl = process.env.API_HOST || "http://127.0.0.1:8080";
 
 const getAuthorizationUrl = async (): Promise<AuthorizationUrlResponse> => {
   const response = await checkStatus<AuthorizationUrlResponse>(
