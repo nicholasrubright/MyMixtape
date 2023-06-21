@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/mymixtape-api/server"
 )
@@ -30,11 +28,6 @@ func main() {
         MaxAge: 12 * time.Hour,
     }))
 
-	// Sessions
-	store := cookie.NewStore([]byte(SESSION_SECRET))
-	store.Options(sessions.Options{MaxAge: 60 * 60 * 24})
-	router.Use(sessions.Sessions("mysession", store))
-
 	// Authorization
 	router.GET("/api/auth", server.GetAuthorizationUrl)
 	router.POST("/api/auth", server.GetAccessToken)
@@ -46,5 +39,5 @@ func main() {
 	router.GET("/api/playlists", server.GetCurrentUsersPlaylists)
 	router.POST("/api/playlists", server.CombinePlaylists)
 
-	router.Run("localhost:8080")
+	router.Run(API_ADDRESS)
 }
