@@ -13,7 +13,6 @@ var (
 
 	CLIENT_ADDRESS = ""
 	API_ADDRESS = ""
-	SESSION_SECRET = ""
 )
 
 func InitConfig() {
@@ -25,5 +24,4 @@ func InitConfig() {
 
 	CLIENT_ADDRESS = os.Getenv("CLIENT_ADDRESS")
 	API_ADDRESS = os.Getenv("API_ADDRESS")
-	SESSION_SECRET = os.Getenv("SESSION_SECRET")
 }
