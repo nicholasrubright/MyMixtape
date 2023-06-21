@@ -13,9 +13,6 @@ export default async function Mixtape(props: MixtapeProps) {
     }
   } else {
     const accessTokenResponse = await getAccessToken(code);
-
-    console.log("Token: ", accessTokenResponse.token);
-
     return (
       <div className="container">
         <div className="row float-end">
