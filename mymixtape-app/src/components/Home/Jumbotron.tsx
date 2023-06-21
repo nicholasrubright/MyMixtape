@@ -14,12 +14,13 @@ export default function Jumbotron() {
           >
             Get Started!
           </Link>
-          <button
+          <Link
+            href="/about"
             type="button"
             className="btn btn-learnMore text-white btn-lg px-4"
           >
             Learn More
-          </button>
+          </Link>
         </div>
       </div>
     </div>
