@@ -12,6 +12,8 @@ import (
 
 func main() {
 
+	gin.SetMode(gin.ReleaseMode)
+
 	InitConfig()
 
 	server.SPOTIFY_CLIENT_ID = SPOTIFY_CLIENT_ID
@@ -20,6 +22,7 @@ func main() {
 
 	router := gin.Default()
 	
+
 	// CORS Policy For Testing
 	router.Use(cors.New(cors.Config{
         AllowOrigins:     []string{CLIENT_ADDRESS},
