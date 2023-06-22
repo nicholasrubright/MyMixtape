@@ -77,6 +77,7 @@ const combinePlaylist = async (
       method: "POST",
       headers: {
         "X-MyMixtape-Token": token,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(request),
     })
