@@ -92,7 +92,6 @@ func GetCurrentUsersPlaylists(token string, offset string, limit string) (*model
 
 	endpoint := "/me/playlists?" + parameters.Encode()
 
-
 	if err := REQUEST_MANAGER.GetInto(endpoint, &spotifyCurrentUsersPlaylistsResponse, token); err != nil {
 		return nil, &models.SpotifyErrorResponse{
 			Error: models.SpotifyErrorObjectResponse{

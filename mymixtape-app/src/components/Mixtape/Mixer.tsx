@@ -79,10 +79,10 @@ export function Mixer(props: MixerProps) {
   };
 
   useEffect(() => {
-    const getPlaylists = async () => {
-      const response = await api.getUserPlaylists(token, 0, 20);
+    const getData = async () => {
+      const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
       const tempPlaylists: Playlist[] = [];
-      response.items.forEach((item) => {
+      userPlaylistsResponse.items.forEach((item) => {
         tempPlaylists.push({
           id: item.id,
           name: item.name,
@@ -90,21 +90,16 @@ export function Mixer(props: MixerProps) {
         });
       });
 
-      console.log(response.total);
-
-      setMaxPlaylists(response.total);
+      setMaxPlaylists(userPlaylistsResponse.total);
 
       setPlaylists(tempPlaylists);
       setMapping();
+
+      const userProfileResponse = await api.getUserProfile(token);
+      setUserId(userProfileResponse.id);
     };
 
-    const getUserProfile = async () => {
-      const response = await api.getUserProfile(token);
-      setUserId(response.id);
-    };
-
-    getPlaylists();
-    getUserProfile();
+    getData();
   }, [token]);
 
   const getMoreData = async (offset: number, limit: number) => {
