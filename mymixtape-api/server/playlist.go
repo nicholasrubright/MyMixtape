@@ -12,20 +12,27 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 
 	token := c.GetHeader(tokenKey)
 
-	var offset string
 	var limit string
+	var offset string
 
-	offset, ok := c.GetQuery("offset")
-	if !ok {
-		offset = "0"
-	}
+	var clientGetCurrentUsersPlaylistsRequestQueryParameters models.ClientGetCurrentUsersPlaylistsRequestQueryParameters
+	
+	if c.Bind(&clientGetCurrentUsersPlaylistsRequestQueryParameters) == nil {
+		limit = clientGetCurrentUsersPlaylistsRequestQueryParameters.Limit
+		offset = clientGetCurrentUsersPlaylistsRequestQueryParameters.Offset
 
-	limit, ok = c.GetQuery("limit")
+		if limit == "" {
+			limit = "20"
+		}
 
-	if !ok {
+		if offset == "" {
+			offset = "0"
+		}
+
+	} else {
 		limit = "20"
-	}
-
+		offset = "0"
+	}	
 	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token, offset, limit)
 
 	if clientErrorResponse != nil {

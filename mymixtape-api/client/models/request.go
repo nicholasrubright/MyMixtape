@@ -11,7 +11,7 @@ type ClientCombinePlaylistRequest struct {
 	PlaylistIDs	[]string	`json:"playlist_ids"`
 }
 
-type ClientGetCurrentUsersPlaylistsRequest struct {
-	Limit	string	`json:"limit"`
-	Offset	string	`json:"offset"`
+type ClientGetCurrentUsersPlaylistsRequestQueryParameters struct {
+	Limit	string	`form:"limit"`
+	Offset	string	`form:"offset"`
 }
