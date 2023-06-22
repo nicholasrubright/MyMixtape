@@ -10,6 +10,11 @@ import (
 
 func GetCurrentUsersPlaylists(c *gin.Context) {
 
+	if c.Request.Method == "OPTIONS" {
+		c.Done()
+		return
+	}
+
 	token := c.GetHeader(tokenKey)
 
 	var limit string
@@ -32,7 +37,9 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 	} else {
 		limit = "20"
 		offset = "0"
-	}	
+	}
+
+
 	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token, offset, limit)
 
 	if clientErrorResponse != nil {

@@ -32,6 +32,9 @@ func CreateRoutes() {
 
 		apiRoutes.GET("/playlists", server.GetCurrentUsersPlaylists)
 		apiRoutes.POST("/playlists", server.CombinePlaylists)
+		apiRoutes.OPTIONS("/playlists", func(c *gin.Context) {
+			c.Done()
+		})
 	}
 
 }
