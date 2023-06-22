@@ -171,7 +171,6 @@ func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, tok
 
 	if response.StatusCode < 200 || response.StatusCode > 299 {
 		err, ok := utils.StatusToError[response.StatusCode]
-
 		if !ok {
 			err = utils.Error{
 				Message: "unknown error reason",

@@ -1,4 +1,5 @@
 import { Image } from "@/types/models";
+import Link from "next/link";
 
 export default function ProfileButton(props: ProfileButtonProps) {
   const { name, images } = props;
@@ -20,7 +21,9 @@ export default function ProfileButton(props: ProfileButtonProps) {
       </button>
       <ul className="dropdown-menu">
         <li>
-          <a className="dropdown-item">Logout</a>
+          <Link href="/" className="dropdown-item">
+            Logout
+          </Link>
         </li>
       </ul>
     </div>

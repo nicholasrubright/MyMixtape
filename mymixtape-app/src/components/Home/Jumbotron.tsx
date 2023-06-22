@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Jumbotron() {
   return (
     <div className="px-4 py-5 my-5 text-center">
-      <h1 className="display-5 fw-bold text-body-emphasis logo mb-4">
+      <h1 className="display-1 fw-bold text-body-emphasis logo mb-4">
         MyMixtape
       </h1>
       <div className="col-lg-6 mx-auto">
@@ -14,12 +14,13 @@ export default function Jumbotron() {
           >
             Get Started!
           </Link>
-          <button
+          <Link
+            href="/about"
             type="button"
             className="btn btn-learnMore text-white btn-lg px-4"
           >
             Learn More
-          </button>
+          </Link>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
           ></img>
         </div>
         <div className="col align-self-center">
-          <h4 className="text-center">{name}</h4>
+          <h4 className="text-center text-break">{name}</h4>
         </div>
         <a
           onClick={(e) => selectPlaylist(e, id)}

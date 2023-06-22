@@ -4,7 +4,13 @@ import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
 import { Playlist, PlaylistMapping } from "@/types/models";
 import { api } from "@/api/mixtape.api";
-import { getPlaylistMapping, getSelectedPlaylists } from "@/utils/playlists";
+import {
+  createPlaylistMapping,
+  getSelectedPlaylists,
+  remapPlaylistMapping,
+} from "@/utils/playlists";
+import { useMixtapeContext } from "@/context/mixtape";
+import Alert from "../shared/Alert";
 
 export function Mixer(props: MixerProps) {
   const { token } = props;
@@ -17,6 +23,10 @@ export function Mixer(props: MixerProps) {
     {}
   );
   const [userId, setUserId] = useState<string>("");
+  const [maxPlaylists, setMaxPlaylists] = useState(-1);
+  const [isCombining, setIsCombining] = useState<boolean>(false);
+
+  const { combineAlert, setCombineAlert } = useMixtapeContext();
 
   const handleNewPlaylistName = (e: any) => {
     setNewPlaylistName(e.target.value);
@@ -27,13 +37,12 @@ export function Mixer(props: MixerProps) {
   };
 
   const createNewPlaylist = async (e: any) => {
-    console.log(newPlaylistName, newPlaylistDescription);
-
     const ids = getSelectedPlaylists(playlists, selectedPlaylists);
-    console.log(ids);
 
     // Client validation for now
     if (newPlaylistName !== "" && newPlaylistDescription !== "") {
+      setIsCombining(true);
+
       await api.combinePlaylist(
         {
           playlist_ids: ids,
@@ -43,11 +52,17 @@ export function Mixer(props: MixerProps) {
         },
         token
       );
+      setIsCombining(false);
+      setCombineAlert(true);
+
+      setTimeout(() => {
+        setCombineAlert(false);
+      }, 8000);
     }
 
     setNewPlaylistName("");
     setNewPlaylistDescription("");
-    const mapping = getPlaylistMapping(playlists);
+    const mapping = createPlaylistMapping(playlists);
     setSelectedPlaylists({ ...mapping });
   };
 
@@ -57,11 +72,17 @@ export function Mixer(props: MixerProps) {
     setSelectedPlaylists({ ...updatedSelectedPlaylists });
   };
 
+  const setMapping = () => {
+    const mapping = remapPlaylistMapping(playlists, selectedPlaylists);
+
+    setSelectedPlaylists({ ...mapping });
+  };
+
   useEffect(() => {
-    const getPlaylists = async () => {
-      const response = await api.getUserPlaylists(token);
+    const getData = async () => {
+      const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
       const tempPlaylists: Playlist[] = [];
-      response.items.forEach((item) => {
+      userPlaylistsResponse.items.forEach((item) => {
         tempPlaylists.push({
           id: item.id,
           name: item.name,
@@ -69,28 +90,39 @@ export function Mixer(props: MixerProps) {
         });
       });
 
+      setMaxPlaylists(userPlaylistsResponse.total);
+
       setPlaylists(tempPlaylists);
-      const mapping = getPlaylistMapping(playlists);
-      setSelectedPlaylists({ ...mapping });
+      setMapping();
+
+      const userProfileResponse = await api.getUserProfile(token);
+      setUserId(userProfileResponse.id);
     };
 
-    const getUserProfile = async () => {
-      const response = await api.getUserProfile(token);
-      setUserId(response.id);
-    };
-
-    getPlaylists();
-    getUserProfile();
+    getData();
   }, [token]);
+
+  const getMoreData = async (offset: number, limit: number) => {
+    const response = await api.getUserPlaylists(token, offset, limit);
+    setPlaylists([...playlists, ...response.items]);
+    setMapping();
+  };
 
   return (
     <div className="container px-4 py-5">
+      {combineAlert && (
+        <div className="row">
+          <Alert message={"Playlist has been created."} />
+        </div>
+      )}
       <div className="row">
         <div className="col-lg-7">
           <Playlists
             playlists={playlists}
             selectedPlaylists={selectedPlaylists}
             selectPlaylist={selectPlaylist}
+            getMoreData={getMoreData}
+            maxPlaylists={maxPlaylists}
           />
         </div>
         <div className="col-lg-5">
@@ -100,6 +132,7 @@ export function Mixer(props: MixerProps) {
             handleNewPlaylistName={handleNewPlaylistName}
             handleNewPlaylistDescription={handleNewPlaylistDescription}
             createNewPlaylist={createNewPlaylist}
+            isCombining={isCombining}
           />
         </div>
       </div>

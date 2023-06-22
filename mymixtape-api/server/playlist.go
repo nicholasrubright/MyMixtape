@@ -10,9 +10,37 @@ import (
 
 func GetCurrentUsersPlaylists(c *gin.Context) {
 
+	if c.Request.Method == "OPTIONS" {
+		c.Done()
+		return
+	}
+
 	token := c.GetHeader(tokenKey)
 
-	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token)
+	var limit string
+	var offset string
+
+	var clientGetCurrentUsersPlaylistsRequestQueryParameters models.ClientGetCurrentUsersPlaylistsRequestQueryParameters
+	
+	if c.Bind(&clientGetCurrentUsersPlaylistsRequestQueryParameters) == nil {
+		limit = clientGetCurrentUsersPlaylistsRequestQueryParameters.Limit
+		offset = clientGetCurrentUsersPlaylistsRequestQueryParameters.Offset
+
+		if limit == "" {
+			limit = "20"
+		}
+
+		if offset == "" {
+			offset = "0"
+		}
+
+	} else {
+		limit = "20"
+		offset = "0"
+	}
+
+
+	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token, offset, limit)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse)
@@ -33,12 +61,12 @@ func CombinePlaylists(c *gin.Context) {
 		return
 	}
 
-	clientErrorResponse := client.CombinePlaylists(clientCombinePlaylistRequest.UserID, clientCombinePlaylistRequest.Name, clientCombinePlaylistRequest.Description, clientCombinePlaylistRequest.PlaylistIDs, token)
+	clientCombineResponse, clientErrorResponse := client.CombinePlaylists(clientCombinePlaylistRequest.UserID, clientCombinePlaylistRequest.Name, clientCombinePlaylistRequest.Description, clientCombinePlaylistRequest.PlaylistIDs, token)
 
 	if clientErrorResponse != nil {
 		c.JSON(clientErrorResponse.Status, clientErrorResponse.Message)
 		return
 	}
 
-	c.Done()
+	c.JSON(http.StatusCreated, clientCombineResponse)
 }

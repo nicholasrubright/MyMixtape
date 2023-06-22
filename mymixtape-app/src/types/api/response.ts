@@ -36,6 +36,11 @@ export type UserPlaylistsResponse = {
   }[];
 };
 
+export type CombinePlaylistResponse = {
+  id: string;
+  name: string;
+};
+
 // Error Response
 export type ErrorResponse = {
   status: number;
