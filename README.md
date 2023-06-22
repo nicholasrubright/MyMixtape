@@ -20,9 +20,13 @@ MyMixtape runs on a [Gin](https://gin-gonic.com/) backend and uses a [Next.js](h
 
 ## To-do
 
+### Features
+
+- Able to combine Collaborative Playlists
+
 ### Frontend
 
-- Utilize cookies to move api requests server side
+- Utilize cookies to move api token server side
 - Add client-side validation
 - Add loading/placeholders on elements
 - Unit testing
