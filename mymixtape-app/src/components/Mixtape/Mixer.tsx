@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
 import { Playlist, PlaylistMapping } from "@/types/models";
@@ -9,12 +9,18 @@ import {
   getSelectedPlaylists,
   remapPlaylistMapping,
 } from "@/utils/playlists";
-import Alert from "../shared/Alert";
+import { PlaylistContextType } from "@/context/Playlists/types";
+import { PlaylistContext } from "@/context/Playlists/PlaylistContext";
 
 export function Mixer(props: MixerProps) {
   const { token } = props;
 
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const { state, getPlaylists } = useContext(
+    PlaylistContext
+  ) as PlaylistContextType;
+
+  const { playlists, isLoading, error } = state;
+
   const [newPlaylistName, setNewPlaylistName] = useState<string>("");
   const [newPlaylistDescription, setNewPlaylistDescription] =
     useState<string>("");
@@ -72,23 +78,24 @@ export function Mixer(props: MixerProps) {
 
   useEffect(() => {
     const getData = async () => {
-      const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
-      const tempPlaylists: Playlist[] = [];
-      userPlaylistsResponse.items.forEach((item) => {
-        tempPlaylists.push({
-          id: item.id,
-          name: item.name,
-          images: item.images,
-        });
-      });
+      await getPlaylists(token);
+      // const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
+      // const tempPlaylists: Playlist[] = [];
+      // userPlaylistsResponse.items.forEach((item) => {
+      //   tempPlaylists.push({
+      //     id: item.id,
+      //     name: item.name,
+      //     images: item.images,
+      //   });
+      // });
 
-      setMaxPlaylists(userPlaylistsResponse.total);
+      // setMaxPlaylists(userPlaylistsResponse.total);
 
-      setPlaylists(tempPlaylists);
-      setMapping();
+      // //setPlaylists(tempPlaylists);
+      // setMapping();
 
-      const userProfileResponse = await api.getUserProfile(token);
-      setUserId(userProfileResponse.id);
+      // const userProfileResponse = await api.getUserProfile(token);
+      // setUserId(userProfileResponse.id);
     };
 
     getData();
@@ -96,7 +103,7 @@ export function Mixer(props: MixerProps) {
 
   const getMoreData = async (offset: number, limit: number) => {
     const response = await api.getUserPlaylists(token, offset, limit);
-    setPlaylists([...playlists, ...response.items]);
+    //setPlaylists([...playlists, ...response.items]);
     setMapping();
   };
 
@@ -115,6 +122,7 @@ export function Mixer(props: MixerProps) {
             selectPlaylist={selectPlaylist}
             getMoreData={getMoreData}
             maxPlaylists={maxPlaylists}
+            isLoading={isLoading}
           />
         </div>
         <div className="col-lg-5">

@@ -39,7 +39,7 @@ export const UserProvider = (props: ProviderProps) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, getProfile }}>
+    <UserContext.Provider value={{ state: user, getProfile }}>
       {children}
     </UserContext.Provider>
   );

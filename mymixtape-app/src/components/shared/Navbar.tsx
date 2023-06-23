@@ -7,9 +7,9 @@ import { UserContextType } from "@/context/User/types";
 export default function Navbar(props: NavbarProps) {
   const { token } = props;
 
-  const { user, getProfile } = useContext(UserContext) as UserContextType;
+  const { state, getProfile } = useContext(UserContext) as UserContextType;
 
-  const { profile, isLoading, error } = user;
+  const { profile, isLoading, error } = state;
 
   useEffect(() => {
     const getData = async () => {
