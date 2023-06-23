@@ -1,15 +1,8 @@
-import { Playlist, Profile } from "@/types/models";
-
-type ReducerAction = {
-  type: string;
-  payload: any;
-};
+import { ReducerAction } from "../types";
 
 export type MixerState = {
   token: string | null;
   isLoading: boolean;
-  profile: Profile | null;
-  playlists: Playlist[];
   error: string | null;
 };
 

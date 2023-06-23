@@ -3,12 +3,11 @@ import MixerReducer from "./mixerReducer";
 import { ActionNames } from "../actionNames";
 import MixerContext from "./mixerContext";
 import { MixerState } from "./types";
+import { StateProps } from "../types";
 
 export const MixerInitialState: MixerState = {
   token: null,
   isLoading: false,
-  profile: null,
-  playlists: [],
   error: null,
 };
 
@@ -36,9 +35,5 @@ const MixerState = (props: StateProps) => {
     </MixerContext.Provider>
   );
 };
-
-interface StateProps {
-  children: JSX.Element;
-}
 
 export default MixerState;

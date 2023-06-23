@@ -1,10 +1,6 @@
 import { ActionNames } from "../actionNames";
+import { ReducerAction } from "../types";
 import { MixerReducerType, MixerState } from "./types";
-
-type ReducerAction = {
-  type: string;
-  payload: any;
-};
 
 const MixerReducer: MixerReducerType = (
   state: MixerState,
