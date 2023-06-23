@@ -107,7 +107,7 @@ export function Mixer() {
   }, [token]);
 
   const getMoreData = async (offset: number, limit: number) => {
-    const response = await api.getUserPlaylists(token, offset, limit);
+    //const response = await api.getUserPlaylists(token, offset, limit);
     //setPlaylists([...playlists, ...response.items]);
     setMapping();
   };
