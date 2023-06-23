@@ -11,15 +11,18 @@ import {
 } from "@/utils/playlists";
 import { PlaylistContextType } from "@/context/Playlists/types";
 import { PlaylistContext } from "@/context/Playlists/PlaylistContext";
+import { MixerContextType } from "@/context/Mixer/types";
+import { MixerContext } from "@/context/Mixer/MixerContext";
 
-export function Mixer(props: MixerProps) {
-  const { token } = props;
+export function Mixer() {
+  const { mixerState } = useContext(MixerContext) as MixerContextType;
+  const { token } = mixerState;
 
-  const { state, getPlaylists } = useContext(
+  const { playlistState, getPlaylists } = useContext(
     PlaylistContext
   ) as PlaylistContextType;
 
-  const { playlists, isLoading, error } = state;
+  const { playlists, isLoading, error } = playlistState;
 
   const [newPlaylistName, setNewPlaylistName] = useState<string>("");
   const [newPlaylistDescription, setNewPlaylistDescription] =
@@ -98,7 +101,9 @@ export function Mixer(props: MixerProps) {
       // setUserId(userProfileResponse.id);
     };
 
-    getData();
+    if (token !== "") {
+      getData();
+    }
   }, [token]);
 
   const getMoreData = async (offset: number, limit: number) => {
@@ -138,8 +143,4 @@ export function Mixer(props: MixerProps) {
       </div>
     </div>
   );
-}
-
-interface MixerProps {
-  token: string;
 }

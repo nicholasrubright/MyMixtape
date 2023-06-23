@@ -37,7 +37,7 @@ export const PlaylistProvider = (props: ProviderProps) => {
   };
 
   return (
-    <PlaylistContext.Provider value={{ state, getPlaylists }}>
+    <PlaylistContext.Provider value={{ playlistState: state, getPlaylists }}>
       {children}
     </PlaylistContext.Provider>
   );

@@ -1,7 +1,6 @@
 import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "./PlaylistBlock";
 import ScrollableList from "@/components/controls/ScrollableList";
-import PlaylistBlockPlaceholder from "./PlaylistBlockPlaceholder";
 
 export default function Playlists(props: PlaylistsProp) {
   const {

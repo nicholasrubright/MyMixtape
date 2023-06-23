@@ -7,7 +7,7 @@ export const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider = (props: ProviderProps) => {
   const { children } = props;
 
-  const [user, setUser] = useState<UserStateType>({
+  const [state, setState] = useState<UserStateType>({
     profile: {
       id: "0",
       name: "",
@@ -24,22 +24,22 @@ export const UserProvider = (props: ProviderProps) => {
   });
 
   const getProfile = async (token: string) => {
-    setUser({
-      ...user,
+    setState({
+      ...state,
       isLoading: true,
     });
 
     const response = await api.getUserProfile(token);
 
-    setUser({
-      ...user,
+    setState({
+      ...state,
       isLoading: false,
       profile: response,
     });
   };
 
   return (
-    <UserContext.Provider value={{ state: user, getProfile }}>
+    <UserContext.Provider value={{ userState: state, getProfile }}>
       {children}
     </UserContext.Provider>
   );

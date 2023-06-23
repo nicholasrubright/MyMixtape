@@ -7,6 +7,6 @@ export type UserStateType = {
 };
 
 export type UserContextType = {
-  state: UserStateType;
+  userState: UserStateType;
   getProfile: (token: string) => Promise<void>;
 };

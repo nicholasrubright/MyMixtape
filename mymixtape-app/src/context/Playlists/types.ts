@@ -7,6 +7,6 @@ export type PlaylistStateType = {
 };
 
 export type PlaylistContextType = {
-  state: PlaylistStateType;
+  playlistState: PlaylistStateType;
   getPlaylists: (token: string) => Promise<void>;
 };
