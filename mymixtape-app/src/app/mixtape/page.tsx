@@ -1,16 +1,11 @@
 import { api } from "@/api/mixtape.api";
 import { Mixer } from "@/components/Mixtape/Mixer";
 import Navbar from "@/components/shared/Navbar";
-import { MixerContext } from "@/context/Mixer/MixerState";
 import { redirect } from "next/navigation";
 import { useContext } from "react";
 
 export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
-
-  const mixerContext = useContext(MixerContext);
-
-  const { token, isLoading, error, fetchAccessToken } = mixerContext;
 
   if (!code) {
     const { url, valid_token } = await getAuthorization();
@@ -18,29 +13,21 @@ export default async function Mixtape(props: MixtapeProps) {
       redirect(url);
     }
   } else {
-    // const accessTokenResponse = await getAccessToken(code);
-    if (fetchAccessToken) {
-      await fetchAccessToken(code);
-    }
-    if (!isLoading) {
-      if (token !== null) {
-        return (
-          <div className="container">
-            <div className="row float-end">
-              <Navbar token={token} />
-            </div>
-            <div className="row container-fluid">
-              <Mixer token={token} />
-            </div>
-          </div>
-        );
-      } else {
-        return redirect("/error");
-      }
-    }
+    const accessTokenResponse = await getAccessToken(code);
+
+    return (
+      <div className="container">
+        <div className="row float-end">
+          <Navbar token={accessTokenResponse.token} />
+        </div>
+        <div className="row container-fluid">
+          <Mixer token={accessTokenResponse.token} />
+        </div>
+      </div>
+    );
   }
 
-  //return redirect("/error");
+  return redirect("/error");
 }
 
 interface MixtapeProps {

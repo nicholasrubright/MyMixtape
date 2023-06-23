@@ -1,13 +1,12 @@
 import { Profile } from "@/types/models";
-import { ReducerAction } from "../types";
 
-export type UserState = {
+export type UserStateType = {
+  profile: Profile;
   isLoading: boolean;
-  error: string | null;
-  profile: Profile | null;
+  error: null;
 };
 
-export type UserReducerType = (
-  state: UserState,
-  action: ReducerAction
-) => UserState;
+export type UserContextType = {
+  user: UserStateType;
+  getProfile: (token: string) => Promise<void>;
+};
