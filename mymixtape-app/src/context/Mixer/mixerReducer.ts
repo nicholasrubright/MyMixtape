@@ -1,9 +1,9 @@
 import { ActionNames } from "../actionNames";
 import { ReducerAction } from "../types";
-import { MixerReducerType, MixerState } from "./types";
+import { MixerReducerType, MixerStateType } from "./types";
 
 const MixerReducer: MixerReducerType = (
-  state: MixerState,
+  state: MixerStateType,
   action: ReducerAction
 ) => {
   switch (action.type) {

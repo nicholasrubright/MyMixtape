@@ -1,16 +1,16 @@
 "use client";
 
-import { MixerProvider, PlaylistProvider, UserProvider } from "@/context";
+import { MixerState, PlaylistProvider, UserProvider } from "@/context";
 
 export function Providers(props: ProviderProps) {
   const { children } = props;
 
   return (
-    <MixerProvider>
+    <MixerState>
       <PlaylistProvider>
         <UserProvider>{children}</UserProvider>
       </PlaylistProvider>
-    </MixerProvider>
+    </MixerState>
   );
 }
 

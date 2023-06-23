@@ -9,7 +9,6 @@ import {
   getSelectedPlaylists,
   remapPlaylistMapping,
 } from "@/utils/playlists";
-import { useMixtapeContext } from "@/context/mixtape";
 import Alert from "../shared/Alert";
 
 export function Mixer(props: MixerProps) {
@@ -25,8 +24,6 @@ export function Mixer(props: MixerProps) {
   const [userId, setUserId] = useState<string>("");
   const [maxPlaylists, setMaxPlaylists] = useState(-1);
   const [isCombining, setIsCombining] = useState<boolean>(false);
-
-  const { combineAlert, setCombineAlert } = useMixtapeContext();
 
   const handleNewPlaylistName = (e: any) => {
     setNewPlaylistName(e.target.value);
@@ -53,11 +50,6 @@ export function Mixer(props: MixerProps) {
         token
       );
       setIsCombining(false);
-      setCombineAlert(true);
-
-      setTimeout(() => {
-        setCombineAlert(false);
-      }, 8000);
     }
 
     setNewPlaylistName("");
@@ -110,11 +102,11 @@ export function Mixer(props: MixerProps) {
 
   return (
     <div className="container px-4 py-5">
-      {combineAlert && (
+      {/* {combineAlert && (
         <div className="row">
           <Alert message={"Playlist has been created."} />
         </div>
-      )}
+      )} */}
       <div className="row">
         <div className="col-lg-7">
           <Playlists

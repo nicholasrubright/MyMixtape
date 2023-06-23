@@ -1,33 +1,46 @@
-import { useReducer } from "react";
+import { createContext, useReducer } from "react";
 import MixerReducer from "./mixerReducer";
 import { ActionNames } from "../actionNames";
-import MixerContext from "./mixerContext";
-import { MixerState } from "./types";
+import { MixerStateType } from "./types";
 import { StateProps } from "../types";
+import { api } from "@/api/mixtape.api";
 
-export const MixerInitialState: MixerState = {
+const MixerInitialState: MixerStateType = {
   token: null,
   isLoading: false,
   error: null,
 };
 
-const MixerState = (props: StateProps) => {
+const fetchAccessToken = async (code: string) => {
+  const [state, dispatch] = useReducer(MixerReducer, MixerInitialState);
+
+  dispatch({
+    type: ActionNames.FETCH_ACCESS_TOKEN,
+    payload: null,
+  });
+
+  const response = await api.getAccessToken(code);
+
+  dispatch({
+    type: ActionNames.FETCH_ACCESS_TOKEN_SUCCESS,
+    payload: "fake token",
+  });
+};
+
+export const MixerContext = createContext({
+  ...MixerInitialState,
+  fetchAccessToken,
+});
+
+export const MixerState = (props: StateProps) => {
   const { children } = props;
 
   const [state, dispatch] = useReducer(MixerReducer, MixerInitialState);
 
-  // fetch access token
-  const fetchAccessToken = (code: string, type: string) => {
-    dispatch({
-      type: ActionNames.FETCH_ACCESS_TOKEN,
-      payload: null,
-    });
-  };
-
   return (
     <MixerContext.Provider
       value={{
-        mixer: state,
+        ...state,
         fetchAccessToken,
       }}
     >
@@ -35,5 +48,3 @@ const MixerState = (props: StateProps) => {
     </MixerContext.Provider>
   );
 };
-
-export default MixerState;
