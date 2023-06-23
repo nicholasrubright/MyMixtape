@@ -2,13 +2,13 @@ import "bootstrap/dist/css/bootstrap.css";
 import "@/styles/globals.scss";
 
 import { Inter } from "next/font/google";
-import { MixtapeContextProvider } from "@/context/mixtape";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "MyMixtape",
-  description: "Combine multiple playlists into one!",
+  description: "Unite your playlists, amplify your vibes.",
 };
 
 export default function RootLayout({
@@ -41,9 +41,9 @@ export default function RootLayout({
         ></script>
       </head>
       <body className={inter.className}>
-        <MixtapeContextProvider>
+        <Providers>
           <div>{children}</div>
-        </MixtapeContextProvider>
+        </Providers>
       </body>
     </html>
   );

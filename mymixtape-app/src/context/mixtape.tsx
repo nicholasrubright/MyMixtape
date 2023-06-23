@@ -1,10 +1,9 @@
 "use client";
-
 import { createContext, useContext, useState } from "react";
 
 const MixtapeContext: React.Context<any> = createContext({});
 
-export const MixtapeContextProvider = (props: MixtapeContextProviderProps) => {
+export const MixtapeProvider = (props: MixtapeContextProviderProps) => {
   const [combineAlert, setCombineAlert] = useState<boolean>(false);
 
   return (
