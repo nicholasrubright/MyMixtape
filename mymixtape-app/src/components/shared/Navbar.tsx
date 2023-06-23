@@ -16,10 +16,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const getData = async () => {
-      await getProfile(token);
+      await getProfile(token as string);
     };
 
-    if (token !== "") {
+    if (token !== null) {
       getData();
     }
   }, [token]);

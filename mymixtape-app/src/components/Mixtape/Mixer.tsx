@@ -56,7 +56,7 @@ export function Mixer() {
           description: newPlaylistDescription,
           user_id: userId,
         },
-        token
+        token as string
       );
       setIsCombining(false);
     }
@@ -81,7 +81,7 @@ export function Mixer() {
 
   useEffect(() => {
     const getData = async () => {
-      await getPlaylists(token);
+      await getPlaylists(token as string);
       // const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
       // const tempPlaylists: Playlist[] = [];
       // userPlaylistsResponse.items.forEach((item) => {
@@ -101,7 +101,7 @@ export function Mixer() {
       // setUserId(userProfileResponse.id);
     };
 
-    if (token !== "") {
+    if (token !== null) {
       getData();
     }
   }, [token]);

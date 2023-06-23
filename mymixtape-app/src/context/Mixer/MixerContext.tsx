@@ -7,7 +7,7 @@ export const MixerProvider = (props: ProviderProps) => {
   const { children } = props;
 
   const [state, setState] = useState<MixerStateType>({
-    token: "",
+    token: null,
     error: null,
   });
 

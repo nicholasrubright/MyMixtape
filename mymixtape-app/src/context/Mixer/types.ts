@@ -1,5 +1,5 @@
 export type MixerStateType = {
-  token: string;
+  token: string | null;
   error: null;
 };
 
