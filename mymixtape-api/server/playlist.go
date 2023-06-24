@@ -4,16 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/mymixtape-api/client"
 	"github.com/mymixtape-api/client/models"
 )
 
 func GetCurrentUsersPlaylists(c *gin.Context) {
-
-	if c.Request.Method == "OPTIONS" {
-		c.Done()
-		return
-	}
 
 	token := c.GetHeader("Authorization")
 
@@ -56,10 +52,12 @@ func CombinePlaylists(c *gin.Context) {
 
 	var clientCombinePlaylistRequest models.ClientCombinePlaylistRequest
 
-	if err := c.BindJSON(&clientCombinePlaylistRequest); err != nil {
+	if err := c.ShouldBindWith(&clientCombinePlaylistRequest, binding.FormPost); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
+
+	
 
 	clientCombineResponse, clientErrorResponse := client.CombinePlaylists(clientCombinePlaylistRequest.UserID, clientCombinePlaylistRequest.Name, clientCombinePlaylistRequest.Description, clientCombinePlaylistRequest.PlaylistIDs, token)
 
