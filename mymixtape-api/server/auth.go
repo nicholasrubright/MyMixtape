@@ -8,10 +8,6 @@ import (
 	"github.com/mymixtape-api/client/models"
 )
 
-const (
-	tokenKey = "X-MyMixtape-Token"
-)
-
 var (
 	SPOTIFY_CLIENT_ID = ""
 	SPOTIFY_CLIENT_SECRET = ""

@@ -15,7 +15,7 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 		return
 	}
 
-	token := c.GetHeader(tokenKey)
+	token := c.GetHeader("Authorization")
 
 	var limit string
 	var offset string
@@ -52,7 +52,7 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 
 func CombinePlaylists(c *gin.Context) {
 
-	token := c.GetHeader(tokenKey)
+	token := c.GetHeader("Authorization")
 
 	var clientCombinePlaylistRequest models.ClientCombinePlaylistRequest
 
