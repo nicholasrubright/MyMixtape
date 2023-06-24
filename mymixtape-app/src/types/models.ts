@@ -17,3 +17,14 @@ export type Playlist = {
 };
 
 export type PlaylistMapping = Record<string, boolean>;
+
+export enum AlertType {
+  ERROR = 0,
+  WARNING = 1,
+  SUCCESS = 2,
+}
+
+export type Alert = {
+  type: AlertType;
+  message: string;
+};

@@ -1,6 +1,5 @@
 import { api } from "@/api/mixtape.api";
-import { Mixer } from "@/components/Mixtape/Mixer";
-import Navbar from "@/components/shared/Navbar";
+import MixerPage from "@/components/Mixtape/MixerPage";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
@@ -13,16 +12,8 @@ export default async function Mixtape(props: MixtapeProps) {
     }
   } else {
     const accessTokenResponse = await getAccessToken(code);
-    return (
-      <div className="container">
-        <div className="row float-end">
-          <Navbar token={accessTokenResponse.token} />
-        </div>
-        <div className="row container-fluid">
-          <Mixer token={accessTokenResponse.token} />
-        </div>
-      </div>
-    );
+
+    return <MixerPage accessToken={accessTokenResponse.token} />;
   }
 
   return redirect("/error");

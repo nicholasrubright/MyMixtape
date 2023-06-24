@@ -16,7 +16,7 @@ var (
 var (
 	CORS_ALLOW_ORIGINS = []string{}
 	CORS_ALLOW_METHODS = []string{"GET", "POST", "OPTIONS"}
-	CORS_ALLOW_HEADERS = []string{"Origin", "X-MyMixtape-Token"}
+	CORS_ALLOW_HEADERS = []string{"Origin", "Authorization"}
 	CORS_EXPOSE_HEADERS = []string{"Content-Length"}
 	CORS_MAX_AGE = 12 * time.Hour
 )
@@ -27,8 +27,14 @@ func CreateRoutes() {
 	{
 		apiRoutes.GET("/auth", server.GetAuthorizationUrl)
 		apiRoutes.POST("/auth", server.GetAccessToken)
+		apiRoutes.OPTIONS("/auth", func(c *gin.Context) {
+			c.Done()
+		})
 
 		apiRoutes.GET("/user", server.GetCurrentUsersProfile)
+		apiRoutes.OPTIONS("/user", func(c *gin.Context) {
+			c.Done()
+		})
 
 		apiRoutes.GET("/playlists", server.GetCurrentUsersPlaylists)
 		apiRoutes.POST("/playlists", server.CombinePlaylists)
@@ -56,6 +62,7 @@ func SetupRouter() {
 			AllowMethods: CORS_ALLOW_METHODS,
 			AllowHeaders: CORS_ALLOW_HEADERS,
 			ExposeHeaders: CORS_EXPOSE_HEADERS,
+			AllowCredentials: true,
 			MaxAge: CORS_MAX_AGE,
 		})
 

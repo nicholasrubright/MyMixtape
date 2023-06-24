@@ -1,32 +1,49 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
-import { Playlist, PlaylistMapping } from "@/types/models";
-import { api } from "@/api/mixtape.api";
+import { AlertType, PlaylistMapping } from "@/types/models";
 import {
   createPlaylistMapping,
   getSelectedPlaylists,
   remapPlaylistMapping,
 } from "@/utils/playlists";
-import { useMixtapeContext } from "@/context/mixtape";
-import Alert from "../shared/Alert";
 
-export function Mixer(props: MixerProps) {
-  const { token } = props;
+import {
+  AlertContext,
+  MixerContext,
+  PlaylistContext,
+  PlaylistContextType,
+  MixerContextType,
+  AlertContextType,
+  UserContext,
+  UserContextType,
+} from "@/context";
 
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+export function Mixer() {
+  const { mixerState } = useContext(MixerContext) as MixerContextType;
+  const { token } = mixerState;
+
+  const { setAlert } = useContext(AlertContext) as AlertContextType;
+
+  const { playlistState, getPlaylists, combinePlaylists } = useContext(
+    PlaylistContext
+  ) as PlaylistContextType;
+
+  const { playlists, isLoading } = playlistState;
+
+  const { userState } = useContext(UserContext) as UserContextType;
+
+  const { profile } = userState;
+
   const [newPlaylistName, setNewPlaylistName] = useState<string>("");
   const [newPlaylistDescription, setNewPlaylistDescription] =
     useState<string>("");
   const [selectedPlaylists, setSelectedPlaylists] = useState<PlaylistMapping>(
     {}
   );
-  const [userId, setUserId] = useState<string>("");
   const [maxPlaylists, setMaxPlaylists] = useState(-1);
   const [isCombining, setIsCombining] = useState<boolean>(false);
-
-  const { combineAlert, setCombineAlert } = useMixtapeContext();
 
   const handleNewPlaylistName = (e: any) => {
     setNewPlaylistName(e.target.value);
@@ -43,21 +60,23 @@ export function Mixer(props: MixerProps) {
     if (newPlaylistName !== "" && newPlaylistDescription !== "") {
       setIsCombining(true);
 
-      await api.combinePlaylist(
-        {
-          playlist_ids: ids,
-          name: newPlaylistName,
-          description: newPlaylistDescription,
-          user_id: userId,
-        },
-        token
-      );
-      setIsCombining(false);
-      setCombineAlert(true);
+      try {
+        if (token !== null) {
+          await combinePlaylists(
+            token,
+            ids,
+            newPlaylistName,
+            newPlaylistDescription,
+            profile.id
+          );
 
-      setTimeout(() => {
-        setCombineAlert(false);
-      }, 8000);
+          setAlert(AlertType.SUCCESS, "Successfully created playlist!");
+        }
+      } catch (error) {
+        setAlert(AlertType.ERROR, String(error));
+      }
+
+      setIsCombining(false);
     }
 
     setNewPlaylistName("");
@@ -80,41 +99,44 @@ export function Mixer(props: MixerProps) {
 
   useEffect(() => {
     const getData = async () => {
-      const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
-      const tempPlaylists: Playlist[] = [];
-      userPlaylistsResponse.items.forEach((item) => {
-        tempPlaylists.push({
-          id: item.id,
-          name: item.name,
-          images: item.images,
-        });
-      });
+      try {
+        await getPlaylists(token as string);
+      } catch (error) {
+        setAlert(AlertType.ERROR, String(error));
+      }
 
-      setMaxPlaylists(userPlaylistsResponse.total);
+      // const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
+      // const tempPlaylists: Playlist[] = [];
+      // userPlaylistsResponse.items.forEach((item) => {
+      //   tempPlaylists.push({
+      //     id: item.id,
+      //     name: item.name,
+      //     images: item.images,
+      //   });
+      // });
 
-      setPlaylists(tempPlaylists);
-      setMapping();
+      // setMaxPlaylists(userPlaylistsResponse.total);
 
-      const userProfileResponse = await api.getUserProfile(token);
-      setUserId(userProfileResponse.id);
+      // //setPlaylists(tempPlaylists);
+      // setMapping();
+
+      // const userProfileResponse = await api.getUserProfile(token);
+      // setUserId(userProfileResponse.id);
     };
 
-    getData();
+    if (token !== null) {
+      getData();
+    }
   }, [token]);
 
   const getMoreData = async (offset: number, limit: number) => {
-    const response = await api.getUserPlaylists(token, offset, limit);
-    setPlaylists([...playlists, ...response.items]);
+    //const response = await api.getUserPlaylists(token, offset, limit);
+    //setPlaylists([...playlists, ...response.items]);
     setMapping();
   };
 
   return (
     <div className="container px-4 py-5">
-      {combineAlert && (
-        <div className="row">
-          <Alert message={"Playlist has been created."} />
-        </div>
-      )}
       <div className="row">
         <div className="col-lg-7">
           <Playlists
@@ -123,6 +145,7 @@ export function Mixer(props: MixerProps) {
             selectPlaylist={selectPlaylist}
             getMoreData={getMoreData}
             maxPlaylists={maxPlaylists}
+            isLoading={isLoading}
           />
         </div>
         <div className="col-lg-5">
@@ -132,14 +155,11 @@ export function Mixer(props: MixerProps) {
             handleNewPlaylistName={handleNewPlaylistName}
             handleNewPlaylistDescription={handleNewPlaylistDescription}
             createNewPlaylist={createNewPlaylist}
+            isDisabled={isCombining || isLoading}
             isCombining={isCombining}
           />
         </div>
       </div>
     </div>
   );
-}
-
-interface MixerProps {
-  token: string;
 }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Loader from "../shared/Loader";
 
 export default function ScrollableList(props: ScrollableListProps) {
-  const { items, getMoreData, maxPlaylists } = props;
+  const { items, getMoreData, maxPlaylists, isLoading } = props;
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [previousPage, setPreviousPage] = useState<number>(0);
@@ -41,9 +41,14 @@ export default function ScrollableList(props: ScrollableListProps) {
       ref={listInnerRef}
       onScroll={onScroll}
     >
-      {isEmpty && (
+      {isLoading && (
         <div className="d-flex justify-content-center">
           <Loader />
+        </div>
+      )}
+      {!isLoading && isEmpty && (
+        <div>
+          <p className="text-center">No Playlists</p>
         </div>
       )}
       {!isEmpty && items}
@@ -55,4 +60,5 @@ interface ScrollableListProps {
   items: JSX.Element[];
   getMoreData: (offset: number, limit: number) => void;
   maxPlaylists: number;
+  isLoading: boolean;
 }
