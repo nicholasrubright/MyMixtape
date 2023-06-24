@@ -9,12 +9,12 @@ export default function AlertReducer(
     case ActionNames.SET_ALERT:
       return {
         ...state,
-        alert: action.payload,
+        alerts: [...state.alerts, action.payload],
       };
-    case ActionNames.CLEAR_ALERT:
+    case ActionNames.CLEAR_ALERTS:
       return {
         ...state,
-        alert: null,
+        alerts: [],
       };
     default:
       return state;

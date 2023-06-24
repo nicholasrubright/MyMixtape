@@ -10,7 +10,7 @@ const ActionNames = {
   SET_TOKEN: "SET_TOKEN",
 
   SET_ALERT: "SET_ALERT",
-  CLEAR_ALERT: "CLEAR_ALERT",
+  CLEAR_ALERTS: "CLEAR_ALERTS",
 };
 
 export default ActionNames;

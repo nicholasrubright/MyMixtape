@@ -48,7 +48,7 @@ export default function ScrollableList(props: ScrollableListProps) {
       )}
       {!isLoading && isEmpty && (
         <div>
-          <h1>No Playlists</h1>
+          <p className="text-center">No Playlists</p>
         </div>
       )}
       {!isEmpty && items}

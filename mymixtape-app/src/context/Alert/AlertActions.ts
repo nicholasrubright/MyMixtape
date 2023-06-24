@@ -1,4 +1,4 @@
-import { Alert, AlertType } from "@/types/models";
+import { AlertType } from "@/types/models";
 import ActionNames from "../actionNames";
 import { ContextAction } from "../types";
 
@@ -11,6 +11,6 @@ export const createAlert = (
 });
 
 export const clearAlert = (): ContextAction => ({
-  type: ActionNames.CLEAR_ALERT,
+  type: ActionNames.CLEAR_ALERTS,
   payload: null,
 });

@@ -41,6 +41,7 @@ export const PlaylistProvider = (props: ProviderProps) => {
       dispatch(
         fetchPlaylistsFailure("There was a problem fetching user playlists")
       );
+      throw Error("There was a problem fetching user playlists");
     }
   };
 

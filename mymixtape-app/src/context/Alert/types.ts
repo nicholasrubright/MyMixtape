@@ -1,7 +1,7 @@
 import { Alert, AlertType } from "@/types/models";
 
 export type AlertStateType = {
-  alert: Alert | null;
+  alerts: Alert[];
 };
 
 export type AlertContextType = {

@@ -1,14 +1,21 @@
 "use client";
 import { useContext, useEffect } from "react";
 import ProfileButton from "../controls/ProfileButton";
-import { UserContext } from "@/context/User/UserContext";
-import { UserContextType } from "@/context/User/types";
-import { MixerContext } from "@/context/Mixer/MixerContext";
-import { MixerContextType } from "@/context/Mixer/types";
+import {
+  AlertContext,
+  AlertContextType,
+  UserContext,
+  UserContextType,
+  MixerContext,
+  MixerContextType,
+} from "@/context";
+import { AlertType } from "@/types/models";
 
 export default function Navbar() {
   const { mixerState } = useContext(MixerContext) as MixerContextType;
   const { token } = mixerState;
+
+  const { setAlert } = useContext(AlertContext) as AlertContextType;
 
   const { userState, getProfile } = useContext(UserContext) as UserContextType;
 
@@ -16,7 +23,11 @@ export default function Navbar() {
 
   useEffect(() => {
     const getData = async () => {
-      await getProfile(token as string);
+      try {
+        await getProfile(token as string);
+      } catch (error) {
+        setAlert(AlertType.ERROR, String(error));
+      }
     };
 
     if (token !== null) {

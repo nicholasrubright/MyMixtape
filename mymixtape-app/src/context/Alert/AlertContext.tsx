@@ -10,7 +10,7 @@ export const AlertProvider = (props: ProviderProps) => {
   const { children } = props;
 
   const initialState: AlertStateType = {
-    alert: null,
+    alerts: [],
   };
 
   const [state, dispatch] = useReducer(AlertReducer, initialState);

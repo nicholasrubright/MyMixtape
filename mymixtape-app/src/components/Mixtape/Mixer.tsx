@@ -2,21 +2,27 @@
 import { useContext, useEffect, useState } from "react";
 import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
-import { Playlist, PlaylistMapping } from "@/types/models";
+import { AlertType, Playlist, PlaylistMapping } from "@/types/models";
 import { api } from "@/api/mixtape.api";
 import {
   createPlaylistMapping,
   getSelectedPlaylists,
   remapPlaylistMapping,
 } from "@/utils/playlists";
-import { PlaylistContextType } from "@/context/Playlist/types";
-import { PlaylistContext } from "@/context/Playlist/PlaylistContext";
-import { MixerContextType } from "@/context/Mixer/types";
-import { MixerContext } from "@/context/Mixer/MixerContext";
+import {
+  AlertContext,
+  MixerContext,
+  PlaylistContext,
+  PlaylistContextType,
+  MixerContextType,
+  AlertContextType,
+} from "@/context";
 
 export function Mixer() {
   const { mixerState } = useContext(MixerContext) as MixerContextType;
   const { token } = mixerState;
+
+  const { setAlert } = useContext(AlertContext) as AlertContextType;
 
   const { playlistState, getPlaylists } = useContext(
     PlaylistContext
@@ -81,7 +87,12 @@ export function Mixer() {
 
   useEffect(() => {
     const getData = async () => {
-      await getPlaylists(token as string);
+      try {
+        await getPlaylists(token as string);
+      } catch (error) {
+        setAlert(AlertType.ERROR, String(error));
+      }
+
       // const userPlaylistsResponse = await api.getUserPlaylists(token, 0, 20);
       // const tempPlaylists: Playlist[] = [];
       // userPlaylistsResponse.items.forEach((item) => {

@@ -15,7 +15,7 @@ export default function MixerPage(props: MixerPageProps) {
   const { setToken } = useContext(MixerContext) as MixerContextType;
   const { alertState, setAlert } = useContext(AlertContext) as AlertContextType;
 
-  const { alert } = alertState;
+  const { alerts } = alertState;
 
   useEffect(() => {
     setToken(accessToken);
@@ -27,9 +27,9 @@ export default function MixerPage(props: MixerPageProps) {
         <Navbar />
       </div>
       <div className="row container-fluid">
-        {alert && (
+        {alerts.length > 0 && (
           <div>
-            <Alert message={alert.message} type={alert.type} />
+            <Alert alerts={alertState.alerts} />
           </div>
         )}
         <div className="">

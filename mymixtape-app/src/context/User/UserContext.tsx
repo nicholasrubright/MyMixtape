@@ -42,6 +42,8 @@ export const UserProvider = (props: ProviderProps) => {
       dispatch(
         fetchProfileFailure("There was a problem fetching user profile")
       );
+
+      throw Error("There was a problem fetching user profile");
     }
   };
 

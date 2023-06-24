@@ -1,32 +1,37 @@
 import { AlertType } from "@/types/models";
+import { Alert } from "../../types/models";
 
-export default function Alert(props: AlertProps) {
-  const { type, message } = props;
-
-  let alertClass = "alert-primary";
-
+const getAlertClass = (type: AlertType): string => {
   switch (type) {
     case AlertType.ERROR:
-      alertClass = "alert-danger";
+      return "alert-danger";
     case AlertType.WARNING:
-      alertClass = "alert-warning";
+      return "alert-warning";
     case AlertType.SUCCESS:
-      alertClass = "alert-success";
+      return "alert-success";
     default:
-      alertClass = "alert-primary";
+      return "alert-primary";
   }
+};
 
-  return (
-    <div
-      className={`alert d-flex align-items-center ${alertClass}`}
-      role="alert"
-    >
-      {message}
-    </div>
-  );
+export default function Alert(props: AlertProps) {
+  const { alerts } = props;
+
+  const alertComponents = alerts.map((alert) => {
+    const alertClass = getAlertClass(alert.type);
+    return (
+      <div
+        className={`alert d-flex align-items-center ${alertClass}`}
+        role="alert"
+      >
+        {alert.message}
+      </div>
+    );
+  });
+
+  return <div>{alertComponents}</div>;
 }
 
 interface AlertProps {
-  message: string;
-  type: AlertType;
+  alerts: Alert[];
 }
