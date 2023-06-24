@@ -8,7 +8,7 @@ type ClientCombinePlaylistRequest struct {
 	UserID		string		`form:"userId"`
 	Name		string		`form:"name"`
 	Description	string		`form:"description"`
-	PlaylistIDs	string		`form:"playlistIds"`
+	PlaylistIDs	[]string	`form:"playlistIds"`
 }
 
 type ClientGetCurrentUsersPlaylistsRequestQueryParameters struct {

@@ -2,7 +2,6 @@ package client
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/mymixtape-api/client/models"
 	"github.com/mymixtape-api/spotify"
@@ -124,10 +123,7 @@ func GetCurrentUsersPlaylists(token string, offset string, limit string) (*model
 	}, nil
 }
 
-func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids string, token string) (*models.ClientCombinePlaylistResponse, *models.ClientErrorResponse) {
-
-	playlistIds := strings.Split(playlist_ids, ",")
-
+func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string, token string) (*models.ClientCombinePlaylistResponse, *models.ClientErrorResponse) {
 
 	// Create the playlist
 	spotifyCreatePlaylistResponse, spotifyErrorResponse := spotify.CreatePlaylist(user_id, playlist_name, playlist_description, token)
@@ -144,7 +140,7 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 	var clientSelectedPlaylistsTrackList []string
 	clientSelectedPlaylistsTrackList = make([]string, 0)
 
-	for _, playlist_id := range playlistIds {
+	for _, playlist_id := range playlist_ids {
 
 		spotifyPlaylistItemsResponse, spotifyErrorResponse := spotify.GetPlaylistTracks(playlist_id,  token)
 
