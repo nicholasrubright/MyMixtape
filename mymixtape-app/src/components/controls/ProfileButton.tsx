@@ -1,8 +1,12 @@
-import { Image } from "@/types/models";
+import { Profile } from "@/types/models";
 import Link from "next/link";
+import Loader from "../shared/Loader";
 
 export default function ProfileButton(props: ProfileButtonProps) {
-  const { name, images } = props;
+  const { profile, isLoading } = props;
+
+  const profileImage = profile.images[0].url;
+  const profileName = profile.name;
 
   return (
     <div className="dropdown">
@@ -10,14 +14,18 @@ export default function ProfileButton(props: ProfileButtonProps) {
         type="button"
         className="btn dropdown-toggle border-0 rounded-pill profile-dropdown"
         data-bs-toggle="dropdown"
+        disabled={isLoading}
       >
         <img
           className="img-fluid me-2 rounded-circle"
-          src={images.length > 0 ? images[0].url : ""}
+          src={profileImage}
           height="30"
           width="30"
         />
-        <span className="align-middle">{name}</span>
+        <span className="align-middle">
+          {!isLoading && profileName}
+          {isLoading && <Loader isSmall />}
+        </span>
       </button>
       <ul className="dropdown-menu">
         <li>
@@ -31,6 +39,6 @@ export default function ProfileButton(props: ProfileButtonProps) {
 }
 
 interface ProfileButtonProps {
-  name: string;
-  images: Image[];
+  profile: Profile;
+  isLoading: boolean;
 }

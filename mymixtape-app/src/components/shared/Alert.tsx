@@ -1,22 +1,38 @@
+import { AlertType } from "@/types/models";
+import { Alert } from "../../types/models";
+
+const getAlertClass = (type: AlertType): string => {
+  switch (type) {
+    case AlertType.ERROR:
+      return "alert-danger";
+    case AlertType.WARNING:
+      return "alert-warning";
+    case AlertType.SUCCESS:
+      return "alert-success";
+    default:
+      return "alert-primary";
+  }
+};
+
 export default function Alert(props: AlertProps) {
-  const { message } = props;
-  return (
-    <div className="alert alert-primary d-flex align-items-center" role="alert">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        className="bi bi-check-circle-fill flex-shrink-0 me-2"
-        viewBox="0 0 16 16"
+  const { alerts } = props;
+
+  const alertComponents = alerts.map((alert) => {
+    const alertClass = getAlertClass(alert.type);
+    return (
+      <div
+        key={Math.random().toFixed(0)}
+        className={`alert d-flex align-items-center ${alertClass}`}
+        role="alert"
       >
-        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-      </svg>
-      {message}
-    </div>
-  );
+        {alert.message}
+      </div>
+    );
+  });
+
+  return <div>{alertComponents}</div>;
 }
 
 interface AlertProps {
-  message: string;
+  alerts: Alert[];
 }

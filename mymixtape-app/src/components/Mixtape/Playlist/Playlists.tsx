@@ -1,7 +1,6 @@
 import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "./PlaylistBlock";
 import ScrollableList from "@/components/controls/ScrollableList";
-import PlaylistBlockPlaceholder from "./PlaylistBlockPlaceholder";
 
 export default function Playlists(props: PlaylistsProp) {
   const {
@@ -10,6 +9,7 @@ export default function Playlists(props: PlaylistsProp) {
     selectedPlaylists,
     getMoreData,
     maxPlaylists,
+    isLoading,
   } = props;
 
   const playlist_blocks = playlists.map((playlist) => {
@@ -25,14 +25,6 @@ export default function Playlists(props: PlaylistsProp) {
     );
   });
 
-  // if (playlists.length !== maxPlaylists && playlists.length > 0) {
-  //   for (let i = 0; i < 3; i++) {
-  //     playlist_blocks.push(
-  //       <PlaylistBlockPlaceholder key={i + Math.random().toFixed(0)} />
-  //     );
-  //   }
-  // }
-
   return (
     <div className="container">
       <div className="row text-center mb-3">
@@ -43,6 +35,7 @@ export default function Playlists(props: PlaylistsProp) {
           items={playlist_blocks}
           getMoreData={getMoreData}
           maxPlaylists={maxPlaylists}
+          isLoading={isLoading}
         />
       </div>
       <div className="row mt-3 text-center py-2">{/* <p>Options</p> */}</div>
@@ -56,4 +49,5 @@ interface PlaylistsProp {
   selectPlaylist: (e: any, id: string) => void;
   getMoreData: (offset: number, limit: number) => void;
   maxPlaylists: number;
+  isLoading: boolean;
 }

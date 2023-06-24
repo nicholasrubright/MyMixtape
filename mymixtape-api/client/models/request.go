@@ -5,10 +5,10 @@ type ClientAccessTokenRequest struct {
 }
 
 type ClientCombinePlaylistRequest struct {
-	UserID		string		`json:"user_id"`
-	Name		string		`json:"name"`
-	Description	string		`json:"description"`
-	PlaylistIDs	[]string	`json:"playlist_ids"`
+	UserID		string		`form:"userId"`
+	Name		string		`form:"name"`
+	Description	string		`form:"description"`
+	PlaylistIDs	string		`form:"playlistIds"`
 }
 
 type ClientGetCurrentUsersPlaylistsRequestQueryParameters struct {

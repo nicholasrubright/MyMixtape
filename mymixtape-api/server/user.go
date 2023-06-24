@@ -9,7 +9,7 @@ import (
 
 func GetCurrentUsersProfile(c *gin.Context) {
 
-	token := c.GetHeader(tokenKey)
+	token := c.GetHeader("Authorization")
 
 	clientCurrentUsersProfileResponse, clientErrorResponse := client.GetCurrentUsersProfile(token)
 
