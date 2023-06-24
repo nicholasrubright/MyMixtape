@@ -17,6 +17,7 @@ MyMixtape runs on a [Gin](https://gin-gonic.com/) backend and uses a [Next.js](h
 - [Node.js](https://nodejs.org/en) v18.16.x
 - [Next.js](https://nextjs.org/) v13 or higher
 - [Spotify Web Api](https://developer.spotify.com/documentation/web-api)
+- [Bootstrap](https://getbootstrap.com/) v5.3.0
 
 ## To-do
 
@@ -26,17 +27,20 @@ MyMixtape runs on a [Gin](https://gin-gonic.com/) backend and uses a [Next.js](h
 
 ### Frontend
 
-- Utilize cookies to move api token server side
+- Utilize Next.js SSR
+- Utilize Cookies for token
 - Add client-side validation
 - Add loading/placeholders on elements
 - Unit testing
+- Caching
+- Improve UI on web and mobile
+- ~~Use React Context~~
 
 ### Backend
 
-- Add logging to server endpoints
-- Send back correct error responses
+- Add logging
+- Proper error handling
 - Add in transaction rollback functionality to combine playlists
-- Caching
 - Handle rate-limiting
 - Server side validation
-- unit tests
+- Unit tests

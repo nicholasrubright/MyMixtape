@@ -2,10 +2,18 @@ import { Profile } from "@/types/models";
 import Link from "next/link";
 import Loader from "../shared/Loader";
 
+const defaultImage =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png";
+
 export default function ProfileButton(props: ProfileButtonProps) {
   const { profile, isLoading } = props;
 
-  const profileImage = profile.images[0].url;
+  let profileImage = defaultImage;
+
+  if (profile.images.length > 0) {
+    profileImage = profile.images[0].url;
+  }
+
   const profileName = profile.name;
 
   return (
