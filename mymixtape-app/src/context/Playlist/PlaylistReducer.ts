@@ -23,6 +23,23 @@ export default function PlaylistReducer(
         isLoading: false,
         error: action.payload,
       };
+    case ActionNames.COMBINE_PLAYLISTS:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case ActionNames.COMBINE_PLAYLISTS_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      };
+
+    case ActionNames.COMBINE_PLAYLISTS_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      };
     default:
       return state;
   }

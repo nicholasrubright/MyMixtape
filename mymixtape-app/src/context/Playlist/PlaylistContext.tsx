@@ -3,6 +3,9 @@ import { PlaylistContextType, PlaylistStateType } from "./types";
 import { api } from "@/api/mixtape.api";
 import PlaylistReducer from "./PlaylistReducer";
 import {
+  combinePlaylistsAction,
+  combinePlaylistsFailure,
+  combinePlaylistsSuccess,
   fetchPlaylists,
   fetchPlaylistsFailure,
   fetchPlaylistsSuccess,
@@ -45,8 +48,39 @@ export const PlaylistProvider = (props: ProviderProps) => {
     }
   };
 
+  const combinePlaylists = async (
+    token: string,
+    playlistIds: string[],
+    name: string,
+    description: string,
+    userId: string
+  ) => {
+    try {
+      dispatch(combinePlaylistsAction());
+
+      await api.combinePlaylist(
+        {
+          playlist_ids: playlistIds,
+          name,
+          description,
+          user_id: userId,
+        },
+        token
+      );
+
+      dispatch(combinePlaylistsSuccess());
+    } catch (error) {
+      dispatch(
+        combinePlaylistsFailure("There was a problem combining playlists")
+      );
+      throw Error("There was a problem combining playlists");
+    }
+  };
+
   return (
-    <PlaylistContext.Provider value={{ playlistState: state, getPlaylists }}>
+    <PlaylistContext.Provider
+      value={{ playlistState: state, getPlaylists, combinePlaylists }}
+    >
       {children}
     </PlaylistContext.Provider>
   );

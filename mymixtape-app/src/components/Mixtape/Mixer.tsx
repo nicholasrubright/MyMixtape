@@ -2,13 +2,13 @@
 import { useContext, useEffect, useState } from "react";
 import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
-import { AlertType, Playlist, PlaylistMapping } from "@/types/models";
-import { api } from "@/api/mixtape.api";
+import { AlertType, PlaylistMapping } from "@/types/models";
 import {
   createPlaylistMapping,
   getSelectedPlaylists,
   remapPlaylistMapping,
 } from "@/utils/playlists";
+
 import {
   AlertContext,
   MixerContext,
@@ -24,11 +24,11 @@ export function Mixer() {
 
   const { setAlert } = useContext(AlertContext) as AlertContextType;
 
-  const { playlistState, getPlaylists } = useContext(
+  const { playlistState, getPlaylists, combinePlaylists } = useContext(
     PlaylistContext
   ) as PlaylistContextType;
 
-  const { playlists, isLoading, error } = playlistState;
+  const { playlists, isLoading } = playlistState;
 
   const [newPlaylistName, setNewPlaylistName] = useState<string>("");
   const [newPlaylistDescription, setNewPlaylistDescription] =
@@ -55,15 +55,20 @@ export function Mixer() {
     if (newPlaylistName !== "" && newPlaylistDescription !== "") {
       setIsCombining(true);
 
-      await api.combinePlaylist(
-        {
-          playlist_ids: ids,
-          name: newPlaylistName,
-          description: newPlaylistDescription,
-          user_id: userId,
-        },
-        token as string
-      );
+      try {
+        if (token !== null) {
+          await combinePlaylists(
+            token,
+            ids,
+            newPlaylistName,
+            newPlaylistDescription,
+            userId
+          );
+        }
+      } catch (error) {
+        setAlert(AlertType.ERROR, String(error));
+      }
+
       setIsCombining(false);
     }
 
