@@ -35,9 +35,9 @@ const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
   const response = await checkStatus<UserProfileResponse>(
     fetch(`${baseUrl}/api/user`, {
       method: "GET",
-      headers: {
-        "X-MyMixtape-Token": token,
-      },
+      headers: new Headers({
+        Authorization: token,
+      }),
     })
   );
 
@@ -59,9 +59,9 @@ const getUserPlaylists = async (
   const response = await checkStatus<UserPlaylistsResponse>(
     fetch(`${baseUrl}/api/playlists?${urlParams}`, {
       method: "GET",
-      headers: {
-        "X-MyMixtape-Token": token,
-      },
+      headers: new Headers({
+        Authorization: token,
+      }),
     })
   );
 
