@@ -57,8 +57,6 @@ func CombinePlaylists(c *gin.Context) {
 		return
 	}
 
-	
-
 	clientCombineResponse, clientErrorResponse := client.CombinePlaylists(clientCombinePlaylistRequest.UserID, clientCombinePlaylistRequest.Name, clientCombinePlaylistRequest.Description, clientCombinePlaylistRequest.PlaylistIDs, token)
 
 	if clientErrorResponse != nil {
