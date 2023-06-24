@@ -16,6 +16,8 @@ import {
   PlaylistContextType,
   MixerContextType,
   AlertContextType,
+  UserContext,
+  UserContextType,
 } from "@/context";
 
 export function Mixer() {
@@ -30,13 +32,16 @@ export function Mixer() {
 
   const { playlists, isLoading } = playlistState;
 
+  const { userState } = useContext(UserContext) as UserContextType;
+
+  const { profile } = userState;
+
   const [newPlaylistName, setNewPlaylistName] = useState<string>("");
   const [newPlaylistDescription, setNewPlaylistDescription] =
     useState<string>("");
   const [selectedPlaylists, setSelectedPlaylists] = useState<PlaylistMapping>(
     {}
   );
-  const [userId, setUserId] = useState<string>("");
   const [maxPlaylists, setMaxPlaylists] = useState(-1);
   const [isCombining, setIsCombining] = useState<boolean>(false);
 
@@ -62,7 +67,7 @@ export function Mixer() {
             ids,
             newPlaylistName,
             newPlaylistDescription,
-            userId
+            profile.id
           );
         }
       } catch (error) {
@@ -130,11 +135,6 @@ export function Mixer() {
 
   return (
     <div className="container px-4 py-5">
-      {/* {combineAlert && (
-        <div className="row">
-          <Alert message={"Playlist has been created."} />
-        </div>
-      )} */}
       <div className="row">
         <div className="col-lg-7">
           <Playlists

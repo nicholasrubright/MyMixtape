@@ -72,14 +72,24 @@ const combinePlaylist = async (
   request: CombinePlaylistRequest,
   token: string
 ): Promise<CombinePlaylistResponse> => {
+  const formBody = new URLSearchParams({
+    userId: request.user_id,
+    name: request.name,
+    description: request.description,
+  });
+
+  request.playlist_ids.forEach((playlistId) => {
+    formBody.append("playlistIds", playlistId);
+  });
+
   const response = await checkStatus<CombinePlaylistResponse>(
     fetch(`${baseUrl}/api/playlists`, {
       method: "POST",
-      headers: {
-        "X-MyMixtape-Token": token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
+      headers: new Headers({
+        Authorization: token,
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+      }),
+      body: formBody.toString(),
     })
   );
 
