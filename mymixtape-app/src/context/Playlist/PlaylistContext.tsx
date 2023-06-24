@@ -19,7 +19,7 @@ export const PlaylistProvider = (props: ProviderProps) => {
 
   const initialState: PlaylistStateType = {
     playlists: [],
-    isLoading: false,
+    isLoading: true,
     error: null,
   };
 

@@ -25,7 +25,7 @@ export const UserProvider = (props: ProviderProps) => {
         },
       ],
     },
-    isLoading: false,
+    isLoading: true,
     error: null,
   };
 

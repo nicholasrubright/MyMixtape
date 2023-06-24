@@ -1,5 +1,5 @@
 export default function CombineButton(props: CombineButtonProps) {
-  const { isLoading, isDisabled, createNewPlaylist } = props;
+  const { isCombining, isDisabled, createNewPlaylist } = props;
 
   return (
     <button
@@ -8,7 +8,7 @@ export default function CombineButton(props: CombineButtonProps) {
       className="btn btn-primary"
       disabled={isDisabled}
     >
-      {isLoading && (
+      {isCombining && (
         <span
           className="spinner-border spinner-border-sm mx-2"
           role="status"
@@ -20,7 +20,7 @@ export default function CombineButton(props: CombineButtonProps) {
 }
 
 interface CombineButtonProps {
-  isLoading: boolean;
+  isCombining: boolean;
   isDisabled: boolean;
   createNewPlaylist: (e: any) => void;
 }

@@ -69,6 +69,8 @@ export function Mixer() {
             newPlaylistDescription,
             profile.id
           );
+
+          setAlert(AlertType.SUCCESS, "Successfully created playlist!");
         }
       } catch (error) {
         setAlert(AlertType.ERROR, String(error));
@@ -153,6 +155,7 @@ export function Mixer() {
             handleNewPlaylistName={handleNewPlaylistName}
             handleNewPlaylistDescription={handleNewPlaylistDescription}
             createNewPlaylist={createNewPlaylist}
+            isDisabled={isCombining || isLoading}
             isCombining={isCombining}
           />
         </div>

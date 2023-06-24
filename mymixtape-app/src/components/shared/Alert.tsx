@@ -21,6 +21,7 @@ export default function Alert(props: AlertProps) {
     const alertClass = getAlertClass(alert.type);
     return (
       <div
+        key={Math.random().toFixed(0)}
         className={`alert d-flex align-items-center ${alertClass}`}
         role="alert"
       >

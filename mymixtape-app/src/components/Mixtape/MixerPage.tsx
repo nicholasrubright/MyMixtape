@@ -13,13 +13,15 @@ export default function MixerPage(props: MixerPageProps) {
   const { accessToken } = props;
 
   const { setToken } = useContext(MixerContext) as MixerContextType;
-  const { alertState, setAlert } = useContext(AlertContext) as AlertContextType;
+  const { alertState } = useContext(AlertContext) as AlertContextType;
 
   const { alerts } = alertState;
 
   useEffect(() => {
     setToken(accessToken);
   }, [accessToken]);
+
+  useEffect(() => {}, [alerts]);
 
   return (
     <div className="container">
@@ -32,7 +34,7 @@ export default function MixerPage(props: MixerPageProps) {
             <Alert alerts={alertState.alerts} />
           </div>
         )}
-        <div className="">
+        <div>
           <Mixer />
         </div>
       </div>
