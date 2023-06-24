@@ -1,13 +1,19 @@
-import { createContext, useState } from "react";
+import { createContext, useReducer, useState } from "react";
 import { UserContextType, UserStateType } from "./types";
 import { api } from "@/api/mixtape.api";
+import UserReducer from "./UserReducer";
+import {
+  fetchProfile,
+  fetchProfileFailure,
+  fetchProfileSuccess,
+} from "./UserActions";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = (props: ProviderProps) => {
   const { children } = props;
 
-  const [state, setState] = useState<UserStateType>({
+  const initialState: UserStateType = {
     profile: {
       id: "0",
       name: "",
@@ -21,21 +27,22 @@ export const UserProvider = (props: ProviderProps) => {
     },
     isLoading: false,
     error: null,
-  });
+  };
+
+  const [state, dispatch] = useReducer(UserReducer, initialState);
 
   const getProfile = async (token: string) => {
-    setState({
-      ...state,
-      isLoading: true,
-    });
+    try {
+      dispatch(fetchProfile());
 
-    const response = await api.getUserProfile(token);
+      const response = await api.getUserProfile(token);
 
-    setState({
-      ...state,
-      isLoading: false,
-      profile: response,
-    });
+      dispatch(fetchProfileSuccess(response));
+    } catch (error) {
+      dispatch(
+        fetchProfileFailure("There was a problem fetching user profile")
+      );
+    }
   };
 
   return (

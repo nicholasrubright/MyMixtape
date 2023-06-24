@@ -1,21 +1,22 @@
-import { createContext, useState } from "react";
+import { createContext, useReducer, useState } from "react";
 import { MixerContextType, MixerStateType } from "./types";
+import MixerReducer from "./MixerReducer";
+import { addToken } from "./MixerActions";
 
 export const MixerContext = createContext<MixerContextType | null>(null);
 
 export const MixerProvider = (props: ProviderProps) => {
   const { children } = props;
 
-  const [state, setState] = useState<MixerStateType>({
+  const initialState: MixerStateType = {
     token: null,
     error: null,
-  });
+  };
+
+  const [state, dispatch] = useReducer(MixerReducer, initialState);
 
   const setToken = (token: string) => {
-    setState({
-      ...state,
-      token: token,
-    });
+    dispatch(addToken(token));
   };
 
   return (

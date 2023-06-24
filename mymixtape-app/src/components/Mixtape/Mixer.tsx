@@ -9,8 +9,8 @@ import {
   getSelectedPlaylists,
   remapPlaylistMapping,
 } from "@/utils/playlists";
-import { PlaylistContextType } from "@/context/Playlists/types";
-import { PlaylistContext } from "@/context/Playlists/PlaylistContext";
+import { PlaylistContextType } from "@/context/Playlist/types";
+import { PlaylistContext } from "@/context/Playlist/PlaylistContext";
 import { MixerContextType } from "@/context/Mixer/types";
 import { MixerContext } from "@/context/Mixer/MixerContext";
 

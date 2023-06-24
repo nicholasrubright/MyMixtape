@@ -1,30 +1,25 @@
-import { createContext, useState } from "react";
+import { createContext, useReducer } from "react";
 import { AlertContextType, AlertStateType } from "./types";
 import { AlertType } from "../../types/models";
+import AlertReducer from "./AlertReducer";
+import { clearAlert, createAlert } from "./AlertActions";
 
 export const AlertContext = createContext<AlertContextType | null>(null);
 
 export const AlertProvider = (props: ProviderProps) => {
   const { children } = props;
 
-  const [state, setState] = useState<AlertStateType>({
+  const initialState: AlertStateType = {
     alert: null,
-  });
+  };
+
+  const [state, dispatch] = useReducer(AlertReducer, initialState);
 
   const setAlert = (type: AlertType, message: string) => {
-    setState({
-      ...state,
-      alert: {
-        type,
-        message,
-      },
-    });
+    dispatch(createAlert(type, message));
 
     setTimeout(() => {
-      setState({
-        ...state,
-        alert: null,
-      });
+      dispatch(clearAlert());
     }, 8000);
   };
 
