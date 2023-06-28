@@ -8,7 +8,7 @@ import {
 } from "../types/api/response";
 import { CombinePlaylistRequest } from "@/types/api/request";
 
-const serverBaseUrl = process.env.NEXT_PUBLIC_API_HOST;
+const serverBaseUrl = process.env.NEXT_PUBLIC_SERVER_API_HOST;
 const clientBaseUrl = process.env.NEXT_PUBLIC_CLIENT_API_HOST;
 
 const getAuthorizationUrl = async (): Promise<AuthorizationUrlResponse> => {
