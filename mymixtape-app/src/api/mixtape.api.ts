@@ -34,7 +34,7 @@ const getAccessToken = async (code: string): Promise<AccessTokenResponse> => {
 
 const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
   const response = await checkStatus<UserProfileResponse>(
-    fetch(`${clientBaseUrl}/api/user`, {
+    fetch(`${serverBaseUrl}/api/user`, {
       method: "GET",
       headers: new Headers({
         Authorization: token,
