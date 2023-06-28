@@ -15,3 +15,5 @@ services:
       - 3000:3000
     volumes:
       - ./mymixtape-app:/mymixtape-app
+    depends_on:
+      - api
