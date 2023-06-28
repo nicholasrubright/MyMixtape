@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  api:
+    container_name: mymixtape-api
+    build: ./mymixtape-api
+    ports:
+      - 8080:8080
+  app:
+    container_name: mymixtape-app
+    build:
+      context: ./mymixtape-app
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./mymixtape-app:/mymixtape-app
+    depends_on:
+      - api

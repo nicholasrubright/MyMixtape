@@ -8,11 +8,12 @@ import {
 } from "../types/api/response";
 import { CombinePlaylistRequest } from "@/types/api/request";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_HOST;
+const serverBaseUrl = process.env.NEXT_PUBLIC_SERVER_API_HOST;
+const clientBaseUrl = process.env.NEXT_PUBLIC_CLIENT_API_HOST;
 
 const getAuthorizationUrl = async (): Promise<AuthorizationUrlResponse> => {
   const response = await checkStatus<AuthorizationUrlResponse>(
-    fetch(`${baseUrl}/api/auth`, {
+    fetch(`${serverBaseUrl}/api/auth`, {
       cache: "no-store",
     })
   );
@@ -22,7 +23,7 @@ const getAuthorizationUrl = async (): Promise<AuthorizationUrlResponse> => {
 
 const getAccessToken = async (code: string): Promise<AccessTokenResponse> => {
   const response = await checkStatus<AccessTokenResponse>(
-    fetch(`${baseUrl}/api/auth`, {
+    fetch(`${serverBaseUrl}/api/auth`, {
       method: "POST",
       body: JSON.stringify({ code }),
     })
@@ -33,7 +34,7 @@ const getAccessToken = async (code: string): Promise<AccessTokenResponse> => {
 
 const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
   const response = await checkStatus<UserProfileResponse>(
-    fetch(`${baseUrl}/api/user`, {
+    fetch(`${clientBaseUrl}/api/user`, {
       method: "GET",
       headers: new Headers({
         Authorization: token,
@@ -57,7 +58,7 @@ const getUserPlaylists = async (
   const urlParams = new URLSearchParams(params);
 
   const response = await checkStatus<UserPlaylistsResponse>(
-    fetch(`${baseUrl}/api/playlists?${urlParams}`, {
+    fetch(`${clientBaseUrl}/api/playlists?${urlParams}`, {
       method: "GET",
       headers: new Headers({
         Authorization: token,
@@ -83,7 +84,7 @@ const combinePlaylist = async (
   });
 
   const response = await checkStatus<CombinePlaylistResponse>(
-    fetch(`${baseUrl}/api/playlists`, {
+    fetch(`${clientBaseUrl}/api/playlists`, {
       method: "POST",
       headers: new Headers({
         Authorization: token,

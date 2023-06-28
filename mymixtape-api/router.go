@@ -47,7 +47,7 @@ func CreateRoutes() {
 
 func SetupRouter() {
 
-	CORS_ALLOW_ORIGINS = []string{CLIENT_ADDRESS}
+	CORS_ALLOW_ORIGINS = []string{APP_CLIENT_ADDRESS,APP_SERVER_ADDRESS}
 
 	if API_ENVIRONMENT == "PROD" {
 		gin.SetMode(gin.ReleaseMode)
