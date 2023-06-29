@@ -43,7 +43,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         ></script>
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} gradient-background`}>
         <Providers>
           <div>{children}</div>
         </Providers>

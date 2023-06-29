@@ -24,7 +24,7 @@ export default function MixerPage(props: MixerPageProps) {
   useEffect(() => {}, [alerts]);
 
   return (
-    <div className="container">
+    <div className="container py-5 px-3 bg-light mt-5 rounded-5 bg-opacity-10 shadow-lg">
       <div className="row float-end mb-3">
         <Navbar />
       </div>
