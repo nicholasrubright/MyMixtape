@@ -32,20 +32,20 @@
 
 .btn-getStarted {
   color: white;
-  background-color: $bg-purple;
+  background-color: $bg-green-button;
 }
 
 .btn-getStarted:hover {
-  background-color: $bg-purple-light;
+  background-color: $bg-green-button-hover;
 }
 
 .btn-getStarted:active {
-  background-color: $bg-purple-dark !important;
+  background-color: $bg-green-button-active !important;
 }
 
 .btn-learnMore {
   color: white;
-  background-color: $bg-gray;
+  background-color: $bg-gray-button;
 }
 
 .btn-learnMore:hover {
