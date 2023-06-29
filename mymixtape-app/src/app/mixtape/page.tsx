@@ -5,6 +5,9 @@ import { redirect } from "next/navigation";
 export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
 
+  if (process.env.NEXT_PUBLIC_DEBUG === "DEV")
+    return <MixerPage accessToken={"test"} />;
+
   if (!code) {
     const { url, valid_token } = await getAuthorization();
     if (url && !valid_token) {
