@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 
 	"github.com/mymixtape-api/server"
@@ -41,6 +43,28 @@ func CreateRoutes() {
 		apiRoutes.OPTIONS("/playlists", func(c *gin.Context) {
 			c.Done()
 		})
+
+		apiRoutes.GET("/test", func(c *gin.Context) {
+			session := sessions.Default(c)
+
+			var count int
+			v := session.Get("count")
+			if v == nil {
+				count = 0
+			} else {
+				count = v.(int)
+				count++
+			}
+
+			session.Set("count", count)
+			session.Save()
+			c.JSON(200, struct{
+				Count int	`json:"count"`
+			}{
+				Count: count,
+			})
+			
+		})
 	}
 
 }
@@ -70,6 +94,13 @@ func SetupRouter() {
 
 		ROUTER.SetTrustedProxies([]string{})
 	}
+
+	store, err := redis.NewStore(10, "tcp", "172.23.0.2:6379", "secret", []byte("key=secret"))
+	if err != nil {
+		panic(err)
+	}
+
+	ROUTER.Use(sessions.Sessions("mymixtape-session", store))
 
 
 	// Set up Routes

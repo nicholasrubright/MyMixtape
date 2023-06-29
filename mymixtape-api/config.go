@@ -19,6 +19,11 @@ var (
 	APP_SERVER_ADDRESS = ""
 	PORT = ""
 
+	// Redis
+	REDIS_HOST = ""
+	REDIS_PORT = ""
+	REDIS_PASSWORD = ""
+
 	// Environment
 	API_ENVIRONMENT = ""
 )
@@ -40,6 +45,10 @@ func InitConfig() {
 	APP_CLIENT_ADDRESS = os.Getenv("APP_CLIENT_ADDRESS")
 	APP_SERVER_ADDRESS = os.Getenv("APP_SERVER_ADDRESS")
 	PORT = os.Getenv("PORT")
+
+	REDIS_HOST = os.Getenv("REDIS_HOST")
+	REDIS_PORT = os.Getenv("REDIS_PORT")
+	REDIS_PASSWORD = os.Getenv("REDIS_PASSWORD")
 
 	API_ENVIRONMENT = os.Getenv("API_ENVIRONMENT")
 

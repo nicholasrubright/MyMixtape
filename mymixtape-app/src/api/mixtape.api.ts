@@ -97,10 +97,19 @@ const combinePlaylist = async (
   return response;
 };
 
+const getCount = async () => {
+  return await checkStatus<{ count: number }>(
+    fetch(`${serverBaseUrl}/api/test`, {
+      method: "GET",
+    })
+  );
+};
+
 export const api = {
   getAuthorizationUrl,
   getAccessToken,
   getUserProfile,
   getUserPlaylists,
   combinePlaylist,
+  getCount,
 };

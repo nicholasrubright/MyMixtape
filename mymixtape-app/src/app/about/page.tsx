@@ -1,4 +1,8 @@
-export default function About() {
+import { api } from "@/api/mixtape.api";
+
+export default async function About() {
+  const response = await getCount();
+
   return (
     <div className="container py-5 text-center">
       <h1>🎶</h1>
@@ -12,6 +16,21 @@ export default function About() {
         Easily combine your favorite music into a single playlist for your
         enjoyment!
       </p>
+      <h1>Count: {response.count}</h1>
     </div>
   );
+}
+
+async function getCount() {
+  return await api
+    .getCount()
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+      return { count: 0 };
+    });
+
+  //return await api.getCount();
 }

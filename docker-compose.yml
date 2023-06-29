@@ -6,6 +6,8 @@ services:
     build: ./mymixtape-api
     ports:
       - 8080:8080
+    depends_on:
+      - redis
   app:
     container_name: mymixtape-app
     build:
@@ -17,3 +19,15 @@ services:
       - ./mymixtape-app:/mymixtape-app
     depends_on:
       - api
+  redis:
+    container_name: mymixtape-redis
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    command: redis-server --save 20 1 --loglevel warning --requirepass secret
+    volumes:
+      - redis:/data
+volumes:
+  redis:
+    driver: local
