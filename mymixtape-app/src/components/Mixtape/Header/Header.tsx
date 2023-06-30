@@ -1,6 +1,5 @@
 "use client";
 import { useContext, useEffect } from "react";
-import ProfileButton from "../controls/ProfileButton";
 import {
   AlertContext,
   AlertContextType,
@@ -10,8 +9,9 @@ import {
   MixerContextType,
 } from "@/context";
 import { AlertType } from "@/types/models";
+import Loader from "@/components/shared/Loader";
 
-export default function Navbar() {
+export default function Header() {
   const { mixerState } = useContext(MixerContext) as MixerContextType;
   const { token } = mixerState;
 
@@ -35,13 +35,33 @@ export default function Navbar() {
     }
   }, [token]);
 
+  const { name, images } = profile;
+
+  if (isLoading) {
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
-    <nav className="navbar">
-      <div className="container-fluid">
-        <div className="d-flex">
-          <ProfileButton profile={profile} isLoading={isLoading} />
+    <div>
+      <div className="row justify-content-center mb-3">
+        <div className="col-auto">
+          <img
+            src={images[0].url}
+            className="rounded-circle shadow border border-3"
+            height="100px"
+            width="100px"
+          />
         </div>
       </div>
-    </nav>
+      <div className="row justify-content-center">
+        <div className="col-auto">
+          <h3>{name}</h3>
+        </div>
+      </div>
+    </div>
   );
 }
