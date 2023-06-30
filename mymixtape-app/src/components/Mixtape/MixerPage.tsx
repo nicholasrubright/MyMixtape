@@ -1,7 +1,5 @@
 "use client";
-
 import { useContext, useEffect } from "react";
-import Navbar from "../shared/Navbar";
 import { Mixer } from "./Mixer";
 import { MixerContext } from "@/context/Mixer/MixerContext";
 import { MixerContextType } from "@/context/Mixer/types";

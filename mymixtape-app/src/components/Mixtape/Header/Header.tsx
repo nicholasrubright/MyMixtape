@@ -10,6 +10,12 @@ import {
 } from "@/context";
 import { AlertType } from "@/types/models";
 import Loader from "@/components/shared/Loader";
+import { Poppins } from "next/font/google";
+
+const font = Poppins({
+  weight: "500",
+  subsets: ["latin"],
+});
 
 export default function Header() {
   const { mixerState } = useContext(MixerContext) as MixerContextType;
@@ -19,7 +25,7 @@ export default function Header() {
 
   const { userState, getProfile } = useContext(UserContext) as UserContextType;
 
-  const { profile, isLoading, error } = userState;
+  const { profile, isLoading } = userState;
 
   useEffect(() => {
     const getData = async () => {
@@ -59,7 +65,9 @@ export default function Header() {
       </div>
       <div className="row justify-content-center">
         <div className="col-auto">
-          <h3>{name}</h3>
+          <h3 className={font.className}>
+            Welcome, <span className="logo">{name}</span>
+          </h3>
         </div>
       </div>
     </div>

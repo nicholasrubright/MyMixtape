@@ -73,3 +73,16 @@
   background-color: $bg-green-dark;
   color: $bg-white;
 }
+
+.btn-combine {
+  color: white;
+  background-color: $bg-green-button;
+}
+
+.btn-combine:hover {
+  background-color: $bg-green-button-hover;
+}
+
+.btn-combine:active {
+  background-color: $bg-green-button-active !important;
+}
