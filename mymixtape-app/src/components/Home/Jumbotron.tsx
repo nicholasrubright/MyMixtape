@@ -1,14 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Open_Sans, Poppins } from "next/font/google";
+import { Poppins, Work_Sans } from "next/font/google";
 
 const titleFont = Poppins({
   weight: "700",
   subsets: ["latin"],
 });
 
-const subtitleFont = Open_Sans({
-  weight: "300",
+const subtitleFont = Work_Sans({
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -37,11 +37,14 @@ export default function Jumbotron() {
           <div className="d-grid gap-2 d-md-flex justify-content-md-start">
             <Link
               href="/mixtape"
-              className="btn btn-getStarted btn-lg px-4 me-md-2"
+              className={`btn btn-getStarted btn-lg px-4 me-md-2 ${subtitleFont.className}`}
             >
               Get Started
             </Link>
-            <Link href="/about" className="btn btn-learnMore btn-lg px-4">
+            <Link
+              href="/about"
+              className={`btn btn-learnMore btn-lg px-4 ${subtitleFont.className}`}
+            >
               What is this?
             </Link>
           </div>
