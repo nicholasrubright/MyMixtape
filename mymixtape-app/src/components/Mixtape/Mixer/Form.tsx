@@ -29,6 +29,7 @@ export default function Form(props: FormProps) {
               disabled={isDisabled}
               onChange={(e) => handleNewPlaylistName(e)}
             />
+            <div className="invalid-feedback">Please enter a name.</div>
           </div>
           <div className="mb-3">
             <label htmlFor="newPlaylistDescription" className="form-label">
@@ -43,6 +44,7 @@ export default function Form(props: FormProps) {
               placeholder="This is a really awesome playlist..."
               onChange={(e) => handleNewPlaylistDescription(e)}
             />
+            <div className="invalid-feedback">Please enter a description.</div>
           </div>
         </div>
         <div>
