@@ -19,6 +19,12 @@ import {
   UserContext,
   UserContextType,
 } from "@/context";
+import { Work_Sans } from "next/font/google";
+
+const font = Work_Sans({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export function Mixer() {
   const { mixerState } = useContext(MixerContext) as MixerContextType;
@@ -136,7 +142,7 @@ export function Mixer() {
   };
 
   return (
-    <div className="container px-4 py-5">
+    <div className={`container px-4 py-5 ${font.className}`}>
       <div className="row">
         <div className="col-lg-7">
           <Playlists

@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  start:
+    cmds:
+      - docker system prune
+      - docker compose up --build

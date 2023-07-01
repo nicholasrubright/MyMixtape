@@ -3,6 +3,7 @@ import "@/styles/globals.scss";
 
 import { Roboto } from "next/font/google";
 import { Providers } from "./providers";
+import Script from "next/script";
 
 const inter = Roboto({
   weight: ["400", "700"],
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -36,14 +38,14 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap"
           rel="stylesheet"
         />
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-        <script
+        <Script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" />
+        <Script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"
           integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT"
           crossOrigin="anonymous"
-        ></script>
+        />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} gradient-background`}>
         <Providers>
           <div>{children}</div>
         </Providers>
