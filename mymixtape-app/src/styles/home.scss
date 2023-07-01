@@ -1,5 +1,24 @@
 @use "vars" as *;
 
+.gradient-background {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 10s ease infinite;
+  height: 100vh;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .logo {
   background: rgb(22, 219, 101);
   background: linear-gradient(
@@ -13,20 +32,20 @@
 
 .btn-getStarted {
   color: white;
-  background-color: $bg-purple;
+  background-color: $bg-green-button;
 }
 
 .btn-getStarted:hover {
-  background-color: $bg-purple-light;
+  background-color: $bg-green-button-hover;
 }
 
 .btn-getStarted:active {
-  background-color: $bg-purple-dark !important;
+  background-color: $bg-green-button-active !important;
 }
 
 .btn-learnMore {
   color: white;
-  background-color: $bg-gray;
+  background-color: $bg-gray-button;
 }
 
 .btn-learnMore:hover {

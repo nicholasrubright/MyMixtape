@@ -3,9 +3,9 @@ export default function CombineButton(props: CombineButtonProps) {
 
   return (
     <button
-      type="button"
+      type="submit"
       onClick={(e) => createNewPlaylist(e)}
-      className="btn btn-primary"
+      className="btn btn-combine"
       disabled={isDisabled}
     >
       {isCombining && (

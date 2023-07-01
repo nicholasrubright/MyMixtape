@@ -1,13 +1,12 @@
 "use client";
-
 import { useContext, useEffect } from "react";
-import Navbar from "../shared/Navbar";
 import { Mixer } from "./Mixer";
 import { MixerContext } from "@/context/Mixer/MixerContext";
 import { MixerContextType } from "@/context/Mixer/types";
 import { AlertContextType } from "@/context/Alert/types";
 import { AlertContext } from "@/context/Alert/AlertContext";
 import Alert from "../shared/Alert";
+import Header from "./Header/Header";
 
 export default function MixerPage(props: MixerPageProps) {
   const { accessToken } = props;
@@ -24,11 +23,11 @@ export default function MixerPage(props: MixerPageProps) {
   useEffect(() => {}, [alerts]);
 
   return (
-    <div className="container">
-      <div className="row float-end mb-3">
-        <Navbar />
+    <div className="container py-5 px-3 bg-light mt-5 rounded-5 bg-opacity-10 shadow-lg">
+      <div className="row mb-3">
+        <Header />
       </div>
-      <div className="row container-fluid">
+      <div className="row p-0">
         {alerts.length > 0 && (
           <div>
             <Alert alerts={alertState.alerts} />
