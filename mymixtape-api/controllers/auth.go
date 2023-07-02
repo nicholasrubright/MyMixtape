@@ -1,4 +1,4 @@
-package server
+package controllers
 
 import (
 	"net/http"
@@ -13,7 +13,6 @@ var (
 	SPOTIFY_CLIENT_SECRET = ""
 	SPOTIFY_CLIENT_REDIRECT = ""
 )
-
 
 func GetAuthorizationUrl(c *gin.Context) {
 	clientAuthorizationUrlResponse, clientErrorResponse := client.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
