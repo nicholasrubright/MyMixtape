@@ -1,4 +1,4 @@
-package spotify
+package internal
 
 import (
 	"bytes"
@@ -10,7 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mymixtape-api/spotify/models"
+	"github.com/mymixtape-api/constants"
+	"github.com/mymixtape-api/models"
 	"github.com/mymixtape-api/utils"
 )
 
@@ -72,10 +73,10 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	}
 
 	if response.StatusCode < 200 || response.StatusCode > 299 {
-		err, ok := utils.StatusToError[response.StatusCode]
+		err, ok := constants.StatusToError[response.StatusCode]
 
 		if !ok {
-			err = utils.Error{
+			err = constants.Error{
 				Message: "unknown error reason",
 				StatusCode: response.StatusCode,
 			}
@@ -170,9 +171,9 @@ func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, tok
 	}
 
 	if response.StatusCode < 200 || response.StatusCode > 299 {
-		err, ok := utils.StatusToError[response.StatusCode]
+		err, ok := constants.StatusToError[response.StatusCode]
 		if !ok {
-			err = utils.Error{
+			err = constants.Error{
 				Message: "unknown error reason",
 				StatusCode: response.StatusCode,
 			}

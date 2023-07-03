@@ -1,5 +1,21 @@
 package models
 
+// Spotify API Requests
+
+// Playlists
+type SpotifyAddItemsToPlaylistRequest struct {
+	URIs		[]string	`json:"uris"`
+	Position	int			`json:"position"`
+}
+
+type SpotifyCreatePlaylistRequest struct {
+	Name			string	`json:"name"`
+	Public			bool	`json:"public"`
+	Collaborative	bool	`json:"collaborative"`
+	Description		string	`json:"description"`
+}
+
+// Spotify API Responses
 // Authorization
 type SpotifyAccessTokenResponse struct {
 	AccessToken		string	`json:"access_token"`

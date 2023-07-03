@@ -1,18 +1,17 @@
 package models
 
 // Authorization
-type ClientAuthorizationUrlResponse struct {
+type AuthorizationUrlResponse struct {
 	Url		string	`json:"url"`
-	ValidToken	bool	`json:"valid_token"`
 }
 
-type ClientAccessTokenResponse struct {
+type AccessTokenResponse struct {
 	Token	string	`json:"token"`
 	ExpiresIn	int	`json:"expires_in"`
 }
 
 // User Profile
-type ClientCurrentUsersProfileResponse struct {
+type CurrentUsersProfileResponse struct {
 	ID		string	`json:"id"`
 	Name	string	`json:"name"`
 	Images []struct {
@@ -24,7 +23,7 @@ type ClientCurrentUsersProfileResponse struct {
 
 
 // User Playlists
-type ClientCurrentUsersPlaylistsResponse struct {
+type CurrentUsersPlaylistsResponse struct {
 	Href	string	`json:"href"`
 	Limit	int		`json:"limit"`
 	Next	string	`json:"next"`
@@ -42,7 +41,7 @@ type ClientCurrentUsersPlaylistsResponse struct {
 	} `json:"items"`
 }
 
-type ClientPlaylistItemsResponse struct {
+type PlaylistItemsResponse struct {
 	Items    []struct {
 		Track   struct {
 			ID         string `json:"id"`
@@ -52,13 +51,18 @@ type ClientPlaylistItemsResponse struct {
 	} `json:"items"`
 }
 
-type ClientCombinePlaylistResponse struct {
+type CombinePlaylistResponse struct {
 	ID	string	`json:"id"`
 	Name	string	`json:"name"`
 }
 
+type CreatePlaylistResponse struct {
+	ID 		string	`json:"id"`
+	Name	string	`json:"name"`
+}
+
 // Error Response
-type ClientErrorResponse struct {
+type ErrorResponse struct {
 	Message	string	`json:"message"`
 	Status	int		`json:"status"`
 }

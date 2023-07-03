@@ -1,17 +1,17 @@
 package models
 
-type ClientAccessTokenRequest struct {
+type AccessTokenRequest struct {
 	Code	string	`json:"code"`
 }
 
-type ClientCombinePlaylistRequest struct {
+type CombinePlaylistRequest struct {
 	UserID		string		`form:"userId"`
 	Name		string		`form:"name"`
 	Description	string		`form:"description"`
 	PlaylistIDs	[]string	`form:"playlistIds"`
 }
 
-type ClientGetCurrentUsersPlaylistsRequestQueryParameters struct {
+type GetCurrentUsersPlaylistsRequestQueryParameters struct {
 	Limit	string	`form:"limit"`
 	Offset	string	`form:"offset"`
 }
