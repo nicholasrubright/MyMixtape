@@ -2,49 +2,49 @@ package constants
 
 import "net/http"
 
-type Error struct {
+type ApiError struct {
 	Message string
 	StatusCode int
 }
 
-func (e Error) Error() string {
+func (e ApiError) ApiError() string {
 	return e.Message
 }
 
 var (
-	ErrBadRequest = Error{
+	ErrBadRequest = ApiError{
 		Message: "bad request",
 		StatusCode: http.StatusBadRequest,
 	}
-	ErrUnauthorized = Error {
+	ErrUnauthorized = ApiError {
 		Message: "unauthorized",
 		StatusCode: http.StatusUnauthorized,
 	}
-	ErrForbidden = Error {
+	ErrForbidden = ApiError {
 		Message: "forbidden",
 		StatusCode: http.StatusForbidden,
 	}
-	ErrNotFound = Error{
+	ErrNotFound = ApiError{
 		Message: "not found",
 		StatusCode: http.StatusNotFound,
 	}
-	ErrRateLimitExceeded = Error{
+	ErrRateLimitExceeded = ApiError{
 		Message: "rate limit exceeded",
 		StatusCode: http.StatusTooManyRequests,
 	}
-	ErrInternalServerError = Error {
+	ErrInternalServerError = ApiError {
 		Message: "internal server error",
 		StatusCode: http.StatusInternalServerError,
 	}
-	ErrBadGateway = Error{
+	ErrBadGateway = ApiError{
 		Message: "bad gateway",
 		StatusCode: http.StatusBadGateway,
 	}
-	ErrServiceUnavailable = Error {
+	ErrServiceUnavailable = ApiError {
 		Message: "service unavailable",
 		StatusCode: http.StatusServiceUnavailable,
 	}
-	StatusToError = map[int]Error {
+	StatusToError = map[int] ApiError {
 		http.StatusBadRequest: ErrBadRequest,
 		http.StatusUnauthorized: ErrUnauthorized,
 		http.StatusForbidden: ErrForbidden,
