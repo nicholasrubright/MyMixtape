@@ -9,7 +9,7 @@ export default async function Mixtape(props: MixtapeProps) {
     return <MixerPage accessToken={"test"} />;
 
   if (!code) {
-    const { url } = await getAuthorization();
+    const { url } = await getAuthorizationUrl();
     if (url) {
       redirect(url);
     }
@@ -26,22 +26,8 @@ interface MixtapeProps {
   searchParams: { [key: string]: string | undefined };
 }
 
-async function getAuthorization(
-  code: string | null = null
-): Promise<{ url: string | null }> {
-  return await api
-    .getAuthorizationUrl()
-    .then((response) => {
-      const { url } = response;
-      return !code && url ? { url } : { url: null };
-    })
-    .catch((error) => {
-      console.error(
-        "There was a problem getting the authorization url: ",
-        error
-      );
-      return { url: null };
-    });
+async function getAuthorizationUrl() {
+  return await api.getAuthorizationUrl();
 }
 
 async function getAccessToken(code: string) {
