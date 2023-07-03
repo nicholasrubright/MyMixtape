@@ -20,6 +20,9 @@ var (
 
 
 func InitRoutes() *gin.Engine {
+
+	config.InitConfig()
+
 	router := gin.Default()
 
 	CORS_ALLOW_ORIGINS = []string{config.APP_CLIENT_ADDRESS, config.APP_SERVER_ADDRESS}

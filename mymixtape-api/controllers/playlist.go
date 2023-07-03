@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/mymixtape-api/client"
-	"github.com/mymixtape-api/client/models"
+	"github.com/mymixtape-api/models"
+	"github.com/mymixtape-api/services"
 )
 
 func GetCurrentUsersPlaylists(c *gin.Context) {
@@ -16,11 +16,11 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 	var limit string
 	var offset string
 
-	var clientGetCurrentUsersPlaylistsRequestQueryParameters models.ClientGetCurrentUsersPlaylistsRequestQueryParameters
+	var getCurrentUsersPlaylistsRequestQueryParameters models.GetCurrentUsersPlaylistsRequestQueryParameters
 	
-	if c.Bind(&clientGetCurrentUsersPlaylistsRequestQueryParameters) == nil {
-		limit = clientGetCurrentUsersPlaylistsRequestQueryParameters.Limit
-		offset = clientGetCurrentUsersPlaylistsRequestQueryParameters.Offset
+	if c.Bind(&getCurrentUsersPlaylistsRequestQueryParameters) == nil {
+		limit = getCurrentUsersPlaylistsRequestQueryParameters.Limit
+		offset = getCurrentUsersPlaylistsRequestQueryParameters.Offset
 
 		if limit == "" {
 			limit = "20"
@@ -35,34 +35,33 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 		offset = "0"
 	}
 
+	currentUsersPlaylistsResponse, errorResponse := services.GetCurrentUsersPlaylists(token, offset, limit)
 
-	clientCurrentUsersPlaylistsResponse, clientErrorResponse := client.GetCurrentUsersPlaylists(token, offset, limit)
-
-	if clientErrorResponse != nil {
-		c.JSON(clientErrorResponse.Status, clientErrorResponse)
+	if errorResponse != nil {
+		c.JSON(errorResponse.Error.Status, errorResponse.Error.Message)
 		return
 	}
 
-	c.JSON(http.StatusOK, clientCurrentUsersPlaylistsResponse)
+	c.JSON(http.StatusOK, currentUsersPlaylistsResponse)
 }
 
 func CombinePlaylists(c *gin.Context) {
 
 	token := c.GetHeader("Authorization")
 
-	var clientCombinePlaylistRequest models.ClientCombinePlaylistRequest
+	var combinePlaylistRequest models.CombinePlaylistRequest
 
-	if err := c.ShouldBindWith(&clientCombinePlaylistRequest, binding.FormPost); err != nil {
+	if err := c.ShouldBindWith(&combinePlaylistRequest, binding.FormPost); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	clientCombineResponse, clientErrorResponse := client.CombinePlaylists(clientCombinePlaylistRequest.UserID, clientCombinePlaylistRequest.Name, clientCombinePlaylistRequest.Description, clientCombinePlaylistRequest.PlaylistIDs, token)
+	combineResponse, errorResponse := services.CombinePlaylists(combinePlaylistRequest.UserID, combinePlaylistRequest.Name, combinePlaylistRequest.Description, combinePlaylistRequest.PlaylistIDs, token)
 
-	if clientErrorResponse != nil {
-		c.JSON(clientErrorResponse.Status, clientErrorResponse.Message)
+	if errorResponse  != nil {
+		c.JSON(errorResponse.Status, errorResponse.Message)
 		return
 	}
 
-	c.JSON(http.StatusCreated, clientCombineResponse)
+	c.JSON(http.StatusCreated, combineResponse)
 }

@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mymixtape-api/client"
-	"github.com/mymixtape-api/client/models"
+	"github.com/mymixtape-api/models"
+	"github.com/mymixtape-api/services"
 )
 
 var (
@@ -15,32 +15,36 @@ var (
 )
 
 func GetAuthorizationUrl(c *gin.Context) {
-	clientAuthorizationUrlResponse, clientErrorResponse := client.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+	
+	authorizationUrlResponse, errorResponse := services.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
-	if clientErrorResponse != nil {
-		c.JSON(clientErrorResponse.Status, clientErrorResponse)
+	if errorResponse != nil {
+
+		c.JSON(errorResponse.Error.Status, &models.ErrorResponse{
+			Message: errorResponse.Error.Message,
+			Status: errorResponse.Error.Status,
+		})
 		return
 	}
 
-
-	c.JSON(http.StatusOK, clientAuthorizationUrlResponse)
+	c.JSON(http.StatusOK, authorizationUrlResponse)
 }
 
 func GetAccessToken(c *gin.Context) {
 
-	var clientAccessTokenRequest models.ClientAccessTokenRequest
+	var accessTokenRequest models.AccessTokenRequest
 
-	if err := c.BindJSON(&clientAccessTokenRequest); err != nil {
+	if err := c.BindJSON(&accessTokenRequest); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
-	clientAccessTokenResponse, clientErrorResponse := client.GetAccessToken(clientAccessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
-	if clientErrorResponse != nil {
-		c.JSON(clientErrorResponse.Status, clientErrorResponse.Message)
+	if accessTokenResponse != nil {
+		c.JSON(http.StatusBadRequest, errorResponse.Description)
 		return
 	}
 
-	c.JSON(http.StatusOK, clientAccessTokenResponse)
+	c.JSON(http.StatusOK, accessTokenResponse)
 }

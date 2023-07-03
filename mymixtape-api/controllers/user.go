@@ -4,19 +4,19 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mymixtape-api/client"
+	"github.com/mymixtape-api/services"
 )
 
 func GetCurrentUsersProfile(c *gin.Context) {
 
 	token := c.GetHeader("Authorization")
 
-	clientCurrentUsersProfileResponse, clientErrorResponse := client.GetCurrentUsersProfile(token)
+	currentUsersProfileResponse, errorResponse := services.GetCurrentUsersProfile(token)
 
-	if clientErrorResponse != nil {
-		c.JSON(clientErrorResponse.Status, clientErrorResponse)
+	if errorResponse != nil {
+		c.JSON(errorResponse.Error.Status, errorResponse)
 		return
 	}
 
-	c.JSON(http.StatusOK, clientCurrentUsersProfileResponse)
+	c.JSON(http.StatusOK, currentUsersProfileResponse)
 }

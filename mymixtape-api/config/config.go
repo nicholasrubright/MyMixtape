@@ -31,7 +31,7 @@ func SetServerConfig() {
 }
 
 func InitConfig() {
-	godotenv.Load("../.env")
+	godotenv.Load(".env")
 
 	SPOTIFY_CLIENT_ID = os.Getenv("SPOTIFY_CLIENT_ID")
 	SPOTIFY_CLIENT_SECRET = os.Getenv("SPOTIFY_CLIENT_SECRET")
