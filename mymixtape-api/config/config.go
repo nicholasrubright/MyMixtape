@@ -4,8 +4,6 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-
-	"github.com/mymixtape-api/controllers"
 )
 
 var (
@@ -23,12 +21,12 @@ var (
 	API_ENVIRONMENT = ""
 )
 
-func SetServerConfig() {
-	// Set up Config
-	controllers.SPOTIFY_CLIENT_ID = SPOTIFY_CLIENT_ID
-	controllers.SPOTIFY_CLIENT_SECRET = SPOTIFY_CLIENT_SECRET
-	controllers.SPOTIFY_CLIENT_REDIRECT = SPOTIFY_CLIENT_REDIRECT
-}
+// func SetServerConfig() {
+// 	// Set up Config
+// 	controllers.SPOTIFY_CLIENT_ID = SPOTIFY_CLIENT_ID
+// 	controllers.SPOTIFY_CLIENT_SECRET = SPOTIFY_CLIENT_SECRET
+// 	controllers.SPOTIFY_CLIENT_REDIRECT = SPOTIFY_CLIENT_REDIRECT
+// }
 
 func InitConfig() {
 	godotenv.Load(".env")
@@ -43,5 +41,5 @@ func InitConfig() {
 
 	API_ENVIRONMENT = os.Getenv("API_ENVIRONMENT")
 
-	SetServerConfig()
+	// SetServerConfig()
 }

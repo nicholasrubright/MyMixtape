@@ -6,17 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mymixtape-api/models"
 	"github.com/mymixtape-api/services"
-)
-
-var (
-	SPOTIFY_CLIENT_ID = ""
-	SPOTIFY_CLIENT_SECRET = ""
-	SPOTIFY_CLIENT_REDIRECT = ""
+	"github.com/mymixtape-api/config"
 )
 
 func GetAuthorizationUrl(c *gin.Context) {
 	
-	authorizationUrlResponse, errorResponse := services.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+	authorizationUrlResponse, errorResponse := services.GetAuthorizationUrl(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
 
 	if errorResponse != nil {
 		c.JSON(errorResponse.Status, &models.ErrorResponse{
@@ -38,7 +33,7 @@ func GetAccessToken(c *gin.Context) {
 		return
 	}
 
-	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
+	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
 
 	if errorResponse != nil {
 		c.JSON(http.StatusBadRequest, errorResponse.Message)

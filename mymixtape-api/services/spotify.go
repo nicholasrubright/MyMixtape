@@ -1,13 +1,15 @@
 package services
 
 import (
+	"fmt"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
 
+	"github.com/mymixtape-api/constants"
 	"github.com/mymixtape-api/internal"
 	"github.com/mymixtape-api/models"
-	"github.com/mymixtape-api/utils"
 )
 
 const (
@@ -25,7 +27,7 @@ var (
 // Authorization Endpoints
 func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri string) (*models.AuthorizationUrlResponse, *models.ErrorResponse) {
 
-	state := utils.GenerateAuthorizationState()
+	state := GenerateAuthorizationState()
 
 	parameters := url.Values{
 		"client_id": {client_id},
@@ -36,7 +38,7 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 		"show_dialog": {SHOW_DIALOG},
 	}
 
-	authorizationUrl := utils.GenerateAuthorizationUrl(SPOTIFY_AUTHORIZATION_URL, parameters)
+	authorizationUrl := GenerateAuthorizationUrl(SPOTIFY_AUTHORIZATION_URL, parameters)
 
 	return &models.AuthorizationUrlResponse{
 		Url: authorizationUrl,
@@ -276,10 +278,10 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 			continue
 		}
 
-		tracks := utils.NewPlaylistTracks(playlistItemsResponse)
+		tracks := NewPlaylistTracks(playlistItemsResponse)
 
 		for _, track := range tracks.Tracks {
-			selectedPlaylistsTrackList = append(selectedPlaylistsTrackList, utils.GetSpotifyTrackURI((track.ID)))
+			selectedPlaylistsTrackList = append(selectedPlaylistsTrackList, GetSpotifyTrackURI((track.ID)))
 		}
 	}
 
@@ -297,4 +299,47 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 		Name: createPlaylistResponse.Name,
 	}, nil
 
+}
+
+// Utility Functions
+
+// Generate State for Spotify Api
+func GenerateAuthorizationState() string {
+	text := make([]rune, constants.STATE_LENGTH)
+	for i := range text {
+		text[i] = constants.CHARACTERS[rand.Intn(len(constants.CHARACTERS))]
+	}
+
+	return string(text)
+}
+
+func GenerateAuthorizationUrl(authorization_url string, parameters url.Values) string {
+	return fmt.Sprintf("%v?%v", authorization_url, parameters.Encode())
+}
+
+// Creates the base API url
+func GetSpotifyApiUrl(endpoint string) string {
+	return fmt.Sprintf("%v://%v/%v/%v", constants.SCHEME, constants.HOST, constants.VERSION, endpoint)
+}
+
+func GetSpotifyTrackURI(track_id string) string {
+	return "spotify:track:" + track_id
+}
+
+func NewPlaylistTracks(playlistItemsResponse *models.SpotifyPlaylistItemsResponse) *internal.PlaylistTracks {
+	var tracks []struct {
+		ID	string	`json:"id"`
+	}
+
+	tracks = make([]struct { ID string `json:"id"`}, 0)
+
+	for _, playlistItem := range playlistItemsResponse.Items {
+		tracks = append(tracks, struct{ID string "json:\"id\""}{
+			playlistItem.Track.ID,
+		})
+	}
+
+	return &internal.PlaylistTracks{
+		Tracks: tracks,
+	}
 }
