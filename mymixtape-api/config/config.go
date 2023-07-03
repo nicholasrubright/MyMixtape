@@ -21,13 +21,6 @@ var (
 	API_ENVIRONMENT = ""
 )
 
-// func SetServerConfig() {
-// 	// Set up Config
-// 	controllers.SPOTIFY_CLIENT_ID = SPOTIFY_CLIENT_ID
-// 	controllers.SPOTIFY_CLIENT_SECRET = SPOTIFY_CLIENT_SECRET
-// 	controllers.SPOTIFY_CLIENT_REDIRECT = SPOTIFY_CLIENT_REDIRECT
-// }
-
 func InitConfig() {
 	godotenv.Load(".env")
 
@@ -40,6 +33,4 @@ func InitConfig() {
 	PORT = os.Getenv("PORT")
 
 	API_ENVIRONMENT = os.Getenv("API_ENVIRONMENT")
-
-	// SetServerConfig()
 }
