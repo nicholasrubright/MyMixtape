@@ -244,6 +244,7 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) *
 	var spotifyAddTracksToPlaylistResponse *models.SpotifyAddItemsToPlaylistResponse
 
 	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", &spotifyAddTracksToPlaylistRequest, &spotifyAddTracksToPlaylistResponse, token); err != nil {
+		
 		return &models.ErrorResponse{
 			Status: http.StatusInternalServerError,
 			Message: err.Error(),
@@ -278,7 +279,7 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 		tracks := utils.NewPlaylistTracks(playlistItemsResponse)
 
 		for _, track := range tracks.Tracks {
-			selectedPlaylistsTrackList = append(selectedPlaylistsTrackList, utils.GetSpotifyApiUrl((track.ID)))
+			selectedPlaylistsTrackList = append(selectedPlaylistsTrackList, utils.GetSpotifyTrackURI((track.ID)))
 		}
 	}
 

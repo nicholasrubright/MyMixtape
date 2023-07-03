@@ -6,5 +6,5 @@ func main() {
 	
 	engine := router.InitRoutes()
 
-	panic(engine.Run())
+	engine.Run()
 }

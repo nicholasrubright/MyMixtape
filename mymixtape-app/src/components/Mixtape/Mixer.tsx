@@ -60,6 +60,7 @@ export function Mixer() {
   };
 
   const createNewPlaylist = async (e: any) => {
+    e.preventDefault();
     const ids = getSelectedPlaylists(playlists, selectedPlaylists);
 
     // Client validation for now
