@@ -70,7 +70,6 @@ func GetCurrentUsersProfile(token string) (*models.CurrentUsersProfileResponse, 
 		}
 	}
 
-	
 	return &models.CurrentUsersProfileResponse {
 		ID: spotifyCurrentUsersProfileResponse.ID,
 		Name: spotifyCurrentUsersProfileResponse.DisplayName,

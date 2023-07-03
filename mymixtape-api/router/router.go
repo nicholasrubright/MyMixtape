@@ -18,7 +18,6 @@ var (
 	CORS_MAX_AGE = 12 * time.Hour
 )
 
-
 func InitRoutes() *gin.Engine {
 
 	config.InitConfig()
