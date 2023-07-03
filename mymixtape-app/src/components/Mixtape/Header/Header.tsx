@@ -1,47 +1,36 @@
 "use client";
-import { useContext, useEffect } from "react";
-import {
-  AlertContext,
-  AlertContextType,
-  UserContext,
-  UserContextType,
-  MixerContext,
-  MixerContextType,
-} from "@/context";
-import { AlertType } from "@/types/models";
+import { api } from "@/api/mixtape.api";
 import Loader from "@/components/shared/Loader";
+import { Profile } from "@/types/models";
 import { Poppins } from "next/font/google";
+import { useEffect, useState } from "react";
 
 const font = Poppins({
   weight: "500",
   subsets: ["latin"],
 });
 
-export default function Header() {
-  const { mixerState } = useContext(MixerContext) as MixerContextType;
-  const { token } = mixerState;
+export default function Header(props: HeaderProps) {
+  const { token } = props;
 
-  const { setAlert } = useContext(AlertContext) as AlertContextType;
-
-  const { userState, getProfile } = useContext(UserContext) as UserContextType;
-
-  const { profile, isLoading } = userState;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [profile, setProfile] = useState<Profile>({
+    id: "0",
+    name: "Test User",
+    images: [],
+  });
 
   useEffect(() => {
     const getData = async () => {
-      try {
-        await getProfile(token as string);
-      } catch (error) {
-        setAlert(AlertType.ERROR, String(error));
-      }
+      const response = await api.getUserProfile(token);
+
+      setProfile(response);
     };
 
-    if (token !== null) {
-      getData();
-    }
+    setIsLoading(true);
+    getData();
+    setIsLoading(false);
   }, [token]);
-
-  const { name, images } = profile;
 
   if (isLoading) {
     return (
@@ -51,12 +40,20 @@ export default function Header() {
     );
   }
 
+  const getUserProfileImage = () => {
+    if (profile.images.length > 0) {
+      return profile.images[0].url;
+    }
+
+    return "";
+  };
+
   return (
     <div>
       <div className="row justify-content-center mb-3">
         <div className="col-auto">
           <img
-            src={images[0].url}
+            src={getUserProfileImage()}
             className="rounded-circle shadow border border-3"
             height="100px"
             width="100px"
@@ -66,10 +63,14 @@ export default function Header() {
       <div className="row justify-content-center">
         <div className="col-auto">
           <h3 className={font.className}>
-            Welcome, <span className="logo">{name}</span>
+            Welcome, <span className="logo">{profile.name}</span>
           </h3>
         </div>
       </div>
     </div>
   );
+}
+
+interface HeaderProps {
+  token: string;
 }
