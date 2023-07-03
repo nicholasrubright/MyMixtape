@@ -50,8 +50,8 @@ func GetAccessToken(code string, client_id string, client_secret, redirect_uri s
 	
 	if err := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret); err != nil {
 		return nil, &models.ErrorResponse{
-			Message: err.Error(),
-			Status: http.StatusInternalServerError,
+			Message: err.Message,
+			Status: err.StatusCode,
 		}
 	}
 
@@ -67,8 +67,8 @@ func GetCurrentUsersProfile(token string) (*models.CurrentUsersProfileResponse, 
 
 	if err := REQUEST_MANAGER.GetInto("/me", &spotifyCurrentUsersProfileResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
+			Message: err.Message,
+			Status: err.StatusCode,
 		}
 	}
 
@@ -95,8 +95,8 @@ func GetCurrentUsersPlaylists(token string, offset string, limit string) (*model
 
 	if err := REQUEST_MANAGER.GetInto(endpoint, &spotifyCurrentUsersPlaylistsResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
+			Message: err.Message,
+			Status: err.StatusCode,
 		}
 	}
 
@@ -173,8 +173,8 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 
 	if err := REQUEST_MANAGER.GetInto(api_endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
-			Message: err.Error(),
-			Status: http.StatusInternalServerError,
+			Message: err.Message,
+			Status: err.StatusCode,
 		}
 	}
 
@@ -198,8 +198,8 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 
 		if err := REQUEST_MANAGER.GetInto(endpoint, &nextSpotifyPlaylistItemsResponse, token); err != nil {
 			return nil, &models.ErrorResponse{
-				Status: http.StatusInternalServerError,
-				Message: err.Error(),
+				Message: err.Message,
+				Status: err.StatusCode,
 			}
 			
 		}
@@ -224,8 +224,8 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 
 	if err := REQUEST_MANAGER.PostInto("/users/" + user_id + "/playlists", &spotifyCreatePlaylistRequest, &spotifyCreatePlaylistResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
+			Message: err.Message,
+			Status: err.StatusCode,
 		}
 	}
 
@@ -248,8 +248,8 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) *
 	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", &spotifyAddTracksToPlaylistRequest, &spotifyAddTracksToPlaylistResponse, token); err != nil {
 		
 		return &models.ErrorResponse{
-			Status: http.StatusInternalServerError,
-			Message: err.Error(),
+			Message: err.Message,
+			Status: err.StatusCode,
 		}
 	}
 

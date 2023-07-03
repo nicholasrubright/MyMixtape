@@ -3,6 +3,7 @@ package internal
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
@@ -41,7 +42,7 @@ func NewRequestManager(client Doer) *RequestManager {
 	}
 }
 
-func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id string, client_secret string) error {
+func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id string, client_secret string) *constants.ApiError {
 	
 	formData := url.Values{
 		"grant_type": {GRANT_TYPE},
@@ -52,7 +53,8 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	request, err := http.NewRequest("POST", ACCESS_TOKEN_URL, strings.NewReader(formData.Encode()))
 
 	if err != nil {
-		return err
+		errObj := constants.StatusToError[http.StatusInternalServerError]
+		return &errObj
 	}
 
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -61,14 +63,16 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	response, err := rm.Client.Do(request)
 
 	if err != nil {
-		return err
+		errObj := constants.StatusToError[http.StatusInternalServerError]
+		return &errObj
 	}
 
 	if response.StatusCode == http.StatusServiceUnavailable {
 		time.Sleep(time.Second)
 		response, err = rm.Client.Do(request)
 		if err != nil {
-			return err
+			errObj := constants.StatusToError[http.StatusInternalServerError]
+			return &errObj
 		}
 	}
 
@@ -76,18 +80,19 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 		err, ok := constants.StatusToError[response.StatusCode]
 
 		if !ok {
-			err = constants.Error{
+			err = constants.ApiError{
 				Message: "unknown error reason",
 				StatusCode: response.StatusCode,
 			}
 		}
-		return err
+		return &err
 	}
 
 	var accessTokenResponse *models.SpotifyAccessTokenResponse
 
 	if err := json.NewDecoder(response.Body).Decode(&accessTokenResponse); err != nil {
-		return err
+		errObj := constants.StatusToError[http.StatusInternalServerError]
+		return &errObj
 	}
 
 	rm.Token = accessTokenResponse.AccessToken
@@ -96,29 +101,33 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 	return nil
 }
 
-func (rm *RequestManager) GetInto(endpoint string, target interface{}, token string) error {
+func (rm *RequestManager) GetInto(endpoint string, target interface{}, token string) *constants.ApiError {
 	response, err := rm.Get(endpoint, token)
 
 	if err != nil {
-		return err
+		errObj := constants.StatusToError[http.StatusInternalServerError]
+		return &errObj
 	}
 
 	if err := json.NewDecoder(response.Body).Decode(target); err != nil {
-		return err
+		errObj := constants.StatusToError[http.StatusInternalServerError]
+		return &errObj
 	}
 
 	return nil
 }
 
-func (rm *RequestManager) PostInto(endpoint string, body, target interface{}, token string) error {
+func (rm *RequestManager) PostInto(endpoint string, body, target interface{}, token string) *constants.ApiError {
 	response, err := rm.Post(endpoint, body, token)
 
 	if err != nil {
-		return err
+		errObj := constants.StatusToError[http.StatusInternalServerError]
+		return &errObj
 	}
 
 	if err := json.NewDecoder(response.Body).Decode(target); err != nil {
-		return err
+		errObj := constants.StatusToError[http.StatusInternalServerError]
+		return &errObj
 	}
 
 	return nil
@@ -173,12 +182,12 @@ func (rm *RequestManager) DoRequest(method, endpoint string, body io.Reader, tok
 	if response.StatusCode < 200 || response.StatusCode > 299 {
 		err, ok := constants.StatusToError[response.StatusCode]
 		if !ok {
-			err = constants.Error{
+			err = constants.ApiError{
 				Message: "unknown error reason",
 				StatusCode: response.StatusCode,
 			}
 		}
-		return nil, err
+		return nil, errors.New(err.Message)
 	}
 
 	return response, nil
