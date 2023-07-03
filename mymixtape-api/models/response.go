@@ -3,7 +3,6 @@ package models
 // Authorization
 type AuthorizationUrlResponse struct {
 	Url		string	`json:"url"`
-	ValidToken	bool	`json:"valid_token"`
 }
 
 type AccessTokenResponse struct {
@@ -54,6 +53,11 @@ type PlaylistItemsResponse struct {
 
 type CombinePlaylistResponse struct {
 	ID	string	`json:"id"`
+	Name	string	`json:"name"`
+}
+
+type CreatePlaylistResponse struct {
+	ID 		string	`json:"id"`
 	Name	string	`json:"name"`
 }
 

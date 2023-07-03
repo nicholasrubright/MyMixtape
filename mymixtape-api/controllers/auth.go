@@ -19,10 +19,9 @@ func GetAuthorizationUrl(c *gin.Context) {
 	authorizationUrlResponse, errorResponse := services.GetAuthorizationUrl(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
 	if errorResponse != nil {
-
-		c.JSON(errorResponse.Error.Status, &models.ErrorResponse{
-			Message: errorResponse.Error.Message,
-			Status: errorResponse.Error.Status,
+		c.JSON(errorResponse.Status, &models.ErrorResponse{
+			Message: errorResponse.Message,
+			Status: errorResponse.Status,
 		})
 		return
 	}
@@ -41,8 +40,8 @@ func GetAccessToken(c *gin.Context) {
 
 	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_CLIENT_REDIRECT)
 
-	if accessTokenResponse != nil {
-		c.JSON(http.StatusBadRequest, errorResponse.Description)
+	if errorResponse != nil {
+		c.JSON(http.StatusBadRequest, errorResponse.Message)
 		return
 	}
 

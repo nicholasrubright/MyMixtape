@@ -5,9 +5,9 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/mymixtape-api/internal"
 	"github.com/mymixtape-api/models"
 	"github.com/mymixtape-api/utils"
-	"github.com/mymixtape-api/internal"
 )
 
 const (
@@ -55,7 +55,6 @@ func GetAccessToken(code string, client_id string, client_secret, redirect_uri s
 
 	return &models.AccessTokenResponse{
 		Token: REQUEST_MANAGER.Token,
-		ExpiresIn: REQUEST_MANAGER.TokenExpires,
 	}, nil
 }
 
@@ -229,11 +228,14 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 		}
 	}
 
-	return spotifyCreatePlaylistResponse, nil
+	return &models.CreatePlaylistResponse{
+		ID: spotifyCreatePlaylistResponse.ID,
+		Name: spotifyCreatePlaylistResponse.Name,
+	}, nil
 }
 
 // Add tracks to the newly created playlist
-func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) (*models.AddItemsToPlaylistResponse, *models.ErrorResponse) {
+func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) *models.ErrorResponse {
 	
 	spotifyAddTracksToPlaylistRequest := &models.SpotifyAddItemsToPlaylistRequest{
 		URIs: track_ids,
@@ -243,13 +245,13 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) (
 	var spotifyAddTracksToPlaylistResponse *models.SpotifyAddItemsToPlaylistResponse
 
 	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", &spotifyAddTracksToPlaylistRequest, &spotifyAddTracksToPlaylistResponse, token); err != nil {
-		return nil, &models.ErrorResponse{
+		return &models.ErrorResponse{
 			Status: http.StatusInternalServerError,
 			Message: err.Error(),
 		}
 	}
-	
-	return spotifyAddTracksToPlaylistResponse, nil
+
+	return nil
 }
 
 func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string, token string) (*models.CombinePlaylistResponse, *models.ErrorResponse) {
@@ -259,8 +261,8 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 
 	if errorResponse != nil {
 		return nil, &models.ErrorResponse{
-			Message: errorResponse.Error.Message,
-			Status: errorResponse.Error.Status,
+			Message: errorResponse.Message,
+			Status: errorResponse.Status,
 		}
 	}
 
@@ -281,12 +283,12 @@ func CombinePlaylists(user_id string, playlist_name string, playlist_description
 		}
 	}
 
-	_, errorResponse = AddTracksToPlaylist(createPlaylistResponse.ID, selectedPlaylistsTrackList, token)
+	errorResponse = AddTracksToPlaylist(createPlaylistResponse.ID, selectedPlaylistsTrackList, token)
 
 	if errorResponse != nil {
 		return nil, &models.ErrorResponse{
-			Status: errorResponse.Error.Status,
-			Message: errorResponse.Error.Message,
+			Status: errorResponse.Status,
+			Message: errorResponse.Message,
 		}
 	}
 

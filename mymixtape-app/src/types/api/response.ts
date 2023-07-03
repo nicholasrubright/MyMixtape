@@ -1,6 +1,5 @@
 export type AuthorizationUrlResponse = {
   url: string;
-  valid_token: boolean;
 };
 
 export type AccessTokenResponse = {

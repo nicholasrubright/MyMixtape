@@ -38,7 +38,7 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 	currentUsersPlaylistsResponse, errorResponse := services.GetCurrentUsersPlaylists(token, offset, limit)
 
 	if errorResponse != nil {
-		c.JSON(errorResponse.Error.Status, errorResponse.Error.Message)
+		c.JSON(errorResponse.Status, errorResponse.Message)
 		return
 	}
 
