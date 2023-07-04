@@ -1,44 +1,34 @@
-"use client";
-import { useContext, useEffect } from "react";
 import { Mixer } from "./Mixer";
-import { MixerContext } from "@/context/Mixer/MixerContext";
-import { MixerContextType } from "@/context/Mixer/types";
-import { AlertContextType } from "@/context/Alert/types";
-import { AlertContext } from "@/context/Alert/AlertContext";
-import Alert from "../shared/Alert";
 import Header from "./Header/Header";
+import { api } from "@/api/mixtape.api";
 
-export default function MixerPage(props: MixerPageProps) {
+export default async function MixerPage(props: MixerPageProps) {
   const { accessToken } = props;
 
-  const { setToken } = useContext(MixerContext) as MixerContextType;
-  const { alertState } = useContext(AlertContext) as AlertContextType;
+  const userProfileResponse = await getUserProfile(accessToken);
 
-  const { alerts } = alertState;
-
-  useEffect(() => {
-    setToken(accessToken);
-  }, [accessToken]);
-
-  useEffect(() => {}, [alerts]);
+  const userPlaylistsResponse = await getUserPlaylists(accessToken);
 
   return (
     <div className="container py-5 px-3 bg-light mt-5 rounded-5 bg-opacity-10 shadow-lg">
       <div className="row mb-3">
-        <Header />
+        <Header profileResponse={userProfileResponse} />
       </div>
       <div className="row p-0">
-        {alerts.length > 0 && (
-          <div>
-            <Alert alerts={alertState.alerts} />
-          </div>
-        )}
         <div>
-          <Mixer />
+          <Mixer userPlaylistResponse={userPlaylistsResponse} />
         </div>
       </div>
     </div>
   );
+}
+
+async function getUserProfile(token: string) {
+  return await api.getUserProfile(token);
+}
+
+async function getUserPlaylists(token: string) {
+  return await api.getUserPlaylists(token, 0, 20);
 }
 
 interface MixerPageProps {

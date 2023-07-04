@@ -100,7 +100,6 @@ func GetCurrentUsersPlaylists(token string, offset string, limit string) (*model
 		}
 	}
 
-
 	var items []struct {
 		ID     string `json:"id"`
 		Images []struct {
