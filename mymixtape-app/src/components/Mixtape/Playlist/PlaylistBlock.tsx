@@ -4,7 +4,6 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
   const { id, name, images, active, selectPlaylist } = props;
 
   const image = images[0];
-
   return (
     <div className="container rounded py-3">
       <div
