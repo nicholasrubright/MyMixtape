@@ -51,7 +51,7 @@ export default function ScrollableList(props: ScrollableListProps) {
           <p className="text-center">No Playlists</p>
         </div>
       )}
-      {!isEmpty && items}
+      {!isEmpty && !isLoading && items}
     </div>
   );
 }

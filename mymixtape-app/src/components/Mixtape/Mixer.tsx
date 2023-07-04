@@ -2,21 +2,15 @@
 import { useEffect, useState } from "react";
 import Form from "./Mixer/Form";
 import Playlists from "./Playlist/Playlists";
-import { AlertType, Playlist, PlaylistMapping } from "@/types/models";
+import { Playlist, PlaylistMapping } from "@/types/models";
 import {
   createPlaylistMapping,
   getSelectedPlaylists,
   remapPlaylistMapping,
 } from "@/utils/playlists";
 
-import { Work_Sans } from "next/font/google";
-import { api } from "@/api/mixtape.api";
 import { UserPlaylistsResponse } from "@/types/api/response";
-
-const font = Work_Sans({
-  weight: "400",
-  subsets: ["latin"],
-});
+import MixerLayout from "../layouts/MixerLayout";
 
 export function Mixer(props: MixerProps) {
   const { userPlaylistResponse } = props;
@@ -94,31 +88,25 @@ export function Mixer(props: MixerProps) {
   };
 
   return (
-    <div className={`container px-4 py-5 ${font.className}`}>
-      <div className="row">
-        <div className="col-lg-7">
-          <Playlists
-            playlists={playlists}
-            selectedPlaylists={selectedPlaylists}
-            selectPlaylist={selectPlaylist}
-            getMoreData={getMoreData}
-            maxPlaylists={maxPlaylists}
-            isLoading={false}
-          />
-        </div>
-        <div className="col-lg-5">
-          <Form
-            newPlaylistName={newPlaylistName}
-            newPlaylistDescription={newPlaylistDescription}
-            handleNewPlaylistName={handleNewPlaylistName}
-            handleNewPlaylistDescription={handleNewPlaylistDescription}
-            createNewPlaylist={createNewPlaylist}
-            isDisabled={isCombining || false}
-            isCombining={isCombining}
-          />
-        </div>
-      </div>
-    </div>
+    <MixerLayout>
+      <Playlists
+        playlists={playlists}
+        selectedPlaylists={selectedPlaylists}
+        selectPlaylist={selectPlaylist}
+        getMoreData={getMoreData}
+        maxPlaylists={maxPlaylists}
+        isLoading={false}
+      />
+      <Form
+        newPlaylistName={newPlaylistName}
+        newPlaylistDescription={newPlaylistDescription}
+        handleNewPlaylistName={handleNewPlaylistName}
+        handleNewPlaylistDescription={handleNewPlaylistDescription}
+        createNewPlaylist={createNewPlaylist}
+        isDisabled={isCombining || false}
+        isCombining={isCombining}
+      />
+    </MixerLayout>
   );
 }
 

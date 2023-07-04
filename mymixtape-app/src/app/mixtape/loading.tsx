@@ -1,3 +1,9 @@
+import Loader from "@/components/shared/Loader";
+
 export default function Loading() {
-  return <p>Loading...</p>;
+  return (
+    <div className="container text-center py-5">
+      <Loader />
+    </div>
+  );
 }
