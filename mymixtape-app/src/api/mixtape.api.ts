@@ -43,7 +43,7 @@ const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;
 
   const response = await checkStatus<UserProfileResponse>(
-    fetch(`${clientBaseUrl}/api/user`, {
+    fetch(`${serverBaseUrl}/api/user`, {
       method: "GET",
       headers: new Headers({
         Authorization: token,
@@ -69,7 +69,7 @@ const getUserPlaylists = async (
   const urlParams = new URLSearchParams(params);
 
   const response = await checkStatus<UserPlaylistsResponse>(
-    fetch(`${clientBaseUrl}/api/playlists?${urlParams}`, {
+    fetch(`${serverBaseUrl}/api/playlists?${urlParams}`, {
       method: "GET",
       headers: new Headers({
         Authorization: token,

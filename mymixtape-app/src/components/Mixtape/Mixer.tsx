@@ -11,6 +11,7 @@ import {
 
 import { Work_Sans } from "next/font/google";
 import { api } from "@/api/mixtape.api";
+import { UserPlaylistsResponse } from "@/types/api/response";
 
 const font = Work_Sans({
   weight: "400",
@@ -18,9 +19,8 @@ const font = Work_Sans({
 });
 
 export function Mixer(props: MixerProps) {
-  const { token } = props;
+  const { userPlaylistResponse } = props;
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const [newPlaylistName, setNewPlaylistName] = useState<string>("");
@@ -49,18 +49,18 @@ export function Mixer(props: MixerProps) {
     if (newPlaylistName !== "" && newPlaylistDescription !== "") {
       setIsCombining(true);
 
-      try {
-        if (token !== null) {
-          // await api.combinePlaylist({ ids, newPlaylistName, newPlaylistDescription, profile.id}, token);
-          // await api.combinePlaylist(
-          //   token,
-          //   {ids,
-          //   newPlaylistName,
-          //   newPlaylistDescription,
-          //   profile.id}
-          // );
-        }
-      } catch (error) {}
+      // try {
+      //   if (token !== null) {
+      //     // await api.combinePlaylist({ ids, newPlaylistName, newPlaylistDescription, profile.id}, token);
+      //     // await api.combinePlaylist(
+      //     //   token,
+      //     //   {ids,
+      //     //   newPlaylistName,
+      //     //   newPlaylistDescription,
+      //     //   profile.id}
+      //     // );
+      //   }
+      // } catch (error) {}
 
       setIsCombining(false);
     }
@@ -84,18 +84,8 @@ export function Mixer(props: MixerProps) {
   };
 
   useEffect(() => {
-    const getData = async () => {
-      const response = await api.getUserPlaylists(token, 0, 20);
-      setPlaylists(response.items);
-    };
-
-    setIsLoading(true);
-    getData();
-    setIsLoading(false);
-
-    setMaxPlaylists(playlists.length);
-    setMapping();
-  }, [token]);
+    setPlaylists(userPlaylistResponse.items as Playlist[]);
+  }, [userPlaylistResponse]);
 
   const getMoreData = async (offset: number, limit: number) => {
     //const response = await api.getUserPlaylists(token, offset, limit);
@@ -113,7 +103,7 @@ export function Mixer(props: MixerProps) {
             selectPlaylist={selectPlaylist}
             getMoreData={getMoreData}
             maxPlaylists={maxPlaylists}
-            isLoading={isLoading}
+            isLoading={false}
           />
         </div>
         <div className="col-lg-5">
@@ -123,7 +113,7 @@ export function Mixer(props: MixerProps) {
             handleNewPlaylistName={handleNewPlaylistName}
             handleNewPlaylistDescription={handleNewPlaylistDescription}
             createNewPlaylist={createNewPlaylist}
-            isDisabled={isCombining || isLoading}
+            isDisabled={isCombining || false}
             isCombining={isCombining}
           />
         </div>
@@ -133,5 +123,5 @@ export function Mixer(props: MixerProps) {
 }
 
 interface MixerProps {
-  token: string;
+  userPlaylistResponse: UserPlaylistsResponse;
 }
