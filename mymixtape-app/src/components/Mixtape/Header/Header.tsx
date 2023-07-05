@@ -1,5 +1,4 @@
 "use client";
-import { api } from "@/api/mixtape.api";
 import ProfileImage from "@/components/controls/ProfileImage";
 import ProfileName from "@/components/controls/ProfileName";
 import HeaderLayout from "@/components/layouts/HeaderLayout";
@@ -23,18 +22,9 @@ export default function Header(props: HeaderProps) {
   const { profileResponse } = props;
 
   const [profile, setProfile] = useState<Profile>(defaultProfile);
-  const [count, setCount] = useState<number>(0);
 
   useEffect(() => {
     setProfile(profileResponse as Profile);
-
-    const getData = async () => {
-      const response = await api.getTestProfile();
-
-      setCount(response.count);
-    };
-
-    getData();
   }, [profileResponse]);
 
   const getUserProfileImage = () => {
@@ -48,7 +38,7 @@ export default function Header(props: HeaderProps) {
   return (
     <HeaderLayout>
       <ProfileImage image={getUserProfileImage()} isLoading={false} />
-      <ProfileName name={profile.name} isLoading={false} count={count} />
+      <ProfileName name={profile.name} isLoading={false} />
     </HeaderLayout>
   );
 }

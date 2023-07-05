@@ -14,14 +14,13 @@ const getPlaceholder = () => {
 };
 
 export default function ProfileName(props: ProfileNameProps) {
-  const { name, isLoading, count } = props;
+  const { name, isLoading } = props;
 
   if (isLoading) return getPlaceholder();
 
   return (
     <h3 className={font.className}>
       Welcome, <span className="logo">{name}</span>
-      <h4>Count: {count}</h4>
     </h3>
   );
 }
@@ -29,5 +28,4 @@ export default function ProfileName(props: ProfileNameProps) {
 interface ProfileNameProps {
   name: string;
   isLoading: boolean;
-  count: number;
 }
