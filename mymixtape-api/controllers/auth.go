@@ -2,15 +2,14 @@ package controllers
 
 import (
 	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/mymixtape-api/config"
 	"github.com/mymixtape-api/models"
 	"github.com/mymixtape-api/services"
-	"github.com/mymixtape-api/config"
 )
 
 func GetAuthorizationUrl(c *gin.Context) {
-	
+
 	authorizationUrlResponse, errorResponse := services.GetAuthorizationUrl(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
 
 	if errorResponse != nil {

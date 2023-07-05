@@ -72,6 +72,8 @@ func InitRoutes() *gin.Engine {
 		})
 
 		apiRoutes.GET("/test", controllers.TestProfile)
+
+		apiRoutes.GET("/session", controllers.GetSession)
 	}
 
 	return router
