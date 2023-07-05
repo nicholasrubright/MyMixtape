@@ -3,6 +3,7 @@ import {
   AccessTokenResponse,
   AuthorizationUrlResponse,
   CombinePlaylistResponse,
+  TestProfileResponse,
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "../types/api/response";
@@ -109,10 +110,21 @@ const combinePlaylist = async (
   return response;
 };
 
+const getTestProfile = async (): Promise<TestProfileResponse> => {
+  const response = await checkStatus<TestProfileResponse>(
+    fetch(`${clientBaseUrl}/api/test`, {
+      method: "GET",
+    })
+  );
+
+  return response;
+};
+
 export const api = {
   getAuthorizationUrl,
   getAccessToken,
   getUserProfile,
   getUserPlaylists,
   combinePlaylist,
+  getTestProfile,
 };

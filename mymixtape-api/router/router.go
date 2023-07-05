@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 
 	"github.com/mymixtape-api/config"
@@ -23,6 +25,10 @@ func InitRoutes() *gin.Engine {
 	config.InitConfig()
 
 	router := gin.Default()
+
+	// Session
+	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("mysession", store))
 
 	CORS_ALLOW_ORIGINS = []string{config.APP_CLIENT_ADDRESS, config.APP_SERVER_ADDRESS}
 
@@ -64,6 +70,10 @@ func InitRoutes() *gin.Engine {
 		apiRoutes.OPTIONS("/playlists", func(c *gin.Context) {
 			c.Done()
 		})
+
+		apiRoutes.GET("/test", controllers.TestProfile)
+
+		apiRoutes.GET("/session", controllers.GetSession)
 	}
 
 	return router
