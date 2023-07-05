@@ -40,10 +40,6 @@ export type CombinePlaylistResponse = {
   name: string;
 };
 
-export type TestProfileResponse = {
-  count: number;
-};
-
 // Error Response
 export type ErrorResponse = {
   status: number;

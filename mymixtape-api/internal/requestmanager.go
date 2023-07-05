@@ -31,9 +31,6 @@ type Doer interface {
 
 type RequestManager struct {
 	Client 	Doer
-	Token	string
-	TokenExpires	int
-	TokenType	string
 }
 
 func NewRequestManager(client Doer) *RequestManager {
@@ -42,7 +39,7 @@ func NewRequestManager(client Doer) *RequestManager {
 	}
 }
 
-func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id string, client_secret string) *constants.ApiError {
+func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id string, client_secret string) (*models.AccessTokenResponse,  *constants.ApiError) {
 	
 	formData := url.Values{
 		"grant_type": {GRANT_TYPE},
@@ -54,7 +51,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 
 	if err != nil {
 		errObj := constants.StatusToError[http.StatusInternalServerError]
-		return &errObj
+		return nil, &errObj
 	}
 
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -64,7 +61,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 
 	if err != nil {
 		errObj := constants.StatusToError[http.StatusInternalServerError]
-		return &errObj
+		return nil, &errObj
 	}
 
 	if response.StatusCode == http.StatusServiceUnavailable {
@@ -72,7 +69,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 		response, err = rm.Client.Do(request)
 		if err != nil {
 			errObj := constants.StatusToError[http.StatusInternalServerError]
-			return &errObj
+			return nil, &errObj
 		}
 	}
 
@@ -85,20 +82,20 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 				StatusCode: response.StatusCode,
 			}
 		}
-		return &err
+		return nil, &err
 	}
 
-	var accessTokenResponse *models.SpotifyAccessTokenResponse
+	var spotifyAccessTokenResponse *models.SpotifyAccessTokenResponse
 
-	if err := json.NewDecoder(response.Body).Decode(&accessTokenResponse); err != nil {
+	if err := json.NewDecoder(response.Body).Decode(&spotifyAccessTokenResponse); err != nil {
 		errObj := constants.StatusToError[http.StatusInternalServerError]
-		return &errObj
+		return nil, &errObj
 	}
 
-	rm.Token = accessTokenResponse.AccessToken
-	rm.TokenExpires = accessTokenResponse.ExpiresIn
-
-	return nil
+	return &models.AccessTokenResponse{
+		Token: spotifyAccessTokenResponse.AccessToken,
+		ExpiresIn: spotifyAccessTokenResponse.ExpiresIn,
+	}, nil
 }
 
 func (rm *RequestManager) GetInto(endpoint string, target interface{}, token string) *constants.ApiError {

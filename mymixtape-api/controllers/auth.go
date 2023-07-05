@@ -2,8 +2,11 @@ package controllers
 
 import (
 	"net/http"
+
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/mymixtape-api/config"
+	"github.com/mymixtape-api/middleware"
 	"github.com/mymixtape-api/models"
 	"github.com/mymixtape-api/services"
 )
@@ -25,6 +28,14 @@ func GetAuthorizationUrl(c *gin.Context) {
 
 func GetAccessToken(c *gin.Context) {
 
+	session := sessions.Default(c)
+	sessionToken, _ := middleware.GetTokenFromSession(session)
+
+	if sessionToken != nil {
+		c.JSON(http.StatusOK, &models.AccessTokenResponse{Token: sessionToken.Token, ExpiresIn: sessionToken.ExpiresIn})
+		return
+	}
+
 	var accessTokenRequest models.AccessTokenRequest
 
 	if err := c.BindJSON(&accessTokenRequest); err != nil {
@@ -38,6 +49,8 @@ func GetAccessToken(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorResponse.Message)
 		return
 	}
+
+	middleware.SetTokenInSession(session, accessTokenResponse.Token, accessTokenResponse.ExpiresIn)
 
 	c.JSON(http.StatusOK, accessTokenResponse)
 }

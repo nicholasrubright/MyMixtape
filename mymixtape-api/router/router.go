@@ -10,6 +10,7 @@ import (
 
 	"github.com/mymixtape-api/config"
 	"github.com/mymixtape-api/controllers"
+	"github.com/mymixtape-api/middleware"
 )
 
 var (
@@ -19,6 +20,48 @@ var (
 	CORS_EXPOSE_HEADERS = []string{"Content-Length"}
 	CORS_MAX_AGE = 12 * time.Hour
 )
+
+func setAuthRoutes(apiRoutes *gin.RouterGroup) {
+
+	authRoutes := apiRoutes.Group("/auth") 
+	{
+		authRoutes.GET("", controllers.GetAuthorizationUrl)
+		authRoutes.POST("", controllers.GetAccessToken)
+		authRoutes.OPTIONS("", func(c *gin.Context) {
+			c.Done()
+		})
+	}
+
+}
+
+func setUserRoutes(apiRoutes *gin.RouterGroup) {
+
+	userRoutes := apiRoutes.Group("/user")
+
+	userRoutes.Use(middleware.SessionMiddleware())
+	{
+		userRoutes.GET("", controllers.GetCurrentUsersProfile)
+		userRoutes.OPTIONS("", func(c *gin.Context) {
+			c.Done()
+		})
+	}
+}
+
+func setPlaylistRoutes(apiRoutes *gin.RouterGroup) {
+
+	playlistRoutes := apiRoutes.Group("/playlists")
+
+	playlistRoutes.Use(middleware.SessionMiddleware())
+	{
+		playlistRoutes.GET("", controllers.GetCurrentUsersPlaylists)
+		playlistRoutes.POST("", controllers.CombinePlaylists)
+		playlistRoutes.OPTIONS("", func(c *gin.Context) {
+			c.Done()
+		})
+	}
+
+}
+
 
 func InitRoutes() *gin.Engine {
 
@@ -52,29 +95,16 @@ func InitRoutes() *gin.Engine {
 		router.SetTrustedProxies([]string{})
 	}
 
+
+
+	// Setup routes
 	apiRoutes := router.Group("/api")
-	{
-		apiRoutes.GET("/auth", controllers.GetAuthorizationUrl)
-		apiRoutes.POST("/auth", controllers.GetAccessToken)
-		apiRoutes.OPTIONS("/auth", func(c *gin.Context) {
-			c.Done()
-		})
+	apiRoutes.GET("/session", controllers.GetSession)
 
-		apiRoutes.GET("/user", controllers.GetCurrentUsersProfile)
-		apiRoutes.OPTIONS("/user", func(c *gin.Context) {
-			c.Done()
-		})
+	setAuthRoutes(apiRoutes)
+	setUserRoutes(apiRoutes)
+	setPlaylistRoutes(apiRoutes)
 
-		apiRoutes.GET("/playlists", controllers.GetCurrentUsersPlaylists)
-		apiRoutes.POST("/playlists", controllers.CombinePlaylists)
-		apiRoutes.OPTIONS("/playlists", func(c *gin.Context) {
-			c.Done()
-		})
-
-		apiRoutes.GET("/test", controllers.TestProfile)
-
-		apiRoutes.GET("/session", controllers.GetSession)
-	}
 
 	return router
 }

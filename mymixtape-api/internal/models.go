@@ -5,3 +5,13 @@ type PlaylistTracks struct {
 		ID string `json:"id"`
 	}
 }
+
+// Session
+type SessionToken struct {
+	Token		string
+	ExpiresIn	int
+}
+
+type SessionError struct {
+	Message	string
+}

@@ -24,16 +24,17 @@ MyMixtape runs on a [Gin](https://gin-gonic.com/) backend and uses a [Next.js](h
 ### Features
 
 - Able to combine Collaborative Playlists
+- ~~Docker Support~~
 
 ### Frontend
 
-- Utilize Next.js SSR
 - Utilize Cookies for token
 - Add client-side validation
 - Add loading/placeholders on elements
 - Unit testing
 - Caching
-- Improve UI on web and mobile
+- ~~Improve UI on web and mobile~~
+- ~~Utilize Next.js SSR~~
 - ~~Use React Context~~
 
 ### Backend

@@ -3,7 +3,6 @@ import {
   AccessTokenResponse,
   AuthorizationUrlResponse,
   CombinePlaylistResponse,
-  TestProfileResponse,
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "../types/api/response";
@@ -46,9 +45,6 @@ const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
   const response = await checkStatus<UserProfileResponse>(
     fetch(`${serverBaseUrl}/api/user`, {
       method: "GET",
-      headers: new Headers({
-        Authorization: token,
-      }),
     })
   );
 
@@ -72,9 +68,6 @@ const getUserPlaylists = async (
   const response = await checkStatus<UserPlaylistsResponse>(
     fetch(`${serverBaseUrl}/api/playlists?${urlParams}`, {
       method: "GET",
-      headers: new Headers({
-        Authorization: token,
-      }),
     })
   );
 
@@ -100,20 +93,9 @@ const combinePlaylist = async (
     fetch(`${clientBaseUrl}/api/playlists`, {
       method: "POST",
       headers: new Headers({
-        Authorization: token,
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
       }),
       body: formBody.toString(),
-    })
-  );
-
-  return response;
-};
-
-const getTestProfile = async (): Promise<TestProfileResponse> => {
-  const response = await checkStatus<TestProfileResponse>(
-    fetch(`${clientBaseUrl}/api/test`, {
-      method: "GET",
     })
   );
 
@@ -126,5 +108,4 @@ export const api = {
   getUserProfile,
   getUserPlaylists,
   combinePlaylist,
-  getTestProfile,
 };
