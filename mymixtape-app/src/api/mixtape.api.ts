@@ -26,25 +26,36 @@ const getAuthorizationUrl = async (): Promise<AuthorizationUrlResponse> => {
   return response;
 };
 
-const getAccessToken = async (code: string): Promise<AccessTokenResponse> => {
+const getAccessToken = async (
+  code: string,
+  sessionCookie: string | null
+): Promise<AccessTokenResponse> => {
   if (DEBUG) return mockApi.mockGetAccessToken;
 
   const response = await checkStatus<AccessTokenResponse>(
     fetch(`${serverBaseUrl}/api/auth`, {
       method: "POST",
       body: JSON.stringify({ code }),
+      headers: {
+        Cookie: `mysession=${sessionCookie}`,
+      },
     })
   );
 
   return response;
 };
 
-const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
+const getUserProfile = async (
+  sessionCookie: string | null
+): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;
 
   const response = await checkStatus<UserProfileResponse>(
     fetch(`${serverBaseUrl}/api/user`, {
       method: "GET",
+      headers: {
+        Cookie: `mysession=${sessionCookie}`,
+      },
     })
   );
 
@@ -52,7 +63,7 @@ const getUserProfile = async (token: string): Promise<UserProfileResponse> => {
 };
 
 const getUserPlaylists = async (
-  token: string,
+  sessionCookie: string | null,
   offset: number,
   limit: number
 ): Promise<UserPlaylistsResponse> => {
@@ -68,6 +79,9 @@ const getUserPlaylists = async (
   const response = await checkStatus<UserPlaylistsResponse>(
     fetch(`${serverBaseUrl}/api/playlists?${urlParams}`, {
       method: "GET",
+      headers: {
+        Cookie: `mysession=${sessionCookie}`,
+      },
     })
   );
 
@@ -76,7 +90,7 @@ const getUserPlaylists = async (
 
 const combinePlaylist = async (
   request: CombinePlaylistRequest,
-  token: string
+  sessionCookie: string | null
 ): Promise<CombinePlaylistResponse> => {
   if (DEBUG) return mockApi.mockCombinePlaylists;
   const formBody = new URLSearchParams({

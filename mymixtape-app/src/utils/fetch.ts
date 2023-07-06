@@ -9,6 +9,8 @@ export async function checkStatus<T>(response: Promise<Response>): Promise<T> {
       }
       const { url } = responseObj;
 
+      console.log("responseObj: ", responseObj);
+
       return responseObj.json().then((res: ErrorResponse) => {
         return Promise.reject(new ApiError(res.status, url, res.message));
       });

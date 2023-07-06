@@ -1,5 +1,6 @@
 import { api } from "@/api/mixtape.api";
 import MixerPage from "@/components/Mixtape/MixerPage";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
@@ -31,5 +32,6 @@ async function getAuthorizationUrl() {
 }
 
 async function getAccessToken(code: string) {
-  return await api.getAccessToken(code);
+  const sessionCookie = cookies().get("mysession")?.value;
+  return await api.getAccessToken(code, sessionCookie ?? null);
 }
