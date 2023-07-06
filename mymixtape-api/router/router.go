@@ -71,6 +71,9 @@ func InitRoutes() *gin.Engine {
 
 	// Session
 	store := cookie.NewStore([]byte("secret"))
+	store.Options(sessions.Options{ 
+		MaxAge: 60 * 60 * 24,
+	})
 	router.Use(sessions.Sessions("mysession", store))
 
 	CORS_ALLOW_ORIGINS = []string{config.APP_CLIENT_ADDRESS, config.APP_SERVER_ADDRESS}
