@@ -4,9 +4,7 @@ import { api } from "@/api/mixtape.api";
 import MixtapeLayout from "../layouts/MixtapeLayout";
 import { cookies } from "next/headers";
 
-export default async function MixerPage(props: MixerPageProps) {
-  const { accessToken } = props;
-
+export default async function MixerPage() {
   const userProfileResponse = await getUserProfile();
   const userPlaylistsResponse = await getUserPlaylists();
 
@@ -23,6 +21,7 @@ export default async function MixerPage(props: MixerPageProps) {
 }
 
 async function getUserProfile() {
+  console.log("getUserProfile: ", cookies().getAll());
   const sessionCookie = cookies().get("mysession")?.value;
 
   return await api.getUserProfile(sessionCookie ?? null);
@@ -31,8 +30,4 @@ async function getUserProfile() {
 async function getUserPlaylists() {
   const sessionCookie = cookies().get("mysession")?.value;
   return await api.getUserPlaylists(sessionCookie ?? null, 0, 20);
-}
-
-interface MixerPageProps {
-  accessToken: string;
 }

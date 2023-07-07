@@ -1,13 +1,9 @@
 import { api } from "@/api/mixtape.api";
 import MixerPage from "@/components/Mixtape/MixerPage";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
-
-  if (process.env.NEXT_PUBLIC_DEBUG === "DEV")
-    return <MixerPage accessToken={"test"} />;
 
   if (!code) {
     const { url } = await getAuthorizationUrl();
@@ -15,9 +11,13 @@ export default async function Mixtape(props: MixtapeProps) {
       redirect(url);
     }
   } else {
-    const accessTokenResponse = await getAccessToken(code);
+    await initAuthentication(code);
 
-    return <MixerPage accessToken={accessTokenResponse.token} />;
+    return (
+      <>
+        <MixerPage />
+      </>
+    );
   }
 
   return redirect("/error");
@@ -31,7 +31,10 @@ async function getAuthorizationUrl() {
   return await api.getAuthorizationUrl();
 }
 
-async function getAccessToken(code: string) {
-  const sessionCookie = cookies().get("mysession")?.value;
-  return await api.getAccessToken(code, sessionCookie ?? null);
+async function initAuthentication(code: string) {
+  return await fetch("http://localhost:3000/api/mixtape", {
+    method: "POST",
+    body: JSON.stringify({ code }),
+    cache: "no-cache",
+  });
 }

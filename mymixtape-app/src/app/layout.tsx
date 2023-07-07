@@ -48,10 +48,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} gradient-background`}>
         <Providers>
-          <div>
-            <Session />
-            {children}
-          </div>
+          <div>{children}</div>
         </Providers>
       </body>
     </html>
