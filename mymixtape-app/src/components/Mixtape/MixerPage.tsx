@@ -21,13 +21,13 @@ export default async function MixerPage() {
 }
 
 async function getUserProfile() {
-  console.log("getUserProfile: ", cookies().getAll());
   const sessionCookie = cookies().get("mysession")?.value;
-
+  console.log("sessionCookie getUserProifle: ", sessionCookie);
   return await api.getUserProfile(sessionCookie ?? null);
 }
 
 async function getUserPlaylists() {
   const sessionCookie = cookies().get("mysession")?.value;
+  console.log("sessionCookie getUserPlaylists: ", sessionCookie);
   return await api.getUserPlaylists(sessionCookie ?? null, 0, 20);
 }

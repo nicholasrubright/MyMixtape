@@ -1,5 +1,6 @@
 import { api } from "@/api/mixtape.api";
 import MixerPage from "@/components/Mixtape/MixerPage";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function Mixtape(props: MixtapeProps) {
@@ -36,5 +37,8 @@ async function initAuthentication(code: string) {
     method: "POST",
     body: JSON.stringify({ code }),
     cache: "no-cache",
+    headers: {
+      Cookie: `mysession=${cookies().get("mysession")?.value}`,
+    },
   });
 }

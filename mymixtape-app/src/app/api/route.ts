@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   console.log("being callled");
 
-  const apiResponse = await fetch("http://localhost:8080/api/session", {
+  const apiResponse = await fetch("http://mymixtape-api:8080/api/session", {
     cache: "no-cache",
     method: "GET",
   });
