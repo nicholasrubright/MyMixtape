@@ -70,11 +70,11 @@ func InitRoutes() *gin.Engine {
 	router := gin.Default()
 
 	// Session
-	store := cookie.NewStore([]byte("secret"))
+	store := cookie.NewStore([]byte(config.SESSION_SECRET))
 	store.Options(sessions.Options{ 
 		MaxAge: 60 * 60 * 24,
 	})
-	router.Use(sessions.Sessions("mysession", store))
+	router.Use(sessions.Sessions(config.SESSION_VAR, store))
 
 	CORS_ALLOW_ORIGINS = []string{config.APP_CLIENT_ADDRESS, config.APP_SERVER_ADDRESS}
 
@@ -102,19 +102,6 @@ func InitRoutes() *gin.Engine {
 
 	// Setup routes
 	apiRoutes := router.Group("/api")
-	apiRoutes.GET("/session", controllers.GetSession)
-
-
-	sessionRoutes := apiRoutes.Group("/session")
-
-	sessionRoutes.Use(middleware.SessionMiddleware())
-	{
-		sessionRoutes.GET("/get", middleware.SessionMiddleware(), controllers.GetToken)
-	}
-
-	// testing
-	apiRoutes.POST("/session/set", controllers.SetToken)
-
 
 	setAuthRoutes(apiRoutes)
 	setUserRoutes(apiRoutes)

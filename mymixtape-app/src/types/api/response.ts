@@ -12,10 +12,7 @@ export interface AuthorizationUrlResponse extends ApiResponse {
 }
 
 export interface AccessTokenResponse extends ApiResponse {
-  data: {
-    token: string;
-    expires_in: number;
-  };
+  data: {};
 }
 
 export interface UserProfileResponse extends ApiResponse {

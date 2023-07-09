@@ -1,5 +1,7 @@
 package internal
 
+import "time"
+
 type PlaylistTracks struct {
 	Tracks []struct {
 		ID string `json:"id"`
@@ -8,10 +10,11 @@ type PlaylistTracks struct {
 
 // Session
 type SessionToken struct {
-	Token		string
-	ExpiresIn	int
+	Token   string
+	Expires time.Time
+	Code    string
 }
 
 type SessionError struct {
-	Message	string
+	Message string
 }

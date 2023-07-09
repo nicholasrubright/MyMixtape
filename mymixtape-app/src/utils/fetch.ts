@@ -6,6 +6,12 @@ export async function parseResponse<T>(
 ): Promise<T> {
   return await response
     .then(async (responseObj: Response) => {
+      if (responseObj.status === 204) {
+        return {
+          headers: responseObj.headers,
+        } as T;
+      }
+
       if (responseObj.ok) {
         return {
           headers: responseObj.headers,

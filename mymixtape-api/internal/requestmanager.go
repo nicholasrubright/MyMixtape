@@ -92,9 +92,11 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 		return nil, &errObj
 	}
 
+	token_expiration_time := time.Now().Add(time.Duration(spotifyAccessTokenResponse.ExpiresIn) * time.Second)
+
 	return &models.AccessTokenResponse{
 		Token: spotifyAccessTokenResponse.AccessToken,
-		ExpiresIn: spotifyAccessTokenResponse.ExpiresIn,
+		Expires: token_expiration_time.String(),
 	}, nil
 }
 

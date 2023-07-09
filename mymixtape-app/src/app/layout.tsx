@@ -4,7 +4,6 @@ import "@/styles/globals.scss";
 import { Roboto } from "next/font/google";
 import { Providers } from "./providers";
 import Script from "next/script";
-import Session from "@/components/shared/Session";
 
 const inter = Roboto({
   weight: ["400", "700"],

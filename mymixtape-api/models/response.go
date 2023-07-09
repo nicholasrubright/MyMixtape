@@ -6,8 +6,8 @@ type AuthorizationUrlResponse struct {
 }
 
 type AccessTokenResponse struct {
-	Token	string	`json:"token"`
-	ExpiresIn	int	`json:"expires_in"`
+	Token		string	`json:"token"`
+	Expires		string	`json:"expires"`
 }
 
 // User Profile

@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/mymixtape-api/config"
 	"github.com/mymixtape-api/internal"
 	"github.com/mymixtape-api/models"
 )
@@ -13,7 +14,8 @@ import (
 func GetTokenFromSession(session sessions.Session) (*internal.SessionToken, *internal.SessionError)  {
 
 	var token string
-	var expires_in int
+	var expires_in time.Time
+	var code string
 
 	tokenVal := session.Get("token")
 	if tokenVal == nil {
@@ -30,22 +32,32 @@ func GetTokenFromSession(session sessions.Session) (*internal.SessionToken, *int
 			Message: "No expires_in in session",
 		}
 	} else {
-		expires_in = expiresVal.(int)
+		expiresStr := expiresVal.(string)
+		expires_in, _ = time.Parse(expiresStr, expiresStr)
+	}
+
+	codeVal := session.Get("code")
+	if codeVal == nil {
+		return nil, &internal.SessionError{
+			Message: "No code in session",
+		}
+	} else {
+		codeVal = codeVal.(string)
 	}
 
 	return &internal.SessionToken{
 		Token: token,
-		ExpiresIn: expires_in,
+		Expires: expires_in,
+		Code: code,
 	}, nil
 
 }
 
-func SetTokenInSession(session sessions.Session, token string, expires_in int) {
-
-	//fmt.Println("set token in session: ", token, expires_in)
+func SetTokenInSession(session sessions.Session, token string, expires string, code string) {
 
 	session.Set("token", token)
-	session.Set("expires_in", expires_in)
+	session.Set("expires", expires)
+	session.Set("code", code)
 	session.Save()
 
 } 
@@ -53,28 +65,22 @@ func SetTokenInSession(session sessions.Session, token string, expires_in int) {
 func SessionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		_, err := c.Cookie("mysession")
+		_, err := c.Cookie(config.SESSION_VAR)
 		if err != nil {
-			fmt.Println("NO MYSESSION COOKIE")
+			c.AbortWithStatusJSON(http.StatusBadRequest, &models.ErrorResponse{
+				Message: "Cookie missing",
+				Status: http.StatusBadRequest,
+			})
 		}
-
-		//fmt.Println("session middleware cookie: ", cookie)
 
 		session := sessions.Default(c)
-
-		//fmt.Println("GETTING TOKEN FROM SESSION!")
-
 		sessionToken, sessionError := GetTokenFromSession(session)
 
-		//fmt.Println("TOKENS FROM SESSION: ", sessionToken)
-
-		errorResponse := &models.ErrorResponse {
-			Message: "Valid token required",
-			Status: http.StatusUnauthorized,
-		}
-
 		if sessionError != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, &models.ErrorResponse{
+				Message: sessionError.Message,
+				Status: http.StatusUnauthorized,
+			})
 		}
 
 		c.Set("token", sessionToken.Token)

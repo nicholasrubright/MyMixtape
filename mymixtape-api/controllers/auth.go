@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -32,8 +33,14 @@ func GetAccessToken(c *gin.Context) {
 	sessionToken, _ := middleware.GetTokenFromSession(session)
 
 	if sessionToken != nil {
-		c.JSON(http.StatusOK, &models.AccessTokenResponse{Token: sessionToken.Token, ExpiresIn: sessionToken.ExpiresIn})
-		return
+
+		tokenExpiresTime := sessionToken.Expires
+		timeNow := time.Now()
+
+		if tokenExpiresTime.Before(timeNow) {
+			c.JSON(http.StatusOK, &models.AccessTokenResponse{Token: sessionToken.Token, Expires: sessionToken.Expires.String()})
+			return
+		}
 	}
 
 	var accessTokenRequest models.AccessTokenRequest
@@ -56,7 +63,7 @@ func GetAccessToken(c *gin.Context) {
 		return
 	}
 
-	middleware.SetTokenInSession(session, accessTokenResponse.Token, accessTokenResponse.ExpiresIn)
+	middleware.SetTokenInSession(session, accessTokenResponse.Token, accessTokenResponse.Expires, accessTokenRequest.Code)
 
-	c.JSON(http.StatusOK, accessTokenResponse)
+	c.JSON(http.StatusNoContent, nil)
 }
