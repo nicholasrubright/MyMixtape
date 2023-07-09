@@ -7,18 +7,6 @@ import { cookies } from "next/headers";
 
 export default async function MixerPage(props: MixerPageProps) {
   let sessionCookie = props.newSessionCookie;
-
-  console.log("cooie in the thingy: ", cookies().get("mysession")?.value);
-
-  console.log(
-    "is session cookie the old one?: ",
-    sessionCookie === cookies().get("mysession")?.value
-  );
-  console.log(
-    "is session cookie the new one?: ",
-    sessionCookie === props.newSessionCookie
-  );
-
   sessionCookie = sessionCookie as string;
 
   const userProfileResponse = await getUserProfile(sessionCookie);
@@ -29,7 +17,10 @@ export default async function MixerPage(props: MixerPageProps) {
 
   return (
     <MixtapeLayout>
-      <Session hasCookie={false} />
+      <Session
+        hasCookie={cookies().has("mysession")}
+        newSessionCookie={sessionCookie}
+      />
       <div className="row mb-3">
         <Header profileResponse={userProfileResponse} />
       </div>

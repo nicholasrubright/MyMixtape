@@ -12,13 +12,12 @@ export default async function Mixtape(props: MixtapeProps) {
       redirect(data.url);
     }
   } else {
-    const newSessionCookie = await initAuthentication(code);
-    console.log(newSessionCookie);
-
-    console.log(
-      "same session?: ",
-      cookies().get("mysession")?.value === newSessionCookie
-    );
+    let newSessionCookie: string;
+    if (cookies().has("mysession")) {
+      newSessionCookie = cookies().get("mysession")?.value as string;
+    } else {
+      newSessionCookie = await initAuthentication(code as string);
+    }
 
     return (
       <>
@@ -31,7 +30,7 @@ export default async function Mixtape(props: MixtapeProps) {
 }
 
 interface MixtapeProps {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 async function initAuthentication(code: string): Promise<string> {
   const sessionCookie = cookies().get("mysession")?.value;
@@ -45,5 +44,9 @@ async function initAuthentication(code: string): Promise<string> {
     },
   });
 
-  return apiResponse.headers.getSetCookie()[0].concat(";Path=/;");
+  if (apiResponse.headers.getSetCookie()[0].includes("Path=/;")) {
+    return apiResponse.headers.getSetCookie()[0];
+  } else {
+    return apiResponse.headers.getSetCookie()[0].concat(";Path=/;");
+  }
 }

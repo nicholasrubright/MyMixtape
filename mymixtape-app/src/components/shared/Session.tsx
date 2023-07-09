@@ -3,17 +3,18 @@
 import { useEffect } from "react";
 
 export default function Session(props: SessionProps) {
-  const { hasCookie } = props;
+  const { hasCookie, newSessionCookie } = props;
 
   useEffect(() => {
     const setSession = async () => {
       await fetch("http://localhost:3000/api", {
-        method: "GET",
+        method: "POST",
         cache: "no-cache",
+        body: JSON.stringify({ newSessionCookie }),
       });
     };
 
-    if (!hasCookie) {
+    if (typeof window !== "undefined" && !hasCookie) {
       setSession();
     }
   }, [hasCookie]);
@@ -23,4 +24,5 @@ export default function Session(props: SessionProps) {
 
 interface SessionProps {
   hasCookie: boolean;
+  newSessionCookie: string;
 }

@@ -2,8 +2,8 @@ import {
   CombinePlaylistRequest,
   GetAccessTokenRequest,
   GetUserPlaylistsRequest,
-  GetUserProfile,
 } from "@/types/api/request";
+
 import {
   AccessTokenResponse,
   AuthorizationUrlResponse,
@@ -57,6 +57,11 @@ export const getUserProfile = async (
   sessionCookie: string
 ): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;
+
+  if (!sessionCookie.includes("mysession")) {
+    sessionCookie = `mysession=${sessionCookie}`;
+  }
+
   return await parseResponse<UserProfileResponse>(
     fetch(`${getApiUrl()}/api/user`, {
       method: "GET",
@@ -75,6 +80,10 @@ export const getUserPlaylists = async (
   sessionCookie: string
 ): Promise<UserPlaylistsResponse> => {
   if (DEBUG) return mockApi.mockGetUserPlaylists;
+
+  if (!sessionCookie.includes("mysession")) {
+    sessionCookie = `mysession=${sessionCookie}`;
+  }
 
   const params: Record<string, string> = {
     offset: request.offset.toString(),

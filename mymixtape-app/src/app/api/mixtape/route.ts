@@ -10,13 +10,11 @@ export async function POST(request: NextRequest) {
     const apiResponse = await setAccessToken(requestData, sessionCookie);
     const response = NextResponse.json(apiResponse);
 
-    console.log(apiResponse);
+    const apiResponseSessionCookie =
+      apiResponse.headers?.getSetCookie()[0] as string;
 
-    response.headers.set(
-      "Set-Cookie",
-      apiResponse.headers?.getSetCookie()[0] as string
-    );
-    //cookies().delete("mysession"); // doesn't like it when i delete the session variable
+    response.headers.set("Set-Cookie", apiResponseSessionCookie);
+
     return response;
   }
 
