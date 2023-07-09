@@ -15,7 +15,6 @@ export async function parseResponse<T>(
     const { url } = responseObj;
 
     return responseObj.json().then((res: ErrorResponse) => {
-        return Promise.reject(new ApiError(res.status, url, res.message));
       return Promise.reject(
         new ApiError(res.data.status, url, res.data.message)
       );
