@@ -1,20 +1,21 @@
+import { getSession } from "@/api/api";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   console.log("being callled");
 
-  const apiResponse = await fetch("http://mymixtape-api:8080/api/session", {
-    cache: "no-cache",
-    method: "GET",
-  });
+  const apiResponse = await getSession();
 
-  const sessionCookie = apiResponse.headers.getSetCookie()[0];
+  const response = NextResponse.json(apiResponse);
 
-  const response = NextResponse.json(null);
-
-  if (sessionCookie) {
-    response.headers.set("Set-Cookie", sessionCookie);
+  if (apiResponse.headers) {
+    if (!sessionCookie && apiResponse.headers.has("Set-Cookie")) {
+      response.headers.append(
+        "Set-Cookie",
+        apiResponse.headers.get("Set-Cookie") as string
+      );
+    }
   }
 
   return response;

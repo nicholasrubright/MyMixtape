@@ -1,8 +1,8 @@
 import { Mixer } from "./Mixer";
 import Header from "./Header/Header";
-import { api } from "@/api/mixtape.api";
 import MixtapeLayout from "../layouts/MixtapeLayout";
 import { cookies } from "next/headers";
+import { getUserPlaylists, getUserProfile } from "@/api/api";
 
 export default async function MixerPage() {
   const userProfileResponse = await getUserProfile();
@@ -19,12 +19,10 @@ export default async function MixerPage() {
     </MixtapeLayout>
   );
 }
-
 async function getUserProfile() {
   const sessionCookie = cookies().get("mysession")?.value;
   console.log("sessionCookie getUserProifle: ", sessionCookie);
   return await api.getUserProfile(sessionCookie ?? null);
-}
 
 async function getUserPlaylists() {
   const sessionCookie = cookies().get("mysession")?.value;

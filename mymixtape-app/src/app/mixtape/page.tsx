@@ -1,4 +1,4 @@
-import { api } from "@/api/mixtape.api";
+import { setAccessToken, getAuthorizationUrl } from "@/api/api";
 import MixerPage from "@/components/Mixtape/MixerPage";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -7,9 +7,9 @@ export default async function Mixtape(props: MixtapeProps) {
   const { code } = props.searchParams;
 
   if (!code) {
-    const { url } = await getAuthorizationUrl();
-    if (url) {
-      redirect(url);
+    const { data } = await getAuthorizationUrl();
+    if (data.url) {
+      redirect(data.url);
     }
   } else {
     await initAuthentication(code);
@@ -27,11 +27,6 @@ export default async function Mixtape(props: MixtapeProps) {
 interface MixtapeProps {
   searchParams: { [key: string]: string | undefined };
 }
-
-async function getAuthorizationUrl() {
-  return await api.getAuthorizationUrl();
-}
-
 async function initAuthentication(code: string) {
   return await fetch("http://localhost:3000/api/mixtape", {
     method: "POST",
@@ -41,4 +36,3 @@ async function initAuthentication(code: string) {
       Cookie: `mysession=${cookies().get("mysession")?.value}`,
     },
   });
-}

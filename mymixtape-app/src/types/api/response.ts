@@ -1,30 +1,25 @@
-export type AuthorizationUrlResponse = {
-  url: string;
+export type ApiResponseData = {};
+
+export type ApiResponse = {
+  headers?: Headers;
+  data: ApiResponseData;
 };
 
-export type AccessTokenResponse = {
-  token: string;
-  expires_in: number;
-};
-
-export type UserProfileResponse = {
-  id: string;
-  name: string;
-  images: {
+export interface AuthorizationUrlResponse extends ApiResponse {
+  data: {
     url: string;
-    height: number;
-    width: number;
-  }[];
-};
+  };
+}
 
-export type UserPlaylistsResponse = {
-  href: string;
-  limit: number;
-  next: string;
-  offset: number;
-  previous: string;
-  total: number;
-  items: {
+export interface AccessTokenResponse extends ApiResponse {
+  data: {
+    token: string;
+    expires_in: number;
+  };
+}
+
+export interface UserProfileResponse extends ApiResponse {
+  data: {
     id: string;
     name: string;
     images: {
@@ -32,16 +27,51 @@ export type UserPlaylistsResponse = {
       height: number;
       width: number;
     }[];
-  }[];
-};
+  };
+}
 
-export type CombinePlaylistResponse = {
-  id: string;
-  name: string;
-};
+export interface UserPlaylistsResponse extends ApiResponse {
+  data: {
+    href: string;
+    limit: number;
+    next: string;
+    offset: number;
+    previous: string;
+    total: number;
+    items: {
+      id: string;
+      name: string;
+      images: {
+        url: string;
+        height: number;
+        width: number;
+      }[];
+    }[];
+  };
+}
 
+export interface CombinePlaylistResponse extends ApiResponse {
+  data: {
+    id: string;
+    name: string;
+  };
+}
+
+export interface TestProfileResponse extends ApiResponse {
+  data: {
+    count: number;
+  };
+}
+
+export interface GetSessionResponse extends ApiResponse {
+  data: {
+    count: number;
+  };
+}
 // Error Response
-export type ErrorResponse = {
-  status: number;
-  message: string;
-};
+export interface ErrorResponse extends ApiResponse {
+  data: {
+    status: number;
+    message: string;
+  };
+}

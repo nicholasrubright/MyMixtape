@@ -8,6 +8,10 @@ const nextConfig = {
   devIndicators: {
     buildActivityPosition: "bottom-right",
   },
+  env: {
+    API_SERVER_URL: "http://mymixtape-api:8080",
+    API_CLIENT_URL: "http://localhost:8080",
+  },
 };
 
 module.exports = nextConfig;

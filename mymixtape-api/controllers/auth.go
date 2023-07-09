@@ -39,14 +39,20 @@ func GetAccessToken(c *gin.Context) {
 	var accessTokenRequest models.AccessTokenRequest
 
 	if err := c.BindJSON(&accessTokenRequest); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, &models.ErrorResponse{
+			Message: err.Error(),
+			Status: http.StatusBadRequest,
+		})
 		return
 	}
 
 	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
 
 	if errorResponse != nil {
-		c.JSON(http.StatusBadRequest, errorResponse.Message)
+		c.JSON(http.StatusBadRequest, &models.ErrorResponse{
+			Message: errorResponse.Message,
+			Status: errorResponse.Status,
+		})
 		return
 	}
 
