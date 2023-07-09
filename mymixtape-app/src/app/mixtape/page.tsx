@@ -1,4 +1,4 @@
-import { api } from "@/api/mixtape.api";
+import { setAccessToken, getAuthorizationUrl } from "@/api/api";
 import MixerPage from "@/components/Mixtape/MixerPage";
 import { redirect } from "next/navigation";
 
@@ -9,14 +9,14 @@ export default async function Mixtape(props: MixtapeProps) {
     return <MixerPage accessToken={"test"} />;
 
   if (!code) {
-    const { url } = await getAuthorizationUrl();
-    if (url) {
-      redirect(url);
+    const { data } = await getAuthorizationUrl();
+    if (data.url) {
+      redirect(data.url);
     }
   } else {
-    const accessTokenResponse = await getAccessToken(code);
+    const accessTokenResponse = await setAccessToken({ code });
 
-    return <MixerPage accessToken={accessTokenResponse.token} />;
+    return <MixerPage accessToken={accessTokenResponse.data.token} />;
   }
 
   return redirect("/error");
@@ -24,12 +24,4 @@ export default async function Mixtape(props: MixtapeProps) {
 
 interface MixtapeProps {
   searchParams: { [key: string]: string | undefined };
-}
-
-async function getAuthorizationUrl() {
-  return await api.getAuthorizationUrl();
-}
-
-async function getAccessToken(code: string) {
-  return await api.getAccessToken(code);
 }

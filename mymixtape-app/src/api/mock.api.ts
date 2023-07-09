@@ -25,36 +25,51 @@ const getMockPlaylists = (): Playlist[] => {
 
 const mockApi = {
   mockGetAuthorizationUrl: {
-    url: "",
-    valid_token: false,
+    data: {
+      url: "",
+      valid_token: false,
+    },
   },
   mockGetAccessToken: {
-    token: "Test",
-    expires_in: 3600,
+    data: {
+      token: "Test",
+      expires_in: 3600,
+    },
   },
   mockGetUserProfile: {
-    id: "0",
-    name: "test user",
-    images: [
-      {
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png",
-        height: 0,
-        width: 0,
-      },
-    ],
+    data: {
+      id: "0",
+      name: "test user",
+      images: [
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png",
+          height: 0,
+          width: 0,
+        },
+      ],
+    },
   },
   mockGetUserPlaylists: {
-    href: "test",
-    limit: 0,
-    next: "test",
-    offset: 0,
-    previous: "test",
-    total: 0,
-    items: getMockPlaylists(),
+    data: {
+      href: "test",
+      limit: 0,
+      next: "test",
+      offset: 0,
+      previous: "test",
+      total: 0,
+      items: getMockPlaylists(),
+    },
   },
   mockCombinePlaylists: {
-    id: "0",
-    name: "test",
+    data: {
+      id: "0",
+      name: "test",
+    },
+  },
+  mockGetSession: {
+    data: {
+      count: 0,
+    },
   },
 };
 

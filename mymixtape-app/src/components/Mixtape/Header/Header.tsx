@@ -24,7 +24,7 @@ export default function Header(props: HeaderProps) {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
 
   useEffect(() => {
-    setProfile(profileResponse as Profile);
+    setProfile(profileResponse.data as Profile);
   }, [profileResponse]);
 
   const getUserProfileImage = () => {

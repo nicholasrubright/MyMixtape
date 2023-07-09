@@ -14,8 +14,6 @@ func GetCurrentUsersProfile(c *gin.Context) {
 
 	currentUsersProfileResponse, errorResponse := services.GetCurrentUsersProfile(token)
 
-	//time.Sleep(10 * time.Second)
-
 	if errorResponse != nil {
 		c.JSON(errorResponse.Status, errorResponse)
 		return
