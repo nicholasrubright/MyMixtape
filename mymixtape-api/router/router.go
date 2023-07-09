@@ -104,6 +104,18 @@ func InitRoutes() *gin.Engine {
 	apiRoutes := router.Group("/api")
 	apiRoutes.GET("/session", controllers.GetSession)
 
+
+	sessionRoutes := apiRoutes.Group("/session")
+
+	sessionRoutes.Use(middleware.SessionMiddleware())
+	{
+		sessionRoutes.GET("/get", middleware.SessionMiddleware(), controllers.GetToken)
+	}
+
+	// testing
+	apiRoutes.POST("/session/set", controllers.SetToken)
+
+
 	setAuthRoutes(apiRoutes)
 	setUserRoutes(apiRoutes)
 	setPlaylistRoutes(apiRoutes)

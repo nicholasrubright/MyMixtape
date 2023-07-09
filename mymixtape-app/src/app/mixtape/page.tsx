@@ -12,11 +12,13 @@ export default async function Mixtape(props: MixtapeProps) {
       redirect(data.url);
     }
   } else {
-    await initAuthentication(code);
+    const response = await initAuthentication(code);
+
+    const newSession = response.headers.getSetCookie()[0].concat(";Path=/;");
 
     return (
       <>
-        <MixerPage />
+        <MixerPage newSession={newSession} />
       </>
     );
   }
@@ -28,11 +30,14 @@ interface MixtapeProps {
   searchParams: { [key: string]: string | undefined };
 }
 async function initAuthentication(code: string) {
+  const sessionCookie = cookies().get("mysession")?.value;
+
   return await fetch("http://localhost:3000/api/mixtape", {
     method: "POST",
     body: JSON.stringify({ code }),
     cache: "no-cache",
     headers: {
-      Cookie: `mysession=${cookies().get("mysession")?.value}`,
+      Cookie: `mysession=${sessionCookie}`,
     },
   });
+}

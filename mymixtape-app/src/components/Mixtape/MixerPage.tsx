@@ -1,31 +1,43 @@
 import { Mixer } from "./Mixer";
 import Header from "./Header/Header";
 import MixtapeLayout from "../layouts/MixtapeLayout";
-import { cookies } from "next/headers";
 import { getUserPlaylists, getUserProfile } from "@/api/api";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default async function MixerPage() {
-  const userProfileResponse = await getUserProfile();
-  const userPlaylistsResponse = await getUserPlaylists();
+export default async function MixerPage(props: MixerPageProps) {
+  //const sessionCookie = cookies().get("mysession")?.value;
 
-  return (
-    <MixtapeLayout>
-      <div className="row mb-3">
-        <Header profileResponse={userProfileResponse} />
-      </div>
-      <div className="row p-0">
-        <Mixer userPlaylistResponse={userPlaylistsResponse} />
-      </div>
-    </MixtapeLayout>
-  );
+  if (props.newSession) {
+    const userProfileResponse = await getUserProfile(
+      {},
+      props.newSession
+    ).catch((err) => {
+      throw err;
+    });
+    const userPlaylistsResponse = await getUserPlaylists(
+      {
+        limit: 20,
+        offset: 0,
+      },
+      props.newSession
+    );
+
+    return (
+      <MixtapeLayout>
+        <div className="row mb-3">
+          <Header profileResponse={userProfileResponse} />
+        </div>
+        <div className="row p-0">
+          <Mixer userPlaylistResponse={userPlaylistsResponse} />
+        </div>
+      </MixtapeLayout>
+    );
+  } else {
+    redirect("/error");
+  }
 }
-async function getUserProfile() {
-  const sessionCookie = cookies().get("mysession")?.value;
-  console.log("sessionCookie getUserProifle: ", sessionCookie);
-  return await api.getUserProfile(sessionCookie ?? null);
 
-async function getUserPlaylists() {
-  const sessionCookie = cookies().get("mysession")?.value;
-  console.log("sessionCookie getUserPlaylists: ", sessionCookie);
-  return await api.getUserPlaylists(sessionCookie ?? null, 0, 20);
+interface MixerPageProps {
+  newSession: string;
 }

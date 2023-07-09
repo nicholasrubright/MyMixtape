@@ -68,10 +68,21 @@ export interface GetSessionResponse extends ApiResponse {
     count: number;
   };
 }
+
+export interface GetSessionTokenResponse extends ApiResponse {
+  data: {
+    token: string;
+  };
+}
+
+export interface SetSessionTokenResponse extends ApiResponse {
+  data: {
+    token: string;
+  };
+}
+
 // Error Response
 export interface ErrorResponse extends ApiResponse {
-  data: {
-    status: number;
-    message: string;
-  };
+  status: number;
+  message: string;
 }

@@ -3,20 +3,24 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  console.log("being callled");
+  const sessionCookie = cookies().get("mysession")?.value;
 
-  const apiResponse = await getSession();
+  if (!sessionCookie) {
+    const apiResponse = await getSession(sessionCookie as string);
 
-  const response = NextResponse.json(apiResponse);
+    const response = NextResponse.json(apiResponse);
 
-  if (apiResponse.headers) {
-    if (!sessionCookie && apiResponse.headers.has("Set-Cookie")) {
-      response.headers.append(
-        "Set-Cookie",
-        apiResponse.headers.get("Set-Cookie") as string
-      );
+    if (apiResponse.headers) {
+      if (!sessionCookie && apiResponse.headers.has("Set-Cookie")) {
+        response.headers.append(
+          "Set-Cookie",
+          apiResponse.headers.get("Set-Cookie") as string
+        );
+      }
     }
+
+    return response;
   }
 
-  return response;
+  return NextResponse.json(null);
 }

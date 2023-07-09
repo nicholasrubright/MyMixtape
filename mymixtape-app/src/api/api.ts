@@ -9,6 +9,8 @@ import {
   AuthorizationUrlResponse,
   CombinePlaylistResponse,
   GetSessionResponse,
+  GetSessionTokenResponse,
+  SetSessionTokenResponse,
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "@/types/api/response";
@@ -26,11 +28,14 @@ export const getAuthorizationUrl =
         method: "GET",
         cache: "no-cache",
       })
-    );
+    ).catch((err) => {
+      return mockApi.mockGetAuthorizationUrl;
+    });
   };
 
 export const setAccessToken = async (
-  request: GetAccessTokenRequest
+  request: GetAccessTokenRequest,
+  sessionCookie: string
 ): Promise<AccessTokenResponse> => {
   if (DEBUG) return mockApi.mockGetAccessToken;
   return await parseResponse<AccessTokenResponse>(
@@ -38,27 +43,37 @@ export const setAccessToken = async (
       method: "POST",
       cache: "no-cache",
       body: JSON.stringify(request),
+      headers: {
+        Cookie: `mysession=${sessionCookie}`,
+      },
     })
-  );
+  ).catch((err) => {
+    console.log(err);
+    return err;
+  });
 };
 
 export const getUserProfile = async (
-  request: GetUserProfile
+  request: GetUserProfile,
+  sessionCookie: string
 ): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;
   return await parseResponse<UserProfileResponse>(
     fetch(`${getApiUrl()}/api/user`, {
       method: "GET",
       cache: "no-cache",
-      headers: new Headers({
-        Authorization: request.token as string,
-      }),
+      headers: {
+        Cookie: `${sessionCookie}`,
+      },
     })
-  );
+  ).catch((err) => {
+    return mockApi.mockGetUserProfile;
+  });
 };
 
 export const getUserPlaylists = async (
-  request: GetUserPlaylistsRequest
+  request: GetUserPlaylistsRequest,
+  sessionCookie: string
 ): Promise<UserPlaylistsResponse> => {
   if (DEBUG) return mockApi.mockGetUserPlaylists;
 
@@ -73,11 +88,13 @@ export const getUserPlaylists = async (
     fetch(`${getApiUrl()}/api/playlists?${urlParams}`, {
       method: "GET",
       cache: "no-cache",
-      headers: new Headers({
-        Authorization: request.token as string,
-      }),
+      headers: {
+        Cookie: `${sessionCookie}`,
+      },
     })
-  );
+  ).catch((err) => {
+    return mockApi.mockGetUserPlaylists;
+  });
 };
 
 export const combinePlaylists = async (request: CombinePlaylistRequest) => {
@@ -102,16 +119,51 @@ export const combinePlaylists = async (request: CombinePlaylistRequest) => {
       }),
       body: formBody.toString(),
     })
-  );
+  ).catch((err) => {
+    return mockApi.mockCombinePlaylists;
+  });
 };
 
-export const getSession = async (): Promise<GetSessionResponse> => {
+export const getSession = async (
+  sessionCookie: string
+): Promise<GetSessionResponse> => {
   if (DEBUG) return mockApi.mockGetSession;
 
   return await parseResponse<GetSessionResponse>(
     fetch(`${getApiUrl()}/api/session`, {
       method: "GET",
       cache: "no-cache",
+      headers: {
+        Cookie: `mysession=${sessionCookie}`,
+      },
+    })
+  ).catch((err) => {
+    return mockApi.mockGetSession;
+  });
+};
+
+export const setSessionToken = async (
+  code: string
+): Promise<SetSessionTokenResponse> => {
+  return await parseResponse<SetSessionTokenResponse>(
+    fetch(`${getApiUrl()}/api/session/set`, {
+      method: "POST",
+      cache: "no-cache",
+      body: JSON.stringify({ code }),
+    })
+  );
+};
+
+export const getSessionToken = async (
+  sessionCookie: string
+): Promise<GetSessionTokenResponse> => {
+  return await parseResponse<GetSessionTokenResponse>(
+    fetch(`${getApiUrl()}/api/session/get`, {
+      method: "GET",
+      cache: "no-cache",
+      headers: {
+        Cookie: `mysession=${sessionCookie}`,
+      },
     })
   );
 };
