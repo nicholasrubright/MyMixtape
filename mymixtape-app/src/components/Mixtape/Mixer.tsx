@@ -42,20 +42,6 @@ export function Mixer(props: MixerProps) {
     // Client validation for now
     if (newPlaylistName !== "" && newPlaylistDescription !== "") {
       setIsCombining(true);
-
-      // try {
-      //   if (token !== null) {
-      //     // await api.combinePlaylist({ ids, newPlaylistName, newPlaylistDescription, profile.id}, token);
-      //     // await api.combinePlaylist(
-      //     //   token,
-      //     //   {ids,
-      //     //   newPlaylistName,
-      //     //   newPlaylistDescription,
-      //     //   profile.id}
-      //     // );
-      //   }
-      // } catch (error) {}
-
       setIsCombining(false);
     }
 
@@ -78,12 +64,10 @@ export function Mixer(props: MixerProps) {
   };
 
   useEffect(() => {
-    setPlaylists(userPlaylistResponse.items as Playlist[]);
-  }, [userPlaylistResponse]);
+    setPlaylists(userPlaylistResponse.data.items as Playlist[]);
+  }, [userPlaylistResponse.data]);
 
   const getMoreData = async (offset: number, limit: number) => {
-    //const response = await api.getUserPlaylists(token, offset, limit);
-    //setPlaylists([...playlists, ...response.items]);
     setMapping();
   };
 
