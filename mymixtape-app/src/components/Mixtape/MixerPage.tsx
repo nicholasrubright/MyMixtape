@@ -2,42 +2,44 @@ import { Mixer } from "./Mixer";
 import Header from "./Header/Header";
 import MixtapeLayout from "../layouts/MixtapeLayout";
 import { getUserPlaylists, getUserProfile } from "@/api/api";
+import Session from "../shared/Session";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export default async function MixerPage(props: MixerPageProps) {
-  //const sessionCookie = cookies().get("mysession")?.value;
+  let sessionCookie = props.newSessionCookie;
 
-  if (props.newSession) {
-    const userProfileResponse = await getUserProfile(
-      {},
-      props.newSession
-    ).catch((err) => {
-      throw err;
-    });
-    const userPlaylistsResponse = await getUserPlaylists(
-      {
-        limit: 20,
-        offset: 0,
-      },
-      props.newSession
-    );
+  console.log("cooie in the thingy: ", cookies().get("mysession")?.value);
 
-    return (
-      <MixtapeLayout>
-        <div className="row mb-3">
-          <Header profileResponse={userProfileResponse} />
-        </div>
-        <div className="row p-0">
-          <Mixer userPlaylistResponse={userPlaylistsResponse} />
-        </div>
-      </MixtapeLayout>
-    );
-  } else {
-    redirect("/error");
-  }
+  console.log(
+    "is session cookie the old one?: ",
+    sessionCookie === cookies().get("mysession")?.value
+  );
+  console.log(
+    "is session cookie the new one?: ",
+    sessionCookie === props.newSessionCookie
+  );
+
+  sessionCookie = sessionCookie as string;
+
+  const userProfileResponse = await getUserProfile(sessionCookie);
+  const userPlaylistsResponse = await getUserPlaylists(
+    { limit: 20, offset: 0 },
+    sessionCookie
+  );
+
+  return (
+    <MixtapeLayout>
+      <Session hasCookie={false} />
+      <div className="row mb-3">
+        <Header profileResponse={userProfileResponse} />
+      </div>
+      <div className="row p-0">
+        <Mixer userPlaylistResponse={userPlaylistsResponse} />
+      </div>
+    </MixtapeLayout>
+  );
 }
 
 interface MixerPageProps {
-  newSession: string;
+  newSessionCookie: string;
 }

@@ -54,7 +54,6 @@ export const setAccessToken = async (
 };
 
 export const getUserProfile = async (
-  request: GetUserProfile,
   sessionCookie: string
 ): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;

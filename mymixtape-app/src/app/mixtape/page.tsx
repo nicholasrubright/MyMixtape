@@ -1,4 +1,4 @@
-import { setAccessToken, getAuthorizationUrl } from "@/api/api";
+import { getAuthorizationUrl } from "@/api/api";
 import MixerPage from "@/components/Mixtape/MixerPage";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -12,13 +12,17 @@ export default async function Mixtape(props: MixtapeProps) {
       redirect(data.url);
     }
   } else {
-    const response = await initAuthentication(code);
+    const newSessionCookie = await initAuthentication(code);
+    console.log(newSessionCookie);
 
-    const newSession = response.headers.getSetCookie()[0].concat(";Path=/;");
+    console.log(
+      "same session?: ",
+      cookies().get("mysession")?.value === newSessionCookie
+    );
 
     return (
       <>
-        <MixerPage newSession={newSession} />
+        <MixerPage newSessionCookie={newSessionCookie} />
       </>
     );
   }
@@ -29,10 +33,10 @@ export default async function Mixtape(props: MixtapeProps) {
 interface MixtapeProps {
   searchParams: { [key: string]: string | undefined };
 }
-async function initAuthentication(code: string) {
+async function initAuthentication(code: string): Promise<string> {
   const sessionCookie = cookies().get("mysession")?.value;
 
-  return await fetch("http://localhost:3000/api/mixtape", {
+  const apiResponse = await fetch("http://localhost:3000/api/mixtape", {
     method: "POST",
     body: JSON.stringify({ code }),
     cache: "no-cache",
@@ -40,4 +44,6 @@ async function initAuthentication(code: string) {
       Cookie: `mysession=${sessionCookie}`,
     },
   });
+
+  return apiResponse.headers.getSetCookie()[0].concat(";Path=/;");
 }
