@@ -1,3 +1,4 @@
+"use client";
 import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "../../controls/Playlist/PlaylistBlock";
 import ScrollableList from "@/components/controls/ScrollableList";
@@ -23,20 +24,18 @@ export default function Playlists(props: PlaylistsProp) {
     setPlaylistMapping({ ...mapping });
   }, [playlists]);
 
-  const playlistBlocks = playlists.map(() => {});
-
-  // const playlist_blocks = playlists.map((playlist) => {
-  //   return (
-  //     <PlaylistBlock
-  //       key={playlist.id}
-  //       id={playlist.id}
-  //       name={playlist.name}
-  //       images={playlist.images}
-  //       active={selectedPlaylists[playlist.id]}
-  //       selectPlaylist={selectPlaylist}
-  //     />
-  //   );
-  // });
+  const playlistBlocks = playlists.map((playlist) => {
+    return (
+      <PlaylistBlock
+        key={playlist.id}
+        id={playlist.id}
+        name={playlist.name}
+        images={playlist.images}
+        active={playlistMapping[playlist.id]}
+        selectPlaylist={handleSelectPlaylist}
+      />
+    );
+  });
 
   return (
     <div className="container">
@@ -44,12 +43,7 @@ export default function Playlists(props: PlaylistsProp) {
         <h3>Playlists</h3>
       </div>
       <div className="row">
-        {/* <ScrollableList
-          items={playlist_blocks}
-          getMoreData={getMoreData}
-          maxPlaylists={maxPlaylists}
-          isLoading={isLoading}
-        /> */}
+        <ScrollableList items={playlistBlocks} />
       </div>
       <div className="row mt-3 text-center py-2">{/* <p>Options</p> */}</div>
     </div>

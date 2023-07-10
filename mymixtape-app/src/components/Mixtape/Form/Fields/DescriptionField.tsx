@@ -1,4 +1,6 @@
+"use client";
 export default function DescriptionField(props: DescriptionFieldProps) {
+  const { description, handleDescription } = props;
   const id = "playlist_description";
 
   if (props.isLoading) {
@@ -10,6 +12,8 @@ export default function DescriptionField(props: DescriptionFieldProps) {
         <textarea
           className="form-control placeholder"
           id={id}
+          value={description}
+          onChange={(e) => handleDescription(e)}
           required
           placeholder="This is a really awesome playlist..."
         />
@@ -33,5 +37,7 @@ export default function DescriptionField(props: DescriptionFieldProps) {
 }
 
 interface DescriptionFieldProps {
+  description: string;
   isLoading?: boolean;
+  handleDescription: (e: any) => void;
 }

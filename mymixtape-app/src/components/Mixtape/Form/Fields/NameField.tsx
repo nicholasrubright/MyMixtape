@@ -1,4 +1,7 @@
+"use client";
 export default function NameField(props: NameFieldProps) {
+  const { name, handleName } = props;
+
   const id = "playlist_name";
 
   if (props.isLoading) {
@@ -11,6 +14,8 @@ export default function NameField(props: NameFieldProps) {
           type="text"
           className="form-control placeholder"
           id={id}
+          value={name}
+          onChange={(e) => handleName(e)}
           placeholder="Awesome Playlist"
           required
         />
@@ -35,5 +40,7 @@ export default function NameField(props: NameFieldProps) {
 }
 
 interface NameFieldProps {
+  name: string;
   isLoading?: boolean;
+  handleName: (e: any) => void;
 }

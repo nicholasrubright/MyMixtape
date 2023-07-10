@@ -1,4 +1,3 @@
-import { UserPlaylistsResponse } from "@/types/api/response";
 import MixerLayout from "@/components/layouts/MixerLayout";
 import Playlists from "../Playlist/Playlists";
 import CombineForm from "../Form/CombineForm";
