@@ -2,9 +2,12 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/mymixtape-api/config"
+	"github.com/mymixtape-api/middleware"
 	"github.com/mymixtape-api/models"
 	"github.com/mymixtape-api/services"
 )
@@ -26,6 +29,20 @@ func GetAuthorizationUrl(c *gin.Context) {
 
 func GetAccessToken(c *gin.Context) {
 
+	session := sessions.Default(c)
+	sessionToken, _ := middleware.GetTokenFromSession(session)
+
+	if sessionToken != nil {
+
+		tokenExpiresTime := sessionToken.Expires
+		timeNow := time.Now()
+
+		if tokenExpiresTime.Before(timeNow) {
+			c.JSON(http.StatusNoContent, nil)
+			return
+		}
+	}
+
 	var accessTokenRequest models.AccessTokenRequest
 
 	if err := c.BindJSON(&accessTokenRequest); err != nil {
@@ -34,6 +51,16 @@ func GetAccessToken(c *gin.Context) {
 			Status: http.StatusBadRequest,
 		})
 		return
+	}
+
+
+	if sessionToken != nil {
+
+		if accessTokenRequest.Code == sessionToken.Code {
+			c.JSON(http.StatusNoContent, nil)
+			return
+		}
+
 	}
 
 	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
@@ -46,5 +73,7 @@ func GetAccessToken(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, accessTokenResponse)
+	middleware.SetTokenInSession(session, accessTokenResponse.Token, accessTokenResponse.Expires, accessTokenRequest.Code)
+
+	c.JSON(http.StatusNoContent, nil)
 }

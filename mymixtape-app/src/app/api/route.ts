@@ -1,21 +1,15 @@
-import { getSession } from "@/api/api";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
-  const sessionCookie = cookies().get("mysession")?.value;
+export async function POST(request: NextRequest) {
+  const requestData = await request.json();
 
-  const apiResponse = await getSession();
+  const response = NextResponse.json(null);
 
-  const response = NextResponse.json(apiResponse);
-
-  if (apiResponse.headers) {
-    if (!sessionCookie && apiResponse.headers.has("Set-Cookie")) {
-      response.headers.append(
-        "Set-Cookie",
-        apiResponse.headers.get("Set-Cookie") as string
-      );
-    }
+  if (requestData) {
+    response.headers.append(
+      "Set-Cookie",
+      requestData.newSessionCookie as string
+    );
   }
 
   return response;

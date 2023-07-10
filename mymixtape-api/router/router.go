@@ -7,9 +7,11 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/securecookie"
 
 	"github.com/mymixtape-api/config"
 	"github.com/mymixtape-api/controllers"
+	"github.com/mymixtape-api/middleware"
 )
 
 var (
@@ -20,6 +22,50 @@ var (
 	CORS_MAX_AGE = 12 * time.Hour
 )
 
+
+
+func setAuthRoutes(apiRoutes *gin.RouterGroup) {
+
+	authRoutes := apiRoutes.Group("/auth") 
+	{
+		authRoutes.GET("", controllers.GetAuthorizationUrl)
+		authRoutes.POST("", controllers.GetAccessToken)
+		authRoutes.OPTIONS("", func(c *gin.Context) {
+			c.Done()
+		})
+	}
+
+}
+
+func setUserRoutes(apiRoutes *gin.RouterGroup) {
+
+	userRoutes := apiRoutes.Group("/user")
+
+	userRoutes.Use(middleware.SessionMiddleware())
+	{
+		userRoutes.GET("", controllers.GetCurrentUsersProfile)
+		userRoutes.OPTIONS("", func(c *gin.Context) {
+			c.Done()
+		})
+	}
+}
+
+func setPlaylistRoutes(apiRoutes *gin.RouterGroup) {
+
+	playlistRoutes := apiRoutes.Group("/playlists")
+
+	playlistRoutes.Use(middleware.SessionMiddleware())
+	{
+		playlistRoutes.GET("", controllers.GetCurrentUsersPlaylists)
+		playlistRoutes.POST("", controllers.CombinePlaylists)
+		playlistRoutes.OPTIONS("", func(c *gin.Context) {
+			c.Done()
+		})
+	}
+
+}
+
+
 func InitRoutes() *gin.Engine {
 
 	config.InitConfig()
@@ -27,8 +73,16 @@ func InitRoutes() *gin.Engine {
 	router := gin.Default()
 
 	// Session
-	store := cookie.NewStore([]byte("secret"))
-	router.Use(sessions.Sessions("mysession", store))
+	session_secret := securecookie.GenerateRandomKey(64)
+	if session_secret == nil {
+		panic("Failed to initialize session")
+	}
+
+	store := cookie.NewStore(session_secret)
+	store.Options(sessions.Options{ 
+		MaxAge: 60 * 60 * 24,
+	})
+	router.Use(sessions.Sessions(config.SESSION_VAR, store))
 
 	CORS_ALLOW_ORIGINS = []string{config.APP_CLIENT_ADDRESS, config.APP_SERVER_ADDRESS}
 
@@ -52,29 +106,13 @@ func InitRoutes() *gin.Engine {
 		router.SetTrustedProxies([]string{})
 	}
 
+	// Setup routes
 	apiRoutes := router.Group("/api")
-	{
-		apiRoutes.GET("/auth", controllers.GetAuthorizationUrl)
-		apiRoutes.POST("/auth", controllers.GetAccessToken)
-		apiRoutes.OPTIONS("/auth", func(c *gin.Context) {
-			c.Done()
-		})
 
-		apiRoutes.GET("/user", controllers.GetCurrentUsersProfile)
-		apiRoutes.OPTIONS("/user", func(c *gin.Context) {
-			c.Done()
-		})
+	setAuthRoutes(apiRoutes)
+	setUserRoutes(apiRoutes)
+	setPlaylistRoutes(apiRoutes)
 
-		apiRoutes.GET("/playlists", controllers.GetCurrentUsersPlaylists)
-		apiRoutes.POST("/playlists", controllers.CombinePlaylists)
-		apiRoutes.OPTIONS("/playlists", func(c *gin.Context) {
-			c.Done()
-		})
-
-		apiRoutes.GET("/test", controllers.TestProfile)
-
-		apiRoutes.GET("/session", controllers.GetSession)
-	}
 
 	return router
 }

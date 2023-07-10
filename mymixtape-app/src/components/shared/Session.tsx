@@ -1,14 +1,27 @@
 "use client";
+
 import { useEffect } from "react";
 
-export default function Session() {
+export default function Session(props: SessionProps) {
+  const { hasCookie, newSessionCookie } = props;
   useEffect(() => {
-    const getSession = async () => {
-      await fetch("/api");
+    const setSession = async () => {
+      await fetch("http://localhost:3000/api", {
+        method: "POST",
+        cache: "no-cache",
+        body: JSON.stringify({ newSessionCookie }),
+      });
     };
 
-    getSession();
-  }, []);
+    if (typeof window !== "undefined" && !hasCookie) {
+      setSession();
+    }
+  }, [hasCookie]);
 
   return null;
+}
+
+interface SessionProps {
+  hasCookie: boolean;
+  newSessionCookie: string;
 }

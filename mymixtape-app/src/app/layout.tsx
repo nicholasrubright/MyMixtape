@@ -4,7 +4,6 @@ import "@/styles/globals.scss";
 import { Roboto } from "next/font/google";
 import { Providers } from "./providers";
 import Script from "next/script";
-import Session from "@/components/shared/Session";
 
 const inter = Roboto({
   weight: ["400", "700"],
@@ -48,10 +47,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} gradient-background`}>
         <Providers>
-          <div>
-            <Session />
-            {children}
-          </div>
+          <div>{children}</div>
         </Providers>
       </body>
     </html>

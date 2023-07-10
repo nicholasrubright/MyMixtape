@@ -19,6 +19,9 @@ var (
 
 	// Environment
 	API_ENVIRONMENT = ""
+
+	// Session Variables
+	SESSION_VAR = ""
 )
 
 func InitConfig() {
@@ -33,4 +36,6 @@ func InitConfig() {
 	PORT = os.Getenv("PORT")
 
 	API_ENVIRONMENT = os.Getenv("API_ENVIRONMENT")
+
+	SESSION_VAR = os.Getenv("SESSION_VAR")
 }

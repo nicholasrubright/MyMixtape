@@ -11,6 +11,7 @@ const nextConfig = {
   env: {
     API_SERVER_URL: "http://mymixtape-api:8080",
     API_CLIENT_URL: "http://localhost:8080",
+    API_SESSION_VAR: "MyMixtape_Session",
   },
 };
 

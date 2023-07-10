@@ -48,16 +48,16 @@ func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri st
 
 func GetAccessToken(code string, client_id string, client_secret, redirect_uri string) (*models.AccessTokenResponse, *models.ErrorResponse) {
 	
-	if err := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret); err != nil {
-		return nil, &models.ErrorResponse{
-			Message: err.Message,
-			Status: err.StatusCode,
-		}
+	accessTokenResponse, errorResponse := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret)
+
+	if errorResponse != nil {
+			return nil, &models.ErrorResponse{
+			Message: errorResponse.Message,
+			Status: errorResponse.StatusCode,
+		} 
 	}
 
-	return &models.AccessTokenResponse{
-		Token: REQUEST_MANAGER.Token,
-	}, nil
+	return accessTokenResponse, nil
 }
 
 // User Endpoints
