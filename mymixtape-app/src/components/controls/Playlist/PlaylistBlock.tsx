@@ -1,3 +1,4 @@
+"use client";
 import { Image } from "@/types/models";
 import BlockLayout from "../../layouts/BlockLayout";
 import BlockImage from "./BlockImage";
@@ -9,7 +10,7 @@ export default function PlaylistBlock(props: PlaylistBlockProps) {
   const image = images[0];
 
   return (
-    <BlockLayout active={active}>
+    <BlockLayout id={id} active={active} selectPlaylist={selectPlaylist}>
       <BlockImage image={image.url} />
       <BlockName name={name} />
     </BlockLayout>

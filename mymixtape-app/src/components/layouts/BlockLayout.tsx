@@ -1,5 +1,6 @@
+"use client";
 export default function BlockLayout(props: BlockLayoutProps) {
-  const { children, active } = props;
+  const { id, children, active, selectPlaylist } = props;
 
   const [image, name] = children;
 
@@ -13,7 +14,10 @@ export default function BlockLayout(props: BlockLayoutProps) {
       >
         <div className="col-auto p-0">{image}</div>
         <div className="col align-self-center">{name}</div>
-        <a className="stretched-link"></a>
+        <a
+          onClick={(e) => selectPlaylist(e, id)}
+          className="stretched-link"
+        ></a>
       </div>
     </div>
   );
@@ -22,4 +26,6 @@ export default function BlockLayout(props: BlockLayoutProps) {
 interface BlockLayoutProps {
   children: JSX.Element[];
   active: boolean;
+  id: string;
+  selectPlaylist: (e: any, index: string) => void;
 }
