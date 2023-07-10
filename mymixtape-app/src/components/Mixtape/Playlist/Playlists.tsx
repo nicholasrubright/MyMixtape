@@ -2,11 +2,16 @@
 import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "../../controls/Playlist/PlaylistBlock";
 import ScrollableList from "@/components/controls/ScrollableList";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { remapPlaylistMapping } from "@/utils/playlists";
+import { PlaylistContext } from "@/context/PlaylistContext";
 
 export default function Playlists(props: PlaylistsProp) {
   const { playlists } = props;
+
+  const context: any = useContext(PlaylistContext);
+
+  const { selectPlaylist } = context;
 
   const [playlistMapping, setPlaylistMapping] = useState<PlaylistMapping>({});
 
@@ -17,6 +22,7 @@ export default function Playlists(props: PlaylistsProp) {
     const updatePlaylistMapping = playlistMapping;
     updatePlaylistMapping[index] = !updatePlaylistMapping[index];
     setPlaylistMapping({ ...updatePlaylistMapping });
+    selectPlaylist(updatePlaylistMapping);
   };
 
   useEffect(() => {

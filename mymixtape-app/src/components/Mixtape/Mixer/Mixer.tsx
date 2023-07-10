@@ -2,6 +2,7 @@ import MixerLayout from "@/components/layouts/MixerLayout";
 import Playlists from "../Playlist/Playlists";
 import CombineForm from "../Form/CombineForm";
 import { getUserPlaylists } from "@/api/api";
+import PlaylistProvider from "@/context/PlaylistContext";
 
 export default async function Mixer(props: MixerProps) {
   const { sessionCookie } = props;
@@ -9,10 +10,12 @@ export default async function Mixer(props: MixerProps) {
   const userPlaylists = await getUserPlaylists(sessionCookie);
 
   return (
-    <MixerLayout>
-      <Playlists playlists={userPlaylists.data.items} />
-      <CombineForm />
-    </MixerLayout>
+    <PlaylistProvider>
+      <MixerLayout>
+        <Playlists playlists={userPlaylists.data.items} />
+        <CombineForm />
+      </MixerLayout>
+    </PlaylistProvider>
   );
 }
 

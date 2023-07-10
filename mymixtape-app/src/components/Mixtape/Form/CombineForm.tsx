@@ -3,9 +3,14 @@ import CombineButton from "@/components/controls/CombineButton";
 import FormLayout from "@/components/layouts/FormLayout";
 import NameField from "./Fields/NameField";
 import DescriptionField from "./Fields/DescriptionField";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { PlaylistContext } from "@/context/PlaylistContext";
 
 export default function CombineForm() {
+  const context: any = useContext(PlaylistContext);
+
+  const { combinePlaylists } = context;
+
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
@@ -21,6 +26,8 @@ export default function CombineForm() {
     e.preventDefault();
     console.log("Name: ", name);
     console.log("Description: ", description);
+
+    combinePlaylists(name, description);
   };
 
   return (
