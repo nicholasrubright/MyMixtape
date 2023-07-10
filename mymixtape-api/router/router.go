@@ -7,6 +7,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/securecookie"
 
 	"github.com/mymixtape-api/config"
 	"github.com/mymixtape-api/controllers"
@@ -20,6 +21,8 @@ var (
 	CORS_EXPOSE_HEADERS = []string{"Content-Length"}
 	CORS_MAX_AGE = 12 * time.Hour
 )
+
+
 
 func setAuthRoutes(apiRoutes *gin.RouterGroup) {
 
@@ -70,7 +73,12 @@ func InitRoutes() *gin.Engine {
 	router := gin.Default()
 
 	// Session
-	store := cookie.NewStore([]byte(config.SESSION_SECRET))
+	session_secret := securecookie.GenerateRandomKey(64)
+	if session_secret == nil {
+		panic("Failed to initialize session")
+	}
+
+	store := cookie.NewStore(session_secret)
 	store.Options(sessions.Options{ 
 		MaxAge: 60 * 60 * 24,
 	})
@@ -97,8 +105,6 @@ func InitRoutes() *gin.Engine {
 
 		router.SetTrustedProxies([]string{})
 	}
-
-
 
 	// Setup routes
 	apiRoutes := router.Group("/api")

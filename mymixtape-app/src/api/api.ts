@@ -14,7 +14,7 @@ import {
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "@/types/api/response";
-import { parseResponse, getApiUrl } from "@/utils/fetch";
+import { parseResponse, getApiUrl, GetSession } from "@/utils/fetch";
 import mockApi from "./mock.api";
 
 const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "DEV" || false;
@@ -34,8 +34,7 @@ export const getAuthorizationUrl =
   };
 
 export const setAccessToken = async (
-  request: GetAccessTokenRequest,
-  sessionCookie: string
+  request: GetAccessTokenRequest
 ): Promise<AccessTokenResponse> => {
   if (DEBUG) return mockApi.mockGetAccessToken;
   return await parseResponse<AccessTokenResponse>(
@@ -43,9 +42,6 @@ export const setAccessToken = async (
       method: "POST",
       cache: "no-cache",
       body: JSON.stringify(request),
-      headers: {
-        Cookie: `mysession=${sessionCookie}`,
-      },
     })
   ).catch((err) => {
     console.log(err);
@@ -58,9 +54,7 @@ export const getUserProfile = async (
 ): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;
 
-  if (!sessionCookie.includes("mysession")) {
-    sessionCookie = `mysession=${sessionCookie}`;
-  }
+  sessionCookie = GetSession(sessionCookie);
 
   return await parseResponse<UserProfileResponse>(
     fetch(`${getApiUrl()}/api/user`, {
@@ -81,9 +75,7 @@ export const getUserPlaylists = async (
 ): Promise<UserPlaylistsResponse> => {
   if (DEBUG) return mockApi.mockGetUserPlaylists;
 
-  if (!sessionCookie.includes("mysession")) {
-    sessionCookie = `mysession=${sessionCookie}`;
-  }
+  sessionCookie = GetSession(sessionCookie);
 
   const params: Record<string, string> = {
     offset: request.offset.toString(),
@@ -130,48 +122,4 @@ export const combinePlaylists = async (request: CombinePlaylistRequest) => {
   ).catch((err) => {
     return mockApi.mockCombinePlaylists;
   });
-};
-
-export const getSession = async (
-  sessionCookie: string
-): Promise<GetSessionResponse> => {
-  if (DEBUG) return mockApi.mockGetSession;
-
-  return await parseResponse<GetSessionResponse>(
-    fetch(`${getApiUrl()}/api/session`, {
-      method: "GET",
-      cache: "no-cache",
-      headers: {
-        Cookie: `mysession=${sessionCookie}`,
-      },
-    })
-  ).catch((err) => {
-    return mockApi.mockGetSession;
-  });
-};
-
-export const setSessionToken = async (
-  code: string
-): Promise<SetSessionTokenResponse> => {
-  return await parseResponse<SetSessionTokenResponse>(
-    fetch(`${getApiUrl()}/api/session/set`, {
-      method: "POST",
-      cache: "no-cache",
-      body: JSON.stringify({ code }),
-    })
-  );
-};
-
-export const getSessionToken = async (
-  sessionCookie: string
-): Promise<GetSessionTokenResponse> => {
-  return await parseResponse<GetSessionTokenResponse>(
-    fetch(`${getApiUrl()}/api/session/get`, {
-      method: "GET",
-      cache: "no-cache",
-      headers: {
-        Cookie: `mysession=${sessionCookie}`,
-      },
-    })
-  );
 };

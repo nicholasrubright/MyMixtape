@@ -17,6 +17,7 @@ export default async function Mixtape(props: MixtapeProps) {
       newSessionCookie = cookies().get("mysession")?.value as string;
     } else {
       newSessionCookie = await initAuthentication(code as string);
+      console.log("newSessionCookie: ", newSessionCookie);
     }
 
     return (
@@ -33,15 +34,10 @@ interface MixtapeProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 async function initAuthentication(code: string): Promise<string> {
-  const sessionCookie = cookies().get("mysession")?.value;
-
   const apiResponse = await fetch("http://localhost:3000/api/mixtape", {
     method: "POST",
     body: JSON.stringify({ code }),
     cache: "no-cache",
-    headers: {
-      Cookie: `mysession=${sessionCookie}`,
-    },
   });
 
   if (apiResponse.headers.getSetCookie()[0].includes("Path=/;")) {

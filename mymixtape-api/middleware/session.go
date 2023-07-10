@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -26,7 +27,7 @@ func GetTokenFromSession(session sessions.Session) (*internal.SessionToken, *int
 		token = tokenVal.(string)
 	}
 
-	expiresVal := session.Get("expires_in")
+	expiresVal := session.Get("expires")
 	if expiresVal == nil {
 		return nil, &internal.SessionError{
 			Message: "No expires_in in session",
@@ -55,6 +56,8 @@ func GetTokenFromSession(session sessions.Session) (*internal.SessionToken, *int
 
 func SetTokenInSession(session sessions.Session, token string, expires string, code string) {
 
+	fmt.Println("SetTokenInSession: ", token, expires, code)
+
 	session.Set("token", token)
 	session.Set("expires", expires)
 	session.Set("code", code)
@@ -71,6 +74,7 @@ func SessionMiddleware() gin.HandlerFunc {
 				Message: "Cookie missing",
 				Status: http.StatusBadRequest,
 			})
+			return
 		}
 
 		session := sessions.Default(c)
@@ -81,6 +85,7 @@ func SessionMiddleware() gin.HandlerFunc {
 				Message: sessionError.Message,
 				Status: http.StatusUnauthorized,
 			})
+			return
 		}
 
 		c.Set("token", sessionToken.Token)
