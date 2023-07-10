@@ -28,14 +28,14 @@ MyMixtape runs on a [Go](https://go.dev/) and [Gin](https://gin-gonic.com/) back
 
 ### Frontend
 
+- Use React Context for doing combine functionality
 - Add client-side validation
-- Add loading/placeholders on elements
 - Unit testing
 - Caching
+- ~~Add loading/placeholders on elements~~
 - ~~Utilize Cookies for token~~
 - ~~Improve UI on web and mobile~~
 - ~~Utilize Next.js SSR~~
-- ~~Use React Context~~
 
 ### Backend
 
