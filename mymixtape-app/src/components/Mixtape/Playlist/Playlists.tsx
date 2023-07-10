@@ -22,7 +22,9 @@ export default function Playlists(props: PlaylistsProp) {
     const updatePlaylistMapping = playlistMapping;
     updatePlaylistMapping[index] = !updatePlaylistMapping[index];
     setPlaylistMapping({ ...updatePlaylistMapping });
-    selectPlaylist(updatePlaylistMapping);
+
+    const ids = playlists.filter((p) => playlistMapping[p.id]).map((p) => p.id);
+    selectPlaylist(ids);
   };
 
   useEffect(() => {
