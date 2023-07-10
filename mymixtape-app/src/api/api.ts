@@ -68,14 +68,15 @@ export const getUserProfile = async (
 };
 
 export const getUserPlaylists = async (
-  request: GetUserPlaylistsRequest,
-  sessionCookie: string
+  sessionCookie: string,
+  request?: GetUserPlaylistsRequest
 ): Promise<UserPlaylistsResponse> => {
   if (DEBUG) return mockApi.mockGetUserPlaylists;
   sessionCookie = GetSession(sessionCookie);
+
   const params: Record<string, string> = {
-    offset: request.offset.toString(),
-    limit: request.limit.toString(),
+    offset: request ? request.offset.toString() : "0",
+    limit: request ? request.limit.toString() : "20",
   };
 
   const urlParams = new URLSearchParams(params);

@@ -1,7 +1,36 @@
 import { Image } from "@/types/models";
 
 export default function PlaylistBlock(props: PlaylistBlockProps) {
-  const { id, name, images, active, selectPlaylist } = props;
+  const { id, name, images, active, selectPlaylist, isSkeleton } = props;
+
+  if (isSkeleton) {
+    return (
+      <div className="container rounded py-3">
+        <div
+          id="playlist-block"
+          className={`row playlist rounded shadow bg-light position-relative ${
+            active ? "active" : ""
+          }`}
+        >
+          <div className="col-auto p-0">
+            <img
+              className="rounded object-fit-scale placeholder"
+              src={""}
+              width="100"
+              height="100"
+            ></img>
+          </div>
+          <div className="col align-self-center">
+            <h4 className="text-center text-break placeholder w-50"></h4>
+          </div>
+          <a
+            onClick={(e) => selectPlaylist(e, id)}
+            className="stretched-link"
+          ></a>
+        </div>
+      </div>
+    );
+  }
 
   const image = images[0];
   return (
@@ -38,4 +67,5 @@ interface PlaylistBlockProps {
   images: Image[];
   active: boolean;
   selectPlaylist: (e: any, id: string) => void;
+  isSkeleton?: boolean;
 }

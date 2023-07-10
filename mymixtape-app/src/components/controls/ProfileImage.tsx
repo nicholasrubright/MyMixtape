@@ -1,7 +1,18 @@
 import Loader from "../shared/Loader";
 
 export default function ProfileImage(props: ProfileImageProps) {
-  const { image, isLoading } = props;
+  const { image, isLoading, isSkeleton } = props;
+
+  if (isSkeleton) {
+    return (
+      <img
+        src={""}
+        className="rounded-circle shadow border border-3 placeholder"
+        height="100px"
+        width="100px"
+      />
+    );
+  }
 
   if (isLoading) return <Loader />;
 
@@ -18,4 +29,5 @@ export default function ProfileImage(props: ProfileImageProps) {
 interface ProfileImageProps {
   image: string;
   isLoading: boolean;
+  isSkeleton?: boolean;
 }

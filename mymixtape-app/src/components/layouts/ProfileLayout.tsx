@@ -1,4 +1,4 @@
-export default function HeaderLayout(props: HeaderLayoutProps) {
+export default function ProfileLayout(props: ProfileLayoutProps) {
   const [profileImage, profileName] = props.children;
 
   return (
@@ -13,6 +13,6 @@ export default function HeaderLayout(props: HeaderLayoutProps) {
   );
 }
 
-interface HeaderLayoutProps {
+interface ProfileLayoutProps {
   children: React.ReactNode[];
 }

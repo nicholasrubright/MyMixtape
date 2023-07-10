@@ -2,7 +2,6 @@ import "bootstrap/dist/css/bootstrap.css";
 import "@/styles/globals.scss";
 
 import { Roboto } from "next/font/google";
-import { Providers } from "./providers";
 import Script from "next/script";
 
 const inter = Roboto({
@@ -46,9 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} gradient-background`}>
-        <Providers>
-          <div>{children}</div>
-        </Providers>
+        <div>{children}</div>
       </body>
     </html>
   );
