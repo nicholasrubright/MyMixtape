@@ -1,9 +1,29 @@
 import { Playlist, PlaylistMapping } from "@/types/models";
 import PlaylistBlock from "../../controls/Playlist/PlaylistBlock";
 import ScrollableList from "@/components/controls/ScrollableList";
+import { useEffect, useState } from "react";
+import { remapPlaylistMapping } from "@/utils/playlists";
 
 export default function Playlists(props: PlaylistsProp) {
   const { playlists } = props;
+
+  const [playlistMapping, setPlaylistMapping] = useState<PlaylistMapping>({});
+
+  const handleSelectPlaylist = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    index: string
+  ) => {
+    const updatePlaylistMapping = playlistMapping;
+    updatePlaylistMapping[index] = !updatePlaylistMapping[index];
+    setPlaylistMapping({ ...updatePlaylistMapping });
+  };
+
+  useEffect(() => {
+    const mapping = remapPlaylistMapping(playlists, playlistMapping);
+    setPlaylistMapping({ ...mapping });
+  }, [playlists]);
+
+  const playlistBlocks = playlists.map(() => {});
 
   // const playlist_blocks = playlists.map((playlist) => {
   //   return (
