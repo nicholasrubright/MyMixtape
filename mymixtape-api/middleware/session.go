@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -26,7 +25,7 @@ func GetTokenFromSession(session sessions.Session) (*internal.SessionToken, *int
 	} else {
 		token = tokenVal.(string)
 	}
-
+	
 	expiresVal := session.Get("expires")
 	if expiresVal == nil {
 		return nil, &internal.SessionError{
@@ -34,7 +33,8 @@ func GetTokenFromSession(session sessions.Session) (*internal.SessionToken, *int
 		}
 	} else {
 		expiresStr := expiresVal.(string)
-		expires_in, _ = time.Parse(expiresStr, expiresStr)
+
+		expires_in, _ = time.Parse("2006-01-02 15:04:05", expiresStr)
 	}
 
 	codeVal := session.Get("code")
@@ -55,8 +55,6 @@ func GetTokenFromSession(session sessions.Session) (*internal.SessionToken, *int
 }
 
 func SetTokenInSession(session sessions.Session, token string, expires string, code string) {
-
-	fmt.Println("SetTokenInSession: ", token, expires, code)
 
 	session.Set("token", token)
 	session.Set("expires", expires)

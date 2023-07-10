@@ -1,5 +1,6 @@
 import { getAuthorizationUrl } from "@/api/api";
 import MixerPage from "@/components/Mixtape/MixerPage";
+import { GetSession } from "@/utils/fetch";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -13,11 +14,11 @@ export default async function Mixtape(props: MixtapeProps) {
     }
   } else {
     let newSessionCookie: string;
-    if (cookies().has("mysession")) {
-      newSessionCookie = cookies().get("mysession")?.value as string;
+
+    if (cookies().has(GetSession(null))) {
+      newSessionCookie = cookies().get(GetSession(null))?.value as string;
     } else {
       newSessionCookie = await initAuthentication(code as string);
-      console.log("newSessionCookie: ", newSessionCookie);
     }
 
     return (
@@ -40,9 +41,9 @@ async function initAuthentication(code: string): Promise<string> {
     cache: "no-cache",
   });
 
-  if (apiResponse.headers.getSetCookie()[0].includes("Path=/;")) {
-    return apiResponse.headers.getSetCookie()[0];
-  } else {
-    return apiResponse.headers.getSetCookie()[0].concat(";Path=/;");
-  }
+  const responseHeaders = apiResponse.headers;
+
+  const responseCookie = responseHeaders.getSetCookie()[0];
+
+  return responseCookie;
 }

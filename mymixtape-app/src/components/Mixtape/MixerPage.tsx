@@ -4,6 +4,7 @@ import MixtapeLayout from "../layouts/MixtapeLayout";
 import { getUserPlaylists, getUserProfile } from "@/api/api";
 import Session from "../shared/Session";
 import { cookies } from "next/headers";
+import { GetSession } from "@/utils/fetch";
 
 export default async function MixerPage(props: MixerPageProps) {
   let sessionCookie = props.newSessionCookie;
@@ -18,7 +19,7 @@ export default async function MixerPage(props: MixerPageProps) {
   return (
     <MixtapeLayout>
       <Session
-        hasCookie={cookies().has("mysession")}
+        hasCookie={cookies().has(GetSession(null))}
         newSessionCookie={sessionCookie}
       />
       <div className="row mb-3">

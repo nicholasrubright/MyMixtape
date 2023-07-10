@@ -53,9 +53,7 @@ export const getUserProfile = async (
   sessionCookie: string
 ): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;
-
   sessionCookie = GetSession(sessionCookie);
-
   return await parseResponse<UserProfileResponse>(
     fetch(`${getApiUrl()}/api/user`, {
       method: "GET",
@@ -74,9 +72,7 @@ export const getUserPlaylists = async (
   sessionCookie: string
 ): Promise<UserPlaylistsResponse> => {
   if (DEBUG) return mockApi.mockGetUserPlaylists;
-
   sessionCookie = GetSession(sessionCookie);
-
   const params: Record<string, string> = {
     offset: request.offset.toString(),
     limit: request.limit.toString(),

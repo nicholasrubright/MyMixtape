@@ -22,7 +22,6 @@ var (
 
 	// Session Variables
 	SESSION_VAR = ""
-	SESSION_SECRET = ""
 )
 
 func InitConfig() {
@@ -39,5 +38,4 @@ func InitConfig() {
 	API_ENVIRONMENT = os.Getenv("API_ENVIRONMENT")
 
 	SESSION_VAR = os.Getenv("SESSION_VAR")
-	SESSION_SECRET = os.Getenv("SESSION_SECRET")
 }

@@ -38,7 +38,7 @@ func GetAccessToken(c *gin.Context) {
 		timeNow := time.Now()
 
 		if tokenExpiresTime.Before(timeNow) {
-			c.JSON(http.StatusOK, &models.AccessTokenResponse{Token: sessionToken.Token, Expires: sessionToken.Expires.String()})
+			c.JSON(http.StatusNoContent, nil)
 			return
 		}
 	}
@@ -51,6 +51,16 @@ func GetAccessToken(c *gin.Context) {
 			Status: http.StatusBadRequest,
 		})
 		return
+	}
+
+
+	if sessionToken != nil {
+
+		if accessTokenRequest.Code == sessionToken.Code {
+			c.JSON(http.StatusNoContent, nil)
+			return
+		}
+
 	}
 
 	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)

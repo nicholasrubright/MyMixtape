@@ -9,6 +9,7 @@ export async function parseResponse<T>(
       if (responseObj.status === 204) {
         return {
           headers: responseObj.headers,
+          data: {},
         } as T;
       }
 
@@ -44,12 +45,16 @@ export const IsClientSide = () => {
   return typeof window !== "undefined";
 };
 
-export const GetSession = (sessionCookie: string): string => {
+export const GetSession = (sessionCookie: string | null): string => {
   if (!process.env.API_SESSION_VAR) {
     throw new Error("Session variable not defined");
   }
 
-  return sessionCookie.includes(process.env.API_SESSION_VAR)
+  if (!sessionCookie) {
+    return process.env.API_SESSION_VAR;
+  }
+
+  return !sessionCookie.includes(process.env.API_SESSION_VAR)
     ? `${process.env.API_SESSION_VAR}=${sessionCookie}`
     : sessionCookie;
 };

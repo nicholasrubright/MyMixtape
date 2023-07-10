@@ -22,6 +22,9 @@ const (
 	// Access Token
 	ACCESS_TOKEN_URL = "https://accounts.spotify.com/api/token"
 	GRANT_TYPE = "authorization_code"
+
+	// Session
+	TIME_FORMAT = "2006-01-02 15:04:05"
 )
 
 
@@ -96,7 +99,7 @@ func (rm *RequestManager) SetToken(code string, redirect_uri string, client_id s
 
 	return &models.AccessTokenResponse{
 		Token: spotifyAccessTokenResponse.AccessToken,
-		Expires: token_expiration_time.String(),
+		Expires: token_expiration_time.Format(TIME_FORMAT),
 	}, nil
 }
 
