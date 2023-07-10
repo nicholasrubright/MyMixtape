@@ -1,4 +1,4 @@
-import Loader from "../shared/Loader";
+import Loader from "../../shared/Loader";
 
 export default function ProfileImage(props: ProfileImageProps) {
   const { image, isLoading, isSkeleton } = props;

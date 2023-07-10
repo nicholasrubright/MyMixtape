@@ -1,17 +1,13 @@
-import {
-  getAuthorizationUrl,
-  getUserPlaylists,
-  getUserProfile,
-} from "@/api/api";
+import { getAuthorizationUrl, getUserPlaylists } from "@/api/api";
 import Profile from "@/components/Mixtape/Profile/Profile";
-import { Mixer } from "@/components/Mixtape/Mixer";
-import MixtapeLayout from "@/components/layouts/MixtapeLayout";
 import Session from "@/components/shared/Session";
 import { GetSession } from "@/utils/fetch";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import ProfileSkeleton from "@/components/Mixtape/Profile/ProfileSkeleton";
 import { Suspense } from "react";
+import Mixer from "@/components/Mixtape/Mixer/Mixer";
+import MixerSkeleton from "@/components/Mixtape/Mixer/MixerSkeleton";
 
 export default async function Page(props: PageProps) {
   const { searchParams } = props;
@@ -27,11 +23,6 @@ export default async function Page(props: PageProps) {
 
   const sessionCookie = await initAuthentication(code as string);
 
-  //const userProfile = getUserProfile(sessionCookie);
-  const userPlaylists = getUserPlaylists(sessionCookie);
-
-  const [playlists] = await Promise.all([userPlaylists]);
-
   return (
     <>
       <Session
@@ -44,7 +35,9 @@ export default async function Page(props: PageProps) {
         </Suspense>
       </div>
       <div className="row p-0">
-        <Mixer userPlaylistResponse={playlists} />
+        <Suspense fallback={<MixerSkeleton />}>
+          <Mixer sessionCookie={sessionCookie} />
+        </Suspense>
       </div>
     </>
   );

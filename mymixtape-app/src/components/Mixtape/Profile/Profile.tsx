@@ -1,6 +1,6 @@
 import { getUserProfile } from "@/api/api";
-import ProfileImage from "@/components/controls/ProfileImage";
-import ProfileName from "@/components/controls/ProfileName";
+import ProfileImage from "@/components/controls/Profile/ProfileImage";
+import ProfileName from "@/components/controls/Profile/ProfileName";
 import ProfileLayout from "@/components/layouts/ProfileLayout";
 import { Profile } from "@/types/models";
 

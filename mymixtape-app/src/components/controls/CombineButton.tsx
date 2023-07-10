@@ -1,26 +1,19 @@
 export default function CombineButton(props: CombineButtonProps) {
-  const { isCombining, isDisabled, createNewPlaylist } = props;
+  if (props.isLoading) {
+    return (
+      <button type="submit" className="btn btn-primary disabled placeholder">
+        Combine
+      </button>
+    );
+  }
 
   return (
-    <button
-      type="submit"
-      onClick={(e) => createNewPlaylist(e)}
-      className="btn btn-combine"
-      disabled={isDisabled}
-    >
-      {isCombining && (
-        <span
-          className="spinner-border spinner-border-sm mx-2"
-          role="status"
-        ></span>
-      )}
+    <button type="submit" className="btn btn-primary">
       Combine
     </button>
   );
 }
 
 interface CombineButtonProps {
-  isCombining: boolean;
-  isDisabled: boolean;
-  createNewPlaylist: (e: any) => void;
+  isLoading?: boolean;
 }
