@@ -8,62 +8,17 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/securecookie"
-
 	"github.com/mymixtape-api/config"
-	"github.com/mymixtape-api/controllers"
 	"github.com/mymixtape-api/middleware"
 )
 
 var (
-	CORS_ALLOW_ORIGINS = []string{}
-	CORS_ALLOW_METHODS = []string{"GET", "POST", "OPTIONS"}
-	CORS_ALLOW_HEADERS = []string{"Origin", "Authorization"}
+	CORS_ALLOW_ORIGINS  = []string{}
+	CORS_ALLOW_METHODS  = []string{"GET", "POST", "OPTIONS"}
+	CORS_ALLOW_HEADERS  = []string{"Origin", "Authorization"}
 	CORS_EXPOSE_HEADERS = []string{"Content-Length"}
-	CORS_MAX_AGE = 12 * time.Hour
+	CORS_MAX_AGE        = 12 * time.Hour
 )
-
-
-
-func setAuthRoutes(apiRoutes *gin.RouterGroup) {
-
-	authRoutes := apiRoutes.Group("/auth") 
-	{
-		authRoutes.GET("", controllers.GetAuthorizationUrl)
-		authRoutes.POST("", controllers.GetAccessToken)
-		authRoutes.OPTIONS("", func(c *gin.Context) {
-			c.Done()
-		})
-	}
-
-}
-
-func setUserRoutes(apiRoutes *gin.RouterGroup) {
-
-	userRoutes := apiRoutes.Group("/user")
-
-	userRoutes.Use(middleware.SessionMiddleware())
-	{
-		userRoutes.GET("", controllers.GetCurrentUsersProfile)
-		userRoutes.OPTIONS("", func(c *gin.Context) {
-			c.Done()
-		})
-	}
-}
-
-func setPlaylistRoutes(apiRoutes *gin.RouterGroup) {
-
-	playlistRoutes := apiRoutes.Group("/playlists")
-
-	playlistRoutes.Use(middleware.SessionMiddleware())
-	{
-		playlistRoutes.GET("", controllers.GetCurrentUsersPlaylists)
-		playlistRoutes.POST("", controllers.CombinePlaylists)
-		playlistRoutes.OPTIONS("", func(c *gin.Context) {
-			c.Done()
-		})
-	}
-
-}
 
 
 func InitRoutes() *gin.Engine {
@@ -79,7 +34,7 @@ func InitRoutes() *gin.Engine {
 	}
 
 	store := cookie.NewStore(session_secret)
-	store.Options(sessions.Options{ 
+	store.Options(sessions.Options{
 		MaxAge: 60 * 60 * 24,
 	})
 	router.Use(sessions.Sessions(config.SESSION_VAR, store))
@@ -93,12 +48,12 @@ func InitRoutes() *gin.Engine {
 	if config.API_ENVIRONMENT == "DEV" {
 		// CORS Policy for testing at app level
 		corsPolicy := cors.New(cors.Config{
-			AllowOrigins: CORS_ALLOW_ORIGINS,
-			AllowMethods: CORS_ALLOW_METHODS,
-			AllowHeaders: CORS_ALLOW_HEADERS,
-			ExposeHeaders: CORS_EXPOSE_HEADERS,
+			AllowOrigins:     CORS_ALLOW_ORIGINS,
+			AllowMethods:     CORS_ALLOW_METHODS,
+			AllowHeaders:     CORS_ALLOW_HEADERS,
+			ExposeHeaders:    CORS_EXPOSE_HEADERS,
 			AllowCredentials: true,
-			MaxAge: CORS_MAX_AGE,
+			MaxAge:           CORS_MAX_AGE,
 		})
 
 		router.Use(corsPolicy)
@@ -106,13 +61,26 @@ func InitRoutes() *gin.Engine {
 		router.SetTrustedProxies([]string{})
 	}
 
-	// Setup routes
+	s := NewServices()
+
 	apiRoutes := router.Group("/api")
 
-	setAuthRoutes(apiRoutes)
-	setUserRoutes(apiRoutes)
-	setPlaylistRoutes(apiRoutes)
+	apiRoutes.GET("/auth", s.GetAuthorizationUrl)
+	apiRoutes.POST("/auth", s.GetAccessToken)
+	apiRoutes.OPTIONS("/auth", func(c *gin.Context) {
+		c.Done()
+	})
 
+	apiRoutes.GET("/user", middleware.SessionMiddleware(), s.GetCurrentUsersProfile)
+	apiRoutes.OPTIONS("/user", func(c *gin.Context) {
+		c.Done()
+	})
+
+	apiRoutes.GET("/playlists", middleware.SessionMiddleware(), s.GetCurrentUsersPlaylists)
+	apiRoutes.POST("/playlists", middleware.SessionMiddleware(), s.CombinePlaylists)
+	apiRoutes.OPTIONS("/playlists", func (c *gin.Context) {
+		c.Done()
+	})
 
 	return router
 }

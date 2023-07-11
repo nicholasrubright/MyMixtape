@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/mymixtape-api/config"
 	"github.com/mymixtape-api/constants"
 	"github.com/mymixtape-api/internal"
 	"github.com/mymixtape-api/models"
@@ -31,12 +30,12 @@ type Spotify struct {
 	REDIRECT_URI	string
 }
 
-func NewSpotify() Spotify {
+func NewSpotify(client_id string, client_secret string, redirect_uri string) Spotify {
 	return Spotify{
 		Client: internal.New(http.DefaultClient),
-		CLIENT_ID: config.SPOTIFY_CLIENT_ID,
-		CLIENT_SECRET: config.SPOTIFY_CLIENT_SECRET,
-		REDIRECT_URI: config.SPOTIFY_CLIENT_REDIRECT,
+		CLIENT_ID: client_id,
+		CLIENT_SECRET: client_secret,
+		REDIRECT_URI: redirect_uri,
 	}
 }
 
@@ -60,12 +59,21 @@ func (s Spotify) GetAuthorizationUrl() (*models.AuthorizationUrlResponse, *model
 }
 
 func (s Spotify) GetAccessToken(code string) (*models.AccessTokenResponse, *models.ErrorResponse) {
-	accessTokenResponse, errorResponse := s.GetAccessToken(code)
+
+	formData := url.Values{
+		"grant_type": {constants.GRANT_TYPE},
+		"code": {code},
+		"redirect_uri": {s.REDIRECT_URI},
+	}
+
+	var accessTokenResponse *models.AccessTokenResponse
+
+	accessTokenResponse, errorResponse := s.Client.PostAccessToken(constants.TOKEN_URL, formData, &accessTokenResponse, s.CLIENT_ID, s.CLIENT_SECRET)
 
 	if errorResponse != nil {
 		return nil, &models.ErrorResponse{
 			Message: errorResponse.Message,
-			Status: errorResponse.Status,
+			Status: errorResponse.StatusCode,
 		}
 	}
 

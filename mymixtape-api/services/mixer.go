@@ -2,8 +2,10 @@ package services
 
 import "github.com/mymixtape-api/models"
 
+
 type IMixer interface {
 	CombinePlaylists(user string, name string, description string, ids []string, token string) *models.ErrorResponse
+	Rollback(id string, token string) *models.ErrorResponse
 }
 
 type Mixer struct {
@@ -20,3 +22,6 @@ func (m Mixer) CombinePlaylists(user string, name, description string, ids []str
 	return nil
 }
 
+func (m Mixer) Rollback(id string, token string) *models.ErrorResponse {
+	return nil
+}

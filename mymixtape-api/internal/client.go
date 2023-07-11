@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/mymixtape-api/constants"
+	"github.com/mymixtape-api/models"
+	"github.com/mymixtape-api/utils"
 )
 
 type Doer interface {
@@ -17,10 +19,11 @@ type Doer interface {
 }
 
 type IClient interface {
-	GetInto(endpoint string, target interface{}, token string) *constants.ApiError
-	PostInto(endpoint string, body interface{}, target interface{}, token string) *constants.ApiError
 	Get(endpoint string, token string) (*http.Response, error)
 	Post(endpoint string, body interface{}, token string) (*http.Response, error)
+	GetInto(endpoint string, target interface{}, token string) *constants.ApiError
+	PostInto(endpoint string, body interface{}, target interface{}, token string) *constants.ApiError
+	PostAccessToken(endpoint string, body interface{}, target interface{}) *constants.ApiError
 	DoRequest(method string, endpoint string, body io.Reader, token string) (*http.Response, error)
 	NewRequest(method string, endpoint string, body io.Reader, token string) (*http.Request, error)
 }
@@ -96,34 +99,10 @@ func (c Client) DoRequest(method string, endpoint string, body io.Reader, token 
 		return nil, err
 	}
 
-	if response.StatusCode == http.StatusServiceUnavailable {
-		time.Sleep(time.Second)
-		response, err = c.HTTP_CLIENT.Do(request)
-		if err != nil {
-			return nil, err
-		}
-	}
+	response, apiErr := checkStatus(response, request, &c)
 
-	if response.StatusCode == http.StatusTooManyRequests {
-		retry := response.Header.Get("Retry-After")
-		seconds, err := strconv.Atoi(retry)
-		if err != nil {
-			return nil, err
-		}
-
-		time.Sleep(time.Duration(seconds) * time.Second)
-		return c.DoRequest(method, endpoint, body, token)
-	}
-
-	if response.StatusCode < 200 || response.StatusCode > 299 {
-		err, ok := constants.StatusToError[response.StatusCode]
-		if !ok {
-			err = constants.ApiError{
-				Message: "unknown error reason",
-				StatusCode: response.StatusCode,
-			}
-		}
-		return nil, errors.New(err.Message)
+	if apiErr != nil {
+		return nil, errors.New(apiErr.ApiError())
 	}
 
 	return response, nil
@@ -140,4 +119,92 @@ func (c Client) NewRequest(method string, endpoint string, body io.Reader, token
 	request.Header.Add("Accept", "application/json")
 
 	return request, nil
+}
+
+
+func (c Client) PostAccessToken(endpoint string, body interface{}, target interface{}, client_id string, client_secret string) (*models.AccessTokenResponse, *constants.ApiError) {
+
+	buf := &bytes.Buffer{}
+
+	if err := json.NewEncoder(buf).Encode(body); err != nil {
+		return nil, &constants.ErrInternalServerError
+	}
+
+	request, err := http.NewRequest("POST", endpoint, buf)
+
+	if err != nil {
+		return nil, &constants.ErrInternalServerError
+	}
+
+	clientCredentials := utils.GetEncodedClientCredentials(client_id, client_secret)
+
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Add("Authorization", "Basic " + clientCredentials)
+
+	response, err := c.HTTP_CLIENT.Do(request)
+
+	if err != nil {
+		return nil, &constants.ErrInternalServerError
+	}
+
+	var spotifyAccessTokenResponse *models.SpotifyAccessTokenResponse
+
+	if err := json.NewDecoder(response.Body).Decode(&spotifyAccessTokenResponse); err != nil {
+		return nil, &constants.ErrInternalServerError
+	}
+
+	tokenExpiration := time.Now().Add(time.Duration(spotifyAccessTokenResponse.ExpiresIn) * time.Second)
+
+	return &models.AccessTokenResponse {
+		Token: spotifyAccessTokenResponse.AccessToken,
+		Expires: tokenExpiration.Format(constants.TIME_FORMAT),
+	}, nil
+
+}
+
+func checkStatus(response *http.Response, request *http.Request, client *Client) (*http.Response, *constants.ApiError) {
+
+	if response.StatusCode == http.StatusServiceUnavailable {
+		time.Sleep(time.Second)
+		response, err := client.HTTP_CLIENT.Do(request)
+		if err != nil {
+			return nil, &constants.ErrInternalServerError
+		}
+
+		return response, nil
+	}
+
+	if response.StatusCode == http.StatusTooManyRequests {
+		retry := response.Header.Get("Retry-After") 
+		seconds, err := strconv.Atoi(retry)
+		if err != nil {
+			return nil, &constants.ErrInternalServerError
+		}
+
+		time.Sleep(time.Duration(seconds) * time.Second)
+		
+		response, err := client.HTTP_CLIENT.Do(request)
+		if err != nil {
+			return nil, &constants.ErrInternalServerError
+		}
+
+		return response, nil
+	}
+
+	if response.StatusCode < 200 || response.StatusCode > 299 {
+		_, ok := constants.StatusToError[response.StatusCode]
+
+		if !ok {
+			return nil, &constants.ApiError{
+				Message: "unkown error reason",
+				StatusCode: response.StatusCode,
+			}
+		}
+
+		return nil, &constants.ErrInternalServerError
+	}
+
+	return response, nil
+
+
 }
