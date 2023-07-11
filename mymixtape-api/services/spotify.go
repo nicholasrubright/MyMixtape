@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	REQUEST_MANAGER = internal.NewRequestManager(http.DefaultClient)
+	REQUEST_MANAGER = internal.New(http.DefaultClient)
 )
 
 // Authorization Endpoints
