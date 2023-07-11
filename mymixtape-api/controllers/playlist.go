@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/mymixtape-api/models"
-	"github.com/mymixtape-api/services"
 )
 
 func GetCurrentUsersPlaylists(c *gin.Context) {
@@ -36,7 +35,7 @@ func GetCurrentUsersPlaylists(c *gin.Context) {
 		offset = "0"
 	}
 
-	currentUsersPlaylistsResponse, errorResponse := services.GetCurrentUsersPlaylists(token, offset, limit)
+	currentUsersPlaylistsResponse, errorResponse := Spotify.GetCurrentUserPlaylists(token, offset, limit)
 
 	if errorResponse != nil {
 		c.JSON(errorResponse.Status, errorResponse)
@@ -60,12 +59,12 @@ func CombinePlaylists(c *gin.Context) {
 		return
 	}
 
-	combineResponse, errorResponse := services.CombinePlaylists(combinePlaylistRequest.UserID, combinePlaylistRequest.Name, combinePlaylistRequest.Description, combinePlaylistRequest.PlaylistIDs, token)
+	errorResponse := Mixer.CombinePlaylists(combinePlaylistRequest.UserID, combinePlaylistRequest.Name, combinePlaylistRequest.Description, combinePlaylistRequest.PlaylistIDs, token)
 
 	if errorResponse  != nil {
 		c.JSON(errorResponse.Status, errorResponse)
 		return
 	}
 
-	c.JSON(http.StatusCreated, combineResponse)
+	c.JSON(http.StatusCreated, nil)
 }

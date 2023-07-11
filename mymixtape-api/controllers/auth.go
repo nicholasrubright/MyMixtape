@@ -6,15 +6,21 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/mymixtape-api/config"
 	"github.com/mymixtape-api/middleware"
 	"github.com/mymixtape-api/models"
 	"github.com/mymixtape-api/services"
 )
 
+
+var (
+	Spotify = services.NewSpotify()
+	Mixer = services.NewMixer(Spotify)
+)
+
+
 func GetAuthorizationUrl(c *gin.Context) {
 
-	authorizationUrlResponse, errorResponse := services.GetAuthorizationUrl(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
+	authorizationUrlResponse, errorResponse := Spotify.GetAuthorizationUrl()
 
 	if errorResponse != nil {
 		c.JSON(errorResponse.Status, &models.ErrorResponse{
@@ -63,7 +69,7 @@ func GetAccessToken(c *gin.Context) {
 
 	}
 
-	accessTokenResponse, errorResponse := services.GetAccessToken(accessTokenRequest.Code, config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
+	accessTokenResponse, errorResponse := Spotify.GetAccessToken(accessTokenRequest.Code)
 
 	if errorResponse != nil {
 		c.JSON(http.StatusBadRequest, &models.ErrorResponse{
