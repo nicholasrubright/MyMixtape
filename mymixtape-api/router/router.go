@@ -25,7 +25,12 @@ func InitRoutes() *gin.Engine {
 
 	config.InitConfig()
 
-	router := gin.Default()
+	gin.ForceConsoleColor()
+
+	router := gin.Default()	
+
+	//router.Use(gin.Logger())
+	//router.Use(gin.Recovery())
 
 	// Session
 	session_secret := securecookie.GenerateRandomKey(64)

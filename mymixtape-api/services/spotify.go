@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/mymixtape-api/constants"
 	"github.com/mymixtape-api/internal"
@@ -66,9 +67,7 @@ func (s Spotify) GetAccessToken(code string) (*models.AccessTokenResponse, *mode
 		"redirect_uri": {s.REDIRECT_URI},
 	}
 
-	var accessTokenResponse *models.AccessTokenResponse
-
-	accessTokenResponse, errorResponse := s.Client.PostAccessToken(constants.TOKEN_URL, formData, &accessTokenResponse, s.CLIENT_ID, s.CLIENT_SECRET)
+	accessTokenResponse, errorResponse := s.Client.PostAccessToken(constants.TOKEN_URL, strings.NewReader(formData.Encode()), s.CLIENT_ID, s.CLIENT_SECRET)
 
 	if errorResponse != nil {
 		return nil, &models.ErrorResponse{

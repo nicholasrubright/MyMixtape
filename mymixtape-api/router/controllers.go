@@ -27,13 +27,9 @@ func NewServices() *Services {
 }
 
 func initServices() (services.Spotify, services.Mixer) {
-
 	spotify := services.NewSpotify(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, config.SPOTIFY_CLIENT_REDIRECT)
-
 	mixer := services.NewMixer(spotify)
-
 	return spotify, mixer
-
 }
 
 
