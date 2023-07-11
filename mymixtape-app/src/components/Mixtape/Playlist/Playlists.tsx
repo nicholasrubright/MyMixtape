@@ -1,26 +1,46 @@
+"use client";
 import { Playlist, PlaylistMapping } from "@/types/models";
-import PlaylistBlock from "./PlaylistBlock";
+import PlaylistBlock from "../../controls/Playlist/PlaylistBlock";
 import ScrollableList from "@/components/controls/ScrollableList";
+import { useContext, useEffect, useState } from "react";
+import { remapPlaylistMapping } from "@/utils/playlists";
+import { PlaylistContext } from "@/context/PlaylistContext";
 
 export default function Playlists(props: PlaylistsProp) {
-  const {
-    playlists,
-    selectPlaylist,
-    selectedPlaylists,
-    getMoreData,
-    maxPlaylists,
-    isLoading,
-  } = props;
+  const { playlists } = props;
 
-  const playlist_blocks = playlists.map((playlist) => {
+  const context: any = useContext(PlaylistContext);
+
+  const { selectPlaylist } = context;
+
+  const [playlistMapping, setPlaylistMapping] = useState<PlaylistMapping>({});
+
+  const handleSelectPlaylist = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    index: string
+  ) => {
+    const updatePlaylistMapping = playlistMapping;
+    updatePlaylistMapping[index] = !updatePlaylistMapping[index];
+    setPlaylistMapping({ ...updatePlaylistMapping });
+
+    const ids = playlists.filter((p) => playlistMapping[p.id]).map((p) => p.id);
+    selectPlaylist(ids);
+  };
+
+  useEffect(() => {
+    const mapping = remapPlaylistMapping(playlists, playlistMapping);
+    setPlaylistMapping({ ...mapping });
+  }, [playlists]);
+
+  const playlistBlocks = playlists.map((playlist) => {
     return (
       <PlaylistBlock
         key={playlist.id}
         id={playlist.id}
         name={playlist.name}
         images={playlist.images}
-        active={selectedPlaylists[playlist.id]}
-        selectPlaylist={selectPlaylist}
+        active={playlistMapping[playlist.id]}
+        selectPlaylist={handleSelectPlaylist}
       />
     );
   });
@@ -31,12 +51,7 @@ export default function Playlists(props: PlaylistsProp) {
         <h3>Playlists</h3>
       </div>
       <div className="row">
-        <ScrollableList
-          items={playlist_blocks}
-          getMoreData={getMoreData}
-          maxPlaylists={maxPlaylists}
-          isLoading={isLoading}
-        />
+        <ScrollableList items={playlistBlocks} />
       </div>
       <div className="row mt-3 text-center py-2">{/* <p>Options</p> */}</div>
     </div>
@@ -45,9 +60,4 @@ export default function Playlists(props: PlaylistsProp) {
 
 interface PlaylistsProp {
   playlists: Playlist[];
-  selectedPlaylists: PlaylistMapping;
-  selectPlaylist: (e: any, id: string) => void;
-  getMoreData: (offset: number, limit: number) => void;
-  maxPlaylists: number;
-  isLoading: boolean;
 }

@@ -14,7 +14,15 @@ const getPlaceholder = () => {
 };
 
 export default function ProfileName(props: ProfileNameProps) {
-  const { name, isLoading } = props;
+  const { name, isLoading, isSkeleton } = props;
+
+  if (isSkeleton) {
+    return (
+      <h3 className={font.className}>
+        <span className="placeholder w-50"></span>
+      </h3>
+    );
+  }
 
   if (isLoading) return getPlaceholder();
 
@@ -28,4 +36,5 @@ export default function ProfileName(props: ProfileNameProps) {
 interface ProfileNameProps {
   name: string;
   isLoading: boolean;
+  isSkeleton?: boolean;
 }
