@@ -63,7 +63,7 @@ export const getUserProfile = async (
       },
     })
   ).catch((err) => {
-    return mockApi.mockGetUserProfile;
+    throw err;
   });
 };
 
@@ -90,7 +90,7 @@ export const getUserPlaylists = async (
       },
     })
   ).catch((err) => {
-    return mockApi.mockGetUserPlaylists;
+    throw err;
   });
 };
 
