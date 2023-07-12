@@ -6,6 +6,7 @@ import {
 
 import {
   AccessTokenResponse,
+  ApiResponse,
   AuthorizationUrlResponse,
   CombinePlaylistResponse,
   GetSessionResponse,
@@ -14,8 +15,9 @@ import {
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "@/types/api/response";
-import { parseResponse, getApiUrl, GetSession } from "@/utils/fetch";
+import { parseResponse, getApiUrl } from "@/utils/fetch";
 import mockApi from "./mock.api";
+import { getSessionCookieFromResponse, hasSetCookie } from "@/utils/session";
 
 const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "DEV" || false;
 
@@ -119,4 +121,21 @@ export const combinePlaylists = async (request: CombinePlaylistRequest) => {
   ).catch((err) => {
     return mockApi.mockCombinePlaylists;
   });
+};
+
+// Router Handler
+export const postMixtape = async (code: string): Promise<string> => {
+  const response = await parseResponse<ApiResponse>(
+    fetch(`${process.env.CLIENT_URL}/api/mixtape`, {
+      method: "POST",
+      body: JSON.stringify(code),
+      cache: "no-cache",
+    })
+  );
+
+  if (hasSetCookie(response)) {
+    return getSessionCookieFromResponse(response);
+  }
+
+  throw new Error("Set-Cookie not defined in response");
 };

@@ -1,4 +1,4 @@
-import { getAuthorizationUrl, getUserPlaylists } from "@/api/api";
+import { getAuthorizationUrl, getUserPlaylists, postMixtape } from "@/api/api";
 import Profile from "@/components/Mixtape/Profile/Profile";
 import Session from "@/components/shared/Session";
 import { getSessionCookie, hasSessionCookie } from "@/utils/session";
@@ -52,15 +52,5 @@ async function initAuthentication(code: string): Promise<string> {
     return getSessionCookie();
   }
 
-  const apiResponse = await fetch("http://localhost:3000/api/mixtape", {
-    method: "POST",
-    body: JSON.stringify({ code }),
-    cache: "no-cache",
-  });
-
-  const responseHeaders = apiResponse.headers;
-
-  const responseCookie = responseHeaders.getSetCookie()[0];
-
-  return responseCookie;
+  return await postMixtape(code);
 }

@@ -1,6 +1,8 @@
 import { setAccessToken } from "@/api/api";
+import { getSessionCookieFromResponse, hasSetCookie } from "@/utils/session";
 import { NextRequest, NextResponse } from "next/server";
 
+// POST to setAccessToken
 export async function POST(request: NextRequest) {
   const requestData = await request.json();
 
@@ -8,14 +10,14 @@ export async function POST(request: NextRequest) {
 
   const response = NextResponse.json(apiResponse.data);
 
-  var apiResponseSessionCookie =
-    apiResponse.headers?.getSetCookie()[0] as string;
+  if (hasSetCookie(apiResponse)) {
+    let setCookie = getSessionCookieFromResponse(apiResponse);
+    if (!setCookie.includes("Path")) {
+      setCookie = setCookie.concat("; Path=/;");
+    }
 
-  if (!apiResponseSessionCookie.includes("Path")) {
-    apiResponseSessionCookie = apiResponseSessionCookie.concat(";Path=/;");
+    response.headers.set("Set-Cookie", setCookie);
   }
-
-  response.headers.set("Set-Cookie", apiResponseSessionCookie);
 
   return response;
 }

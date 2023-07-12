@@ -1,4 +1,27 @@
+import { ApiResponse } from "@/types/api/response";
 import { cookies } from "next/headers";
+
+export const hasSetCookie = (response: ApiResponse): boolean => {
+  if (response.headers) {
+    return (
+      response.headers
+        .getSetCookie()
+        .find((c) => c.includes(getSessionName(null))) !== undefined
+    );
+  }
+
+  return false;
+};
+
+export const getSessionCookieFromResponse = (response: ApiResponse) => {
+  if (hasSetCookie(response)) {
+    return (response.headers as Headers)
+      .getSetCookie()
+      .find((c) => c.includes(getSessionName(null))) as string;
+  }
+
+  throw new Error("Set-Cookie not in response");
+};
 
 export const getSessionName = (sessionCookie: string | null): string => {
   if (!process.env.API_SESSION_VAR) {
