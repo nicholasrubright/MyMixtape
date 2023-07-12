@@ -1,6 +1,6 @@
 "use client";
 export default function DescriptionField(props: DescriptionFieldProps) {
-  const { description, handleDescription } = props;
+  const { description, hasError, handleDescription } = props;
   const id = "playlist_description";
 
   if (props.isLoading) {
@@ -29,9 +29,14 @@ export default function DescriptionField(props: DescriptionFieldProps) {
       <textarea
         className="form-control form-input bg-white"
         id={id}
-        required
+        required={true}
         placeholder="This is a really awesome playlist..."
       />
+      {hasError && (
+        <div className="text-danger">
+          <small>Please enter a description for the playlist.</small>
+        </div>
+      )}
     </div>
   );
 }
@@ -39,5 +44,6 @@ export default function DescriptionField(props: DescriptionFieldProps) {
 interface DescriptionFieldProps {
   description: string;
   isLoading?: boolean;
+  hasError?: boolean;
   handleDescription: (e: any) => void;
 }

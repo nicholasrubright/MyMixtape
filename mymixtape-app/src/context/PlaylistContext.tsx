@@ -13,8 +13,6 @@ const PlaylistProvider = (props: PlaylistProviderProps) => {
   const combinePlaylists = (name: string, description: string) => {
     console.log("Combining playlists: ");
     console.log("SelectedPlaylists: ", playlistIds);
-    console.log("Name: ", name);
-    console.log("Description: ", description);
   };
 
   return (

@@ -1,6 +1,9 @@
 "use client";
+
+import { useRef } from "react";
+
 export default function NameField(props: NameFieldProps) {
-  const { name, handleName } = props;
+  const { name, hasError, handleName } = props;
 
   const id = "playlist_name";
 
@@ -14,8 +17,6 @@ export default function NameField(props: NameFieldProps) {
           type="text"
           className="form-control placeholder"
           id={id}
-          value={name}
-          onChange={(e) => handleName(e)}
           placeholder="Awesome Playlist"
           required
         />
@@ -29,12 +30,19 @@ export default function NameField(props: NameFieldProps) {
         Name
       </label>
       <input
+        onChange={(e) => handleName(e)}
         type="text"
         className="form-control form-input bg-white"
         id={id}
+        value={name}
         placeholder="Awesome Playlist"
         required
       />
+      {hasError && (
+        <div className="text-danger">
+          <small>Please enter a name for the playlist.</small>
+        </div>
+      )}
     </div>
   );
 }
@@ -42,5 +50,6 @@ export default function NameField(props: NameFieldProps) {
 interface NameFieldProps {
   name: string;
   isLoading?: boolean;
+  hasError?: boolean;
   handleName: (e: any) => void;
 }

@@ -100,7 +100,10 @@ export const getUserPlaylists = async (
   });
 };
 
-export const combinePlaylists = async (request: CombinePlaylistRequest) => {
+export const combinePlaylists = async (
+  request: CombinePlaylistRequest,
+  sessionCookie: string
+) => {
   if (DEBUG) return mockApi.mockCombinePlaylists;
   const formBody = new URLSearchParams({
     userId: request.user_id,
@@ -117,13 +120,13 @@ export const combinePlaylists = async (request: CombinePlaylistRequest) => {
       method: "POST",
       cache: "no-cache",
       headers: new Headers({
-        Authorization: request.token as string,
+        Cookie: `${sessionCookie}`,
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
       }),
       body: formBody.toString(),
     })
   ).catch((err) => {
-    return mockApi.mockCombinePlaylists;
+    throw err;
   });
 };
 
