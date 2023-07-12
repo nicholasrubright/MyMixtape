@@ -6,83 +6,99 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/mymixtape-api/constants"
 	"github.com/mymixtape-api/internal"
 	"github.com/mymixtape-api/models"
 )
 
-const (
-	RESPONSE_TYPE = "code"
-	SHOW_DIALOG = "true"
-	SCOPE = "user-read-private user-read-email playlist-modify-public playlist-modify-private"
-	TRACK_FIELDS = "href,limit,next,offset,previous,total,items(track(name,id))"
-	SPOTIFY_AUTHORIZATION_URL = "https://accounts.spotify.com/authorize"
-)
+type ISpotify interface {
+	GetAuthorizationUrl() (*models.AuthorizationUrlResponse, *models.ErrorResponse)
+	GetAccessToken(code string) (*models.AccessTokenResponse, *models.ErrorResponse)
+	GetCurrentUsersProfile(token string) (*models.CurrentUsersProfileResponse, *models.ErrorResponse)
+	GetCurrentUserPlaylists(token string, offset string, limit string) (*models.CurrentUsersPlaylistsResponse, *models.ErrorResponse)
+	GetPlaylistTracks(token string, id string) (*models.SpotifyPlaylistItemsResponse, *models.ErrorResponse)
+	CreatePlaylist(token string, user string, name string, description string) (*models.CreatePlaylistResponse, *models.ErrorResponse)
+	AddTracksToPlaylist(token string, id string, tracks []string) *models.ErrorResponse
+	DeletePlaylist(token string, id string) *models.ErrorResponse
+}
 
-var (
-	REQUEST_MANAGER = internal.NewRequestManager(http.DefaultClient)
-)
+type Spotify struct {
+	Client			internal.Client
+	CLIENT_ID		string
+	CLIENT_SECRET	string
+	REDIRECT_URI	string
+}
 
-// Authorization Endpoints
-func GetAuthorizationUrl(client_id string, client_secret string, redirect_uri string) (*models.AuthorizationUrlResponse, *models.ErrorResponse) {
+func NewSpotify(client_id string, client_secret string, redirect_uri string) Spotify {
+	return Spotify{
+		Client: internal.New(http.DefaultClient),
+		CLIENT_ID: client_id,
+		CLIENT_SECRET: client_secret,
+		REDIRECT_URI: redirect_uri,
+	}
+}
 
-	state := GenerateAuthorizationState()
+func (s Spotify) GetAuthorizationUrl() (*models.AuthorizationUrlResponse, *models.ErrorResponse) {
+	state := generateAuthorizationState()
 
 	parameters := url.Values{
-		"client_id": {client_id},
-		"response_type": {RESPONSE_TYPE},
-		"redirect_uri": {redirect_uri},
-		"scope": {SCOPE},
+		"client_id": {s.CLIENT_ID},
+		"response_type": {constants.RESPONSE_TYPE},
+		"redirect_uri": {s.REDIRECT_URI},
+		"scope": {constants.SCOPE},
 		"state": {state},
-		"show_dialog": {SHOW_DIALOG},
+		"show_dialog": {constants.SHOW_DIALOG},
 	}
 
-	authorizationUrl := GenerateAuthorizationUrl(SPOTIFY_AUTHORIZATION_URL, parameters)
+	authorizationUrl := generateAuthorizationUrl(constants.SPOTIFY_AUTHORIZATION_URL, parameters)
 
 	return &models.AuthorizationUrlResponse{
 		Url: authorizationUrl,
 	}, nil
 }
 
+func (s Spotify) GetAccessToken(code string) (*models.AccessTokenResponse, *models.ErrorResponse) {
 
-func GetAccessToken(code string, client_id string, client_secret, redirect_uri string) (*models.AccessTokenResponse, *models.ErrorResponse) {
-	
-	accessTokenResponse, errorResponse := REQUEST_MANAGER.SetToken(code, redirect_uri, client_id, client_secret)
+	formData := url.Values{
+		"grant_type": {constants.GRANT_TYPE},
+		"code": {code},
+		"redirect_uri": {s.REDIRECT_URI},
+	}
+
+	accessTokenResponse, errorResponse := s.Client.PostAccessToken(constants.TOKEN_URL, strings.NewReader(formData.Encode()), s.CLIENT_ID, s.CLIENT_SECRET)
 
 	if errorResponse != nil {
-			return nil, &models.ErrorResponse{
+		return nil, &models.ErrorResponse{
 			Message: errorResponse.Message,
 			Status: errorResponse.StatusCode,
-		} 
+		}
 	}
 
 	return accessTokenResponse, nil
 }
 
-// User Endpoints
-func GetCurrentUsersProfile(token string) (*models.CurrentUsersProfileResponse, *models.ErrorResponse) {
+func (s Spotify) GetCurrentUsersProfile(token string) (*models.CurrentUsersProfileResponse, *models.ErrorResponse) {
 
-	var spotifyCurrentUsersProfileResponse *models.SpotifyCurrentUsersProfileResponse
+	var spotifyCurrentProfileResponse *models.SpotifyCurrentUsersProfileResponse
 
-	if err := REQUEST_MANAGER.GetInto("/me", &spotifyCurrentUsersProfileResponse, token); err != nil {
+	if err := s.Client.GetInto("/me", &spotifyCurrentProfileResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
 			Message: err.Message,
 			Status: err.StatusCode,
 		}
 	}
 
-	return &models.CurrentUsersProfileResponse {
-		ID: spotifyCurrentUsersProfileResponse.ID,
-		Name: spotifyCurrentUsersProfileResponse.DisplayName,
-		Images: spotifyCurrentUsersProfileResponse.Images,
+	return &models.CurrentUsersProfileResponse{
+		ID: spotifyCurrentProfileResponse.ID,
+		Name: spotifyCurrentProfileResponse.DisplayName,
+		Images: spotifyCurrentProfileResponse.Images,
 	}, nil
+
 }
 
-
-// Playlist Endpoints
-// will need to add parameters for limit and offset for paginations
-func GetCurrentUsersPlaylists(token string, offset string, limit string) (*models.CurrentUsersPlaylistsResponse, *models.ErrorResponse) {
+func (s Spotify) GetCurrentUserPlaylists(token string, offset string, limit string) (*models.CurrentUsersPlaylistsResponse, *models.ErrorResponse) {
 
 	var spotifyCurrentUsersPlaylistsResponse *models.SpotifyCurrentUsersPlaylistsResponse
 
@@ -93,7 +109,7 @@ func GetCurrentUsersPlaylists(token string, offset string, limit string) (*model
 
 	endpoint := "/me/playlists?" + parameters.Encode()
 
-	if err := REQUEST_MANAGER.GetInto(endpoint, &spotifyCurrentUsersPlaylistsResponse, token); err != nil {
+	if err := s.Client.GetInto(endpoint, &spotifyCurrentUsersPlaylistsResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
 			Message: err.Message,
 			Status: err.StatusCode,
@@ -149,28 +165,22 @@ func GetCurrentUsersPlaylists(token string, offset string, limit string) (*model
 		Items: items,
 	}, nil
 
+
 }
 
-/* Combine Playlists
-*	1. Get the track ids from the selected playlists
-*	2. Create the playlist with the name and description
-*	3. Add tracks to the newly created playlist  
-*/
-
-// Get the track ids from the selected playlists
-func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylistItemsResponse, *models.ErrorResponse) {
+func (s Spotify) GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylistItemsResponse, *models.ErrorResponse) {
 	
 	var spotifyPlaylistItemsResponse *models.SpotifyPlaylistItemsResponse
 
 	parameters := url.Values{
-		"fields": {TRACK_FIELDS},
+		"fields": {constants.TRACK_FIELDS},
 		"limit": {strconv.Itoa(50)},
 	}
 
 	api_endpoint := "/playlists/" + playlist_id + "/tracks?" + string(parameters.Encode())
 
 
-	if err := REQUEST_MANAGER.GetInto(api_endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
+	if err := s.Client.GetInto(api_endpoint, &spotifyPlaylistItemsResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
 			Message: err.Message,
 			Status: err.StatusCode,
@@ -189,13 +199,13 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 
 		parameters := url.Values{
 			"offset": {strconv.Itoa(len(spotifyPlaylistItemsResponse.Items))},
-			"fields": {TRACK_FIELDS},
+			"fields": {constants.TRACK_FIELDS},
 		}
 
 		endpoint := "/playlists/" + playlist_id + "/tracks?" + string(parameters.Encode())
 
 
-		if err := REQUEST_MANAGER.GetInto(endpoint, &nextSpotifyPlaylistItemsResponse, token); err != nil {
+		if err := s.Client.GetInto(endpoint, &nextSpotifyPlaylistItemsResponse, token); err != nil {
 			return nil, &models.ErrorResponse{
 				Message: err.Message,
 				Status: err.StatusCode,
@@ -211,8 +221,7 @@ func GetPlaylistTracks(playlist_id string, token string) (*models.SpotifyPlaylis
 	return spotifyPlaylistItemsResponse, nil
 }
 
-// Create the playlist with the name and description
-func CreatePlaylist(user_id string, playlist_name string, playlist_description string, token string) (*models.CreatePlaylistResponse, *models.ErrorResponse) {
+func (s Spotify) CreatePlaylist(user_id string, playlist_name string, playlist_description string, token string) (*models.CreatePlaylistResponse, *models.ErrorResponse) {
 	
 	spotifyCreatePlaylistRequest := &models.SpotifyCreatePlaylistRequest{
 		Name: playlist_name,
@@ -221,7 +230,7 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 
 	var spotifyCreatePlaylistResponse *models.SpotifyCreatePlaylistResponse
 
-	if err := REQUEST_MANAGER.PostInto("/users/" + user_id + "/playlists", &spotifyCreatePlaylistRequest, &spotifyCreatePlaylistResponse, token); err != nil {
+	if err := s.Client.PostInto("/users/" + user_id + "/playlists", &spotifyCreatePlaylistRequest, &spotifyCreatePlaylistResponse, token); err != nil {
 		return nil, &models.ErrorResponse{
 			Message: err.Message,
 			Status: err.StatusCode,
@@ -234,17 +243,16 @@ func CreatePlaylist(user_id string, playlist_name string, playlist_description s
 	}, nil
 }
 
-// Add tracks to the newly created playlist
-func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) *models.ErrorResponse {
+func (s Spotify) AddTracksToPlaylist(token string, id string, tracks []string) *models.ErrorResponse {
 	
 	spotifyAddTracksToPlaylistRequest := &models.SpotifyAddItemsToPlaylistRequest{
-		URIs: track_ids,
+		URIs: tracks,
 		Position: 0,
 	}
 
 	var spotifyAddTracksToPlaylistResponse *models.SpotifyAddItemsToPlaylistResponse
 
-	if err := REQUEST_MANAGER.PostInto("/playlists/" + playlist_id + "/tracks", &spotifyAddTracksToPlaylistRequest, &spotifyAddTracksToPlaylistResponse, token); err != nil {
+	if err := s.Client.PostInto("/playlists/" + id + "/tracks", &spotifyAddTracksToPlaylistRequest, &spotifyAddTracksToPlaylistResponse, token); err != nil {
 		
 		return &models.ErrorResponse{
 			Message: err.Message,
@@ -255,55 +263,15 @@ func AddTracksToPlaylist(playlist_id string, track_ids []string, token string) *
 	return nil
 }
 
-func CombinePlaylists(user_id string, playlist_name string, playlist_description string, playlist_ids []string, token string) (*models.CombinePlaylistResponse, *models.ErrorResponse) {
-
-	// Create Playlist
-	createPlaylistResponse, errorResponse := CreatePlaylist(user_id, playlist_name, playlist_description, token)
-
-	if errorResponse != nil {
-		return nil, &models.ErrorResponse{
-			Message: errorResponse.Message,
-			Status: errorResponse.Status,
-		}
-	}
-
-	var selectedPlaylistsTrackList []string
-	selectedPlaylistsTrackList = make([]string, 0)
-
-	for _, playlist_id := range playlist_ids {
-		playlistItemsResponse, errorResponse := GetPlaylistTracks(playlist_id, token)
-
-		if errorResponse != nil {
-			continue
-		}
-
-		tracks := NewPlaylistTracks(playlistItemsResponse)
-
-		for _, track := range tracks.Tracks {
-			selectedPlaylistsTrackList = append(selectedPlaylistsTrackList, GetSpotifyTrackURI((track.ID)))
-		}
-	}
-
-	errorResponse = AddTracksToPlaylist(createPlaylistResponse.ID, selectedPlaylistsTrackList, token)
-
-	if errorResponse != nil {
-		return nil, &models.ErrorResponse{
-			Status: errorResponse.Status,
-			Message: errorResponse.Message,
-		}
-	}
-
-	return &models.CombinePlaylistResponse{
-		ID: createPlaylistResponse.ID,
-		Name: createPlaylistResponse.Name,
-	}, nil
-
+func (s Spotify) DeletePlaylist(token string, id string) *models.ErrorResponse {
+	return nil
 }
+
 
 // Utility Functions
 
 // Generate State for Spotify Api
-func GenerateAuthorizationState() string {
+func generateAuthorizationState() string {
 	text := make([]rune, constants.STATE_LENGTH)
 	for i := range text {
 		text[i] = constants.CHARACTERS[rand.Intn(len(constants.CHARACTERS))]
@@ -312,33 +280,33 @@ func GenerateAuthorizationState() string {
 	return string(text)
 }
 
-func GenerateAuthorizationUrl(authorization_url string, parameters url.Values) string {
+func generateAuthorizationUrl(authorization_url string, parameters url.Values) string {
 	return fmt.Sprintf("%v?%v", authorization_url, parameters.Encode())
 }
 
 // Creates the base API url
-func GetSpotifyApiUrl(endpoint string) string {
-	return fmt.Sprintf("%v://%v/%v/%v", constants.SCHEME, constants.HOST, constants.VERSION, endpoint)
-}
+// func getSpotifyApiUrl(endpoint string) string {
+// 	return fmt.Sprintf("%v://%v/%v/%v", constants.SCHEME, constants.HOST, constants.VERSION, endpoint)
+// }
 
-func GetSpotifyTrackURI(track_id string) string {
-	return "spotify:track:" + track_id
-}
+// func getSpotifyTrackURI(track_id string) string {
+// 	return "spotify:track:" + track_id
+// }
 
-func NewPlaylistTracks(playlistItemsResponse *models.SpotifyPlaylistItemsResponse) *internal.PlaylistTracks {
-	var tracks []struct {
-		ID	string	`json:"id"`
-	}
+// func newPlaylistTracks(playlistItemsResponse *models.SpotifyPlaylistItemsResponse) *internal.PlaylistTracks {
+// 	var tracks []struct {
+// 		ID	string	`json:"id"`
+// 	}
 
-	tracks = make([]struct { ID string `json:"id"`}, 0)
+// 	tracks = make([]struct { ID string `json:"id"`}, 0)
 
-	for _, playlistItem := range playlistItemsResponse.Items {
-		tracks = append(tracks, struct{ID string "json:\"id\""}{
-			playlistItem.Track.ID,
-		})
-	}
+// 	for _, playlistItem := range playlistItemsResponse.Items {
+// 		tracks = append(tracks, struct{ID string "json:\"id\""}{
+// 			playlistItem.Track.ID,
+// 		})
+// 	}
 
-	return &internal.PlaylistTracks{
-		Tracks: tracks,
-	}
-}
+// 	return &internal.PlaylistTracks{
+// 		Tracks: tracks,
+// 	}
+// }

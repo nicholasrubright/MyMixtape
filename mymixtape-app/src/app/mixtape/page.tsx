@@ -1,8 +1,7 @@
-import { getAuthorizationUrl, getUserPlaylists } from "@/api/api";
+import { getAuthorizationUrl, getUserPlaylists, postMixtape } from "@/api/api";
 import Profile from "@/components/Mixtape/Profile/Profile";
 import Session from "@/components/shared/Session";
-import { GetSession } from "@/utils/fetch";
-import { cookies } from "next/headers";
+import { getSessionCookie, hasSessionCookie } from "@/utils/session";
 import { redirect } from "next/navigation";
 import ProfileSkeleton from "@/components/Mixtape/Profile/ProfileSkeleton";
 import { Suspense } from "react";
@@ -13,7 +12,7 @@ export default async function Page(props: PageProps) {
   const { searchParams } = props;
   const code = searchParams?.code || null;
 
-  if (!code) {
+  if (!code && !hasSessionCookie()) {
     const authorizationUrl = await getAuthorizationUrl();
 
     if (authorizationUrl.data) {
@@ -26,7 +25,7 @@ export default async function Page(props: PageProps) {
   return (
     <>
       <Session
-        hasCookie={cookies().has(GetSession(null))}
+        hasCookie={hasSessionCookie()}
         newSessionCookie={sessionCookie}
       />
       <div className="row mb-3">
@@ -48,19 +47,9 @@ interface PageProps {
 }
 
 async function initAuthentication(code: string): Promise<string> {
-  if (cookies().has(GetSession(null))) {
-    return cookies().get(GetSession(null))?.value as string;
+  if (hasSessionCookie()) {
+    return getSessionCookie();
   }
 
-  const apiResponse = await fetch("http://localhost:3000/api/mixtape", {
-    method: "POST",
-    body: JSON.stringify({ code }),
-    cache: "no-cache",
-  });
-
-  const responseHeaders = apiResponse.headers;
-
-  const responseCookie = responseHeaders.getSetCookie()[0];
-
-  return responseCookie;
+  return await postMixtape(code);
 }

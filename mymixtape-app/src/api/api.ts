@@ -6,6 +6,7 @@ import {
 
 import {
   AccessTokenResponse,
+  ApiResponse,
   AuthorizationUrlResponse,
   CombinePlaylistResponse,
   GetSessionResponse,
@@ -14,8 +15,13 @@ import {
   UserPlaylistsResponse,
   UserProfileResponse,
 } from "@/types/api/response";
-import { parseResponse, getApiUrl, GetSession } from "@/utils/fetch";
+import { parseResponse, getApiUrl } from "@/utils/fetch";
 import mockApi from "./mock.api";
+import {
+  getSessionCookieFromResponse,
+  getSessionName,
+  hasSetCookie,
+} from "@/utils/session";
 
 const DEBUG = process.env.NEXT_PUBLIC_DEBUG === "DEV" || false;
 
@@ -53,7 +59,7 @@ export const getUserProfile = async (
   sessionCookie: string
 ): Promise<UserProfileResponse> => {
   if (DEBUG) return mockApi.mockGetUserProfile;
-  sessionCookie = GetSession(sessionCookie);
+  sessionCookie = getSessionName(sessionCookie);
   return await parseResponse<UserProfileResponse>(
     fetch(`${getApiUrl()}/api/user`, {
       method: "GET",
@@ -72,7 +78,7 @@ export const getUserPlaylists = async (
   request?: GetUserPlaylistsRequest
 ): Promise<UserPlaylistsResponse> => {
   if (DEBUG) return mockApi.mockGetUserPlaylists;
-  sessionCookie = GetSession(sessionCookie);
+  sessionCookie = getSessionName(sessionCookie);
 
   const params: Record<string, string> = {
     offset: request ? request.offset.toString() : "0",
@@ -119,4 +125,21 @@ export const combinePlaylists = async (request: CombinePlaylistRequest) => {
   ).catch((err) => {
     return mockApi.mockCombinePlaylists;
   });
+};
+
+// Router Handlers
+export const postMixtape = async (code: string): Promise<string> => {
+  const response = await parseResponse<ApiResponse>(
+    fetch(`${process.env.CLIENT_URL}/api/mixtape`, {
+      method: "POST",
+      body: JSON.stringify({ code }),
+      cache: "no-cache",
+    })
+  );
+
+  if (hasSetCookie(response)) {
+    return getSessionCookieFromResponse(response);
+  }
+
+  throw new Error("Set-Cookie not defined in response");
 };
