@@ -11,12 +11,10 @@ export async function POST(request: NextRequest) {
   const response = NextResponse.json(apiResponse.data);
 
   if (hasSetCookie(apiResponse)) {
-    let setCookie = getSessionCookieFromResponse(apiResponse);
-    if (!setCookie.includes("Path")) {
-      setCookie = setCookie.concat("; Path=/;");
-    }
-
-    response.headers.set("Set-Cookie", setCookie);
+    response.headers.set(
+      "Set-Cookie",
+      getSessionCookieFromResponse(apiResponse)
+    );
   }
 
   return response;

@@ -2,7 +2,6 @@ import { getAuthorizationUrl, getUserPlaylists, postMixtape } from "@/api/api";
 import Profile from "@/components/Mixtape/Profile/Profile";
 import Session from "@/components/shared/Session";
 import { getSessionCookie, hasSessionCookie } from "@/utils/session";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import ProfileSkeleton from "@/components/Mixtape/Profile/ProfileSkeleton";
 import { Suspense } from "react";

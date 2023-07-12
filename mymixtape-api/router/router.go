@@ -29,9 +29,6 @@ func InitRoutes() *gin.Engine {
 
 	router := gin.Default()	
 
-	//router.Use(gin.Logger())
-	//router.Use(gin.Recovery())
-
 	// Session
 	session_secret := securecookie.GenerateRandomKey(64)
 	if session_secret == nil {
@@ -41,6 +38,7 @@ func InitRoutes() *gin.Engine {
 	store := cookie.NewStore(session_secret)
 	store.Options(sessions.Options{
 		MaxAge: 60 * 60 * 24,
+		Path: "/",
 	})
 	router.Use(sessions.Sessions(config.SESSION_VAR, store))
 

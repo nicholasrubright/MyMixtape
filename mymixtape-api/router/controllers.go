@@ -64,7 +64,7 @@ func (s *Services) GetAccessToken(c *gin.Context) {
 		}
 	}
 
-	var accessTokenRequest models.AccessTokenRequest
+	var accessTokenRequest *models.AccessTokenRequest
 
 	if err := c.BindJSON(&accessTokenRequest); err != nil {
 		c.JSON(http.StatusBadRequest, &models.ErrorResponse{
