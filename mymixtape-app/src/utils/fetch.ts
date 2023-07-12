@@ -44,17 +44,3 @@ export const getApiUrl = (): string => {
 export const IsClientSide = () => {
   return typeof window !== "undefined";
 };
-
-export const GetSession = (sessionCookie: string | null): string => {
-  if (!process.env.API_SESSION_VAR) {
-    throw new Error("Session variable not defined");
-  }
-
-  if (!sessionCookie) {
-    return process.env.API_SESSION_VAR;
-  }
-
-  return !sessionCookie.includes(process.env.API_SESSION_VAR)
-    ? `${process.env.API_SESSION_VAR}=${sessionCookie}`
-    : sessionCookie;
-};
